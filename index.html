@@ -1412,40 +1412,6 @@ function showModal(id){ const m=document.getElementById(id); m.style.display='fl
 function closeModal(id){ const m=document.getElementById(id); m.classList.remove('show'); setTimeout(()=>{ m.style.display='none'; },300); }
  
 document.querySelectorAll('.modal-ov').forEach(m=>{ m.style.display='none'; });
- // Функция сброса прогноза пользователя для Администратора
-window.resetUserPrediction = async function(userId, userName) {
-  if (!confirm(`Вы уверены, что хотите полностью удалить официальный прогноз пользователя "${userName}"?\nЭто действие нельзя будет отменить.`)) {
-    return;
-  }
-
-  try {
-    // Получаем доступ к Firestore методам, которые сохранены в глобальном объекте window.FB
-    const { db, doc, updateDoc } = window.FB;
-
-    // Ссылка на документ пользователя в коллекции "users"
-    const userDocRef = doc(db, "users", userId);
-
-    // Удаляем данные прогноза и сбрасываем флаг отправки (hasSubmitted)
-    await updateDoc(userDocRef, {
-      hasSubmitted: false,         // Снимаем блокировку, чтобы пользователь мог заполнить форму заново
-      officialPrediction: null,    // Стираем прогнозы группового этапа
-      playoffPrediction: null,     // Стираем сетку плей-офф
-      champion: null,              // Убираем чемпиона
-      pBoot: null,                 // Сбрасываем индивидуальные награды (Золотая бутса)
-      pGlove: null,                // Золотая перчатка
-      pPlayer: null                // Лучший игрок
-    });
-
-    alert(`Прогноз пользователя ${userName} успешно сброшен! Теперь он может отправить его заново.`);
-    
-    // Перезагружаем страницу, чтобы обновить списки пользователей на экране
-    location.reload();
-
-  } catch (error) {
-    console.error("Ошибка при сбросе прогноза:", error);
-    alert("Не удалось сбросить прогноз: " + error.message);
-  }
-};
 </script>
 </body>
 </html>
