@@ -339,6 +339,13 @@ body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;backgro
     <div class="mb-5"><span class="badge bg-red">⚙️ АДМИНИСТРАТОР</span><h1 style="font-family:var(--font-d);font-size:1.8rem;letter-spacing:3px;color:#FF6B6B;margin-top:6px;">ПАНЕЛЬ УПРАВЛЕНИЯ</h1></div>
     <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:14px;">📊 РЕЗУЛЬТАТЫ МАТЧЕЙ</h2><div id="adm-matches"></div></div>
     <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:14px;">🏆 РЕАЛЬНЫЕ НАГРАДЫ</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 БУТСА</label><input type="text" class="ai" id="r-boot" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ПЕРЧАТКА</label><input type="text" class="ai" id="r-glove" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ИГРОК</label><input type="text" class="ai" id="r-player" placeholder="Реальный..."></div></div><button onclick="saveAwards()" class="btn-g mt-4">СОХРАНИТЬ И ПЕРЕСЧИТАТЬ</button></div>
+ <button 
+  onclick="resetUserPrediction('${user.id}', '${user.name || user.email || 'Без имени'}')" 
+  class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded transition ml-2"
+  style="border: 1px solid rgba(255,0,0,0.3);"
+>
+  Сбросить прогноз
+</button>
   </div>
  
 </main>
@@ -1405,6 +1412,40 @@ function showModal(id){ const m=document.getElementById(id); m.style.display='fl
 function closeModal(id){ const m=document.getElementById(id); m.classList.remove('show'); setTimeout(()=>{ m.style.display='none'; },300); }
  
 document.querySelectorAll('.modal-ov').forEach(m=>{ m.style.display='none'; });
+ // Функция сброса прогноза пользователя для Администратора
+window.resetUserPrediction = async function(userId, userName) {
+  if (!confirm(`Вы уверены, что хотите полностью удалить официальный прогноз пользователя "${userName}"?\nЭто действие нельзя будет отменить.`)) {
+    return;
+  }
+
+  try {
+    // Получаем доступ к Firestore методам, которые сохранены в глобальном объекте window.FB
+    const { db, doc, updateDoc } = window.FB;
+
+    // Ссылка на документ пользователя в коллекции "users"
+    const userDocRef = doc(db, "users", userId);
+
+    // Удаляем данные прогноза и сбрасываем флаг отправки (hasSubmitted)
+    await updateDoc(userDocRef, {
+      hasSubmitted: false,         // Снимаем блокировку, чтобы пользователь мог заполнить форму заново
+      officialPrediction: null,    // Стираем прогнозы группового этапа
+      playoffPrediction: null,     // Стираем сетку плей-офф
+      champion: null,              // Убираем чемпиона
+      pBoot: null,                 // Сбрасываем индивидуальные награды (Золотая бутса)
+      pGlove: null,                // Золотая перчатка
+      pPlayer: null                // Лучший игрок
+    });
+
+    alert(`Прогноз пользователя ${userName} успешно сброшен! Теперь он может отправить его заново.`);
+    
+    // Перезагружаем страницу, чтобы обновить списки пользователей на экране
+    location.reload();
+
+  } catch (error) {
+    console.error("Ошибка при сбросе прогноза:", error);
+    alert("Не удалось сбросить прогноз: " + error.message);
+  }
+};
 </script>
 </body>
 </html>
