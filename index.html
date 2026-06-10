@@ -307,21 +307,14 @@ body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;backgro
       <div class="mb-5"><span class="badge bg-purple">🏆 ОФИЦИАЛЬНЫЙ ТУРНИР</span><h2 style="font-family:var(--font-d);font-size:1.8rem;letter-spacing:3px;color:var(--wc-purple-bright);margin-top:8px;">ОФИЦИАЛЬНЫЙ ПРОГНОЗ</h2><p style="color:rgba(232,240,254,0.4);font-size:0.82rem;margin-top:4px;">Одна попытка!</p></div>
       <div id="off-groups"></div>
       <div class="divider"></div>
-      <div class="wc-card mb-5">
-        <div class="flex items-center justify-between mb-4 flex-wrap gap-3"><h2 style="font-family:var(--font-d);font-size:1.4rem;letter-spacing:3px;color:var(--wc-purple-bright);">🏟️ ПЛЕЙ-ОФФ</h2><button onclick="buildPlayoff('official')" class="btn-p">ПОСТРОИТЬ СЕТКУ</button></div>
-        <div id="off-playoff"><div style="text-align:center;color:rgba(232,240,254,0.25);font-family:var(--font-u);padding:28px 0;font-size:0.9rem;">Заполните групповой этап и нажмите «Построить сетку»</div></div>
-      </div>
-      <!-- Награды — после плей-офф -->
-      <div class="divider"></div>
-      <div class="wc-card mb-5">
-        <h2 style="font-family:var(--font-d);font-size:1.4rem;letter-spacing:3px;color:var(--wc-gold);margin-bottom:14px;">🏆 ИНДИВИДУАЛЬНЫЕ НАГРАДЫ</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 ЗОЛОТАЯ БУТСА</label><input type="text" class="ai" id="o-boot" placeholder="Имя игрока..."></div>
-          <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ЗОЛОТАЯ ПЕРЧАТКА</label><input type="text" class="ai" id="o-glove" placeholder="Имя вратаря..."></div>
-          <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ЛУЧШИЙ ИГРОК</label><input type="text" class="ai" id="o-player" placeholder="Имя игрока..."></div>
+      <div class="wc-card mb-5" style="border-color:rgba(255,215,0,0.2);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <span style="font-size:1.5rem;">⏳</span>
+          <h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:3px;color:rgba(232,240,254,0.45);">ПЛЕЙ-ОФФ — СКОРО</h2>
         </div>
+        <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(232,240,254,0.3);">Прогноз на плей-офф откроется после завершения группового этапа. Сейчас принимаются только прогнозы на матчи групп.</p>
       </div>
-      <div class="text-center pb-6"><button onclick="submitOfficial()" class="btn-g px-12 py-4" style="font-size:0.85rem;">🚀 ОТПРАВИТЬ ПРОГНОЗ</button><p style="color:rgba(232,240,254,0.25);font-size:0.72rem;margin-top:7px;">Действие необратимо!</p></div>
+      <div class="text-center pb-6"><button onclick="submitOfficial()" class="btn-g px-12 py-4" style="font-size:0.85rem;">🚀 ОТПРАВИТЬ ПРОГНОЗ</button><p style="color:rgba(232,240,254,0.25);font-size:0.72rem;margin-top:7px;">Действие необратимо! Только групповой этап.</p></div>
     </div>
   </div>
  
@@ -339,13 +332,32 @@ body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;backgro
     <div class="mb-5"><span class="badge bg-red">⚙️ АДМИНИСТРАТОР</span><h1 style="font-family:var(--font-d);font-size:1.8rem;letter-spacing:3px;color:#FF6B6B;margin-top:6px;">ПАНЕЛЬ УПРАВЛЕНИЯ</h1></div>
     <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:14px;">📊 РЕЗУЛЬТАТЫ МАТЧЕЙ</h2><div id="adm-matches"></div></div>
     <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:14px;">🏆 РЕАЛЬНЫЕ НАГРАДЫ</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 БУТСА</label><input type="text" class="ai" id="r-boot" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ПЕРЧАТКА</label><input type="text" class="ai" id="r-glove" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ИГРОК</label><input type="text" class="ai" id="r-player" placeholder="Реальный..."></div></div><button onclick="saveAwards()" class="btn-g mt-4">СОХРАНИТЬ И ПЕРЕСЧИТАТЬ</button></div>
- <button 
-  onclick="resetUserPrediction('${user.id}', '${user.name || user.email || 'Без имени'}')" 
-  class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-1 px-3 rounded transition ml-2"
-  style="border: 1px solid rgba(255,0,0,0.3);"
->
-  Сбросить прогноз
-</button>
+
+    <!-- УПРАВЛЕНИЕ УЧАСТНИКАМИ -->
+    <div class="wc-card mb-5">
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:#FF6B6B;">👥 УЧАСТНИКИ</h2>
+        <button onclick="loadAdminUsers()" class="btn-dl" style="font-size:0.58rem;">🔄 ОБНОВИТЬ СПИСОК</button>
+      </div>
+      <div id="adm-users"><div style="text-align:center;color:rgba(232,240,254,0.25);padding:20px;font-family:var(--font-u);font-size:0.85rem;">Нажмите «Обновить список»</div></div>
+    </div>
+
+    <!-- СОЗДАТЬ АНОНИМНЫЙ ПРОГНОЗ -->
+    <div class="wc-card mb-5">
+      <h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:var(--wc-purple-bright);margin-bottom:14px;">➕ СОЗДАТЬ ПРОГНОЗ ОТ ИМЕНИ...</h2>
+      <div class="flex gap-3 mb-4 flex-wrap">
+        <input type="text" id="anon-name" class="ai" placeholder="Имя участника (напр. Иван Петров)" style="max-width:320px;">
+        <button onclick="startAnonPred()" class="btn-p">СОЗДАТЬ ПРОГНОЗ</button>
+      </div>
+      <div id="anon-form" class="hidden">
+        <div style="font-family:var(--font-t);font-size:0.62rem;letter-spacing:2px;color:var(--wc-purple-bright);margin-bottom:12px;">ЗАПОЛНИТЕ ГРУППОВОЙ ЭТАП ДЛЯ: <span id="anon-name-label" style="color:var(--wc-green);"></span></div>
+        <div id="anon-groups"></div>
+        <div class="flex gap-3 mt-4 justify-center flex-wrap">
+          <button onclick="submitAnonPred()" class="btn-g">СОХРАНИТЬ ПРОГНОЗ</button>
+          <button onclick="cancelAnonPred()" class="btn-dl">ОТМЕНА</button>
+        </div>
+      </div>
+    </div>
   </div>
  
 </main>
@@ -822,10 +834,21 @@ function buildPlayoff(mode){
   const finalPair=[r2W[0]||null,r2W[1]||null];
   const champion=pm[poKey(mode,'final',0)]||null;
  
-  c.innerHTML=buildBracketHTML(mode,r16Pairs,r8Pairs,r4Pairs,r2Pairs,finalPair,champion,pm);
- 
+  // Матч за 3-е место (только для практики)
+  let thirdPlacePair=[null,null], thirdPlaceWinner=null;
+  if(mode==='practice'){
+    const sf1W=r2W[0], sf2W=r2W[1];
+    const sf1Pair=r2Pairs[0], sf2Pair=r2Pairs[1];
+    const sf1Loser=sf1W?(sf1Pair[0]&&sf1W.n!==sf1Pair[0].n?sf1Pair[0]:sf1Pair[1]):null;
+    const sf2Loser=sf2W?(sf2Pair[0]&&sf2W.n!==sf2Pair[0].n?sf2Pair[0]:sf2Pair[1]):null;
+    thirdPlacePair=[sf1Loser,sf2Loser];
+    thirdPlaceWinner=pm[poKey(mode,'3rd',0)]||null;
+  }
+
+  c.innerHTML=buildBracketHTML(mode,r16Pairs,r8Pairs,r4Pairs,r2Pairs,finalPair,champion,pm,thirdPlacePair,thirdPlaceWinner);
+
   // Сохраняем для превью скачивания
-  S._lastPlayoffData={mode,r16Pairs,r8Pairs,r4Pairs,r2Pairs,finalPair,champion};
+  S._lastPlayoffData={mode,r16Pairs,r8Pairs,r4Pairs,r2Pairs,finalPair,champion,thirdPlacePair,thirdPlaceWinner};
 }
  
 /* ═══════════════════════════════════════════════════════
@@ -885,10 +908,21 @@ function buildBracketHTML(mode, r16Pairs, r8Pairs, r4Pairs, r2Pairs, finalPair, 
   h+=matchCard(mode,'final',0,finalPair[0],finalPair[1],champion,'Финал');
   h+=`</div>`;
  
+    // Матч за 3-е место — только практика
+  if(mode==='practice' && thirdPlacePair){
+    h+=`<div class="po-round-title" style="color:rgba(205,127,50,0.9);font-size:1rem;">🥉 МАТЧ ЗА 3-Е МЕСТО</div>`;
+    h+=`<div class="max-w-xs mx-auto mb-2">`;
+    h+=matchCard(mode,'3rd',0,thirdPlacePair[0],thirdPlacePair[1],thirdPlaceWinner,'3-е место');
+    h+=`</div>`;
+    if(thirdPlaceWinner){
+      h+=`<div class="text-center pb-2"><div style="font-family:var(--font-d);font-size:1.1rem;letter-spacing:3px;color:rgba(205,127,50,0.9);">🥉 3-Е МЕСТО: ${thirdPlaceWinner.f} ${thirdPlaceWinner.n}</div></div>`;
+    }
+  }
+
   if(champion){
     h+=`<div class="text-center py-4"><div style="font-family:var(--font-d);font-size:clamp(1.5rem,5vw,2.5rem);letter-spacing:4px;color:var(--wc-gold);text-shadow:0 0 30px rgba(255,215,0,0.5);">🏆 ЧЕМПИОН: ${champion.f} ${champion.n}</div></div>`;
   }
- 
+
   return h;
 }
  
@@ -1048,12 +1082,8 @@ async function submitOfficial(){
   if(!user){ notify('Необходима авторизация!','err'); return; }
   const pred={
     uid:user.uid, displayName:user.displayName||'Аноним', photoURL:user.photoURL||'',
-    scores:{...S.oScores}, playoff:{...S.oPlayoff},
-    awards:{
-      goldenBoot:document.getElementById('o-boot')?.value||'',
-      goldenGlove:document.getElementById('o-glove')?.value||'',
-      bestPlayer:document.getElementById('o-player')?.value||''
-    },
+    scores:{...S.oScores},
+    playoff:null, awards:null,
     points:0, pointsLog:[], stats:{},
     submittedAt:new Date().toISOString()
   };
@@ -1069,13 +1099,13 @@ async function submitOfficial(){
  
 function renderMyPred(pred){
   const el=document.getElementById('off-my-pred'); if(!el) return;
-  const champK=Object.keys(pred.playoff||{}).find(k=>k.includes('__final__'));
-  const champ=champK?pred.playoff[champK]:null;
-  el.innerHTML=`<div class="wc-card"><div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <div><div style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:rgba(232,240,254,0.35);margin-bottom:6px;">🏆 ЧЕМПИОН</div><div style="font-family:var(--font-d);font-size:1.4rem;color:var(--wc-gold);">${champ?`${champ.f} ${champ.n}`:'Не указан'}</div></div>
-    <div><div style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:6px;">👟 БУТСА</div><div style="font-weight:600;">${pred.awards?.goldenBoot||'—'}</div></div>
-    <div><div style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:rgba(192,192,192,0.7);margin-bottom:6px;">🧤 ПЕРЧАТКА / ⭐ ИГРОК</div><div style="font-size:0.85rem;">${pred.awards?.goldenGlove||'—'} / ${pred.awards?.bestPlayer||'—'}</div></div>
-  </div><div class="mt-4 pt-4" style="border-top:1px solid var(--wc-border);"><span class="badge bg-gold">ОЧКИ: ${pred.points||0}</span></div></div>`;
+  const matchCount=Object.keys(pred.scores||{}).length;
+  el.innerHTML=`<div class="wc-card">
+    <div style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:rgba(232,240,254,0.35);margin-bottom:8px;">ГРУППОВОЙ ЭТАП · ПРОГНОЗ ПРИНЯТ</div>
+    <div style="font-family:var(--font-u);font-size:0.9rem;color:rgba(232,240,254,0.7);margin-bottom:10px;">Заполнено матчей: <span style="color:var(--wc-green);font-weight:700;">${matchCount}</span></div>
+    <div style="font-family:var(--font-u);font-size:0.82rem;color:rgba(232,240,254,0.4);">Плей-офф прогноз откроется позже. Очки будут начислены по завершении матчей.</div>
+    <div class="mt-4 pt-4" style="border-top:1px solid var(--wc-border);"><span class="badge bg-gold">ОЧКИ: ${pred.points||0}</span></div>
+  </div>`;
 }
  
 async function loadVox(){
@@ -1124,7 +1154,7 @@ async function loadLeaderboard(){
       const ec=['🥇','🥈','🥉'],rc=['var(--wc-gold)','rgba(192,192,192,0.9)','rgba(205,127,50,0.9)'];
       return `<div class="lb-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}" onclick="openPlayerModal('${esc(p.uid)}')">
         <div style="font-family:var(--font-t);font-size:0.75rem;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);color:${rc[i]||'rgba(232,240,254,0.3)'};margin-right:10px;flex-shrink:0;">${ec[i]||i+1}</div>
-        <img src="${esc(p.photoURL||'')}" alt="" style="width:34px;height:34px;border-radius:50%;border:2px solid var(--wc-border);object-fit:cover;margin-right:10px;flex-shrink:0;" onerror="this.style.display='none'">
+        ${p.photoURL?`<img src="${esc(p.photoURL)}" alt="" style="width:34px;height:34px;border-radius:50%;border:2px solid var(--wc-border);object-fit:cover;margin-right:10px;flex-shrink:0;" onerror="this.style.display='none'">`:`<div style="width:34px;height:34px;border-radius:50%;border:2px solid var(--wc-border);background:rgba(123,47,190,0.2);display:flex;align-items:center;justify-content:center;margin-right:10px;flex-shrink:0;font-size:0.9rem;">👤</div>`}
         <div style="flex:1;min-width:0;"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.displayName||'Аноним')}</div><div style="font-size:0.7rem;color:rgba(232,240,254,0.35);font-family:var(--font-t);">${(p.pointsLog||[]).length} событий</div></div>
         <div style="font-family:var(--font-t);font-size:1rem;font-weight:700;color:var(--wc-gold);margin-left:8px;">${p.points||0}</div>
       </div>`;
@@ -1168,10 +1198,7 @@ async function openPlayerModal(uid){
         <div style="font-family:var(--font-d);font-size:1rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:10px;">📊 СТАТИСТИКА</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;font-size:0.82rem;">
           ${sRow('Угаданных исходов',st.outcomes||0)}${sRow('Точных счетов',st.exactScores||0)}
-          ${sRow('В 1/16 финала',st.r16||0)}${sRow('В 1/8 финала',st.r8||0)}
-          ${sRow('В 1/4 финала',st.r4||0)}${sRow('В полуфинале',st.r2||0)}
-          ${sRow('Бутса',st.goldenBoot?'✅':'❌')}${sRow('Перчатка',st.goldenGlove?'✅':'❌')}
-          ${sRow('Лучший игрок',st.bestPlayer?'✅':'❌')}
+          ${sRow('Правильных мест в группах',st.groupPlaces||0)}
         </div>
       </div>
       <div>
@@ -1230,6 +1257,7 @@ async function loadAdminData(){
       if(h) h.value=sc.h; if(a) a.value=sc.a;
     });
   } catch(e){ console.warn('Admin load:',e.message); }
+  loadAdminUsers();
 }
  
 async function saveMatch(mid,hn,an){
@@ -1266,12 +1294,10 @@ async function recalcAll(){
   try{
     const {db,collection,getDocs,doc,updateDoc}=window.FB;
     const snap=await getDocs(collection(db,'predictions'));
-    const rndPts={r16:1,r8:2,r4:3,r2:4,final:5};
-    const rndNames={r16:'1/16 финала',r8:'1/8 финала',r4:'1/4 финала',r2:'Полуфинале',final:'Финале'};
     for(const ds of snap.docs){
       const pl=ds.data();
-      let pts=0; const log=[]; const st={outcomes:0,exactScores:0,r16:0,r8:0,r4:0,r2:0,goldenBoot:false,goldenGlove:false,bestPlayer:false};
-      // Групповой этап
+      let pts=0; const log=[]; const st={outcomes:0,exactScores:0,groupPlaces:0};
+      // Групповой этап — матчи
       Object.entries(S.realResults).forEach(([mid,real])=>{
         const pred=pl.scores?.[mid]; if(!pred) return;
         const p=mid.split('_');
@@ -1283,24 +1309,186 @@ async function recalcAll(){
         else if(po===ro&&(pred.h-pred.a)===(real.h-real.a)){ pts+=3; st.outcomes++; log.push({points:3,desc:`Разница+исход ${hn}—${an} (${pred.h}:${pred.a}→${real.h}:${real.a})`}); }
         else if(po===ro){ pts+=2; st.outcomes++; log.push({points:2,desc:`Исход ${hn}—${an} (${pred.h}:${pred.a}→${real.h}:${real.a})`}); }
       });
-      // Плей-офф
-      Object.entries(pl.playoff||{}).forEach(([k,predW])=>{
-        if(!predW) return;
-        const parts=k.split('__'), rnd=parts[1]; const p=rndPts[rnd]; if(!p) return;
-        const realW=S.realPlayoff?.[`real__${rnd}__${parts[2]}`];
-        if(realW&&realW.n===predW.n){ pts+=p; st[rnd]=(st[rnd]||0)+1; log.push({points:p,desc:`Проход ${predW.f} ${predW.n} в ${rndNames[rnd]||rnd}`}); }
+      // Бонусы за места в группах
+      // Реальные места берём из S.realResults через calcStandings
+      const hasEnoughResults=(gk)=>{
+        const total=groupMatches(gk).length;
+        const played=groupMatches(gk).filter(m=>S.realResults[m.id]).length;
+        return played===total;
+      };
+      Object.keys(GROUPS).forEach(gk=>{
+        if(!hasEnoughResults(gk)) return; // группа не завершена
+        // Реальная таблица
+        const realStore={};
+        groupMatches(gk).forEach(m=>{ if(S.realResults[m.id]) realStore[m.id]=S.realResults[m.id]; });
+        const realSorted=calcStandingsFromStore(gk, realStore);
+        // Прогнозная таблица
+        const predStore={};
+        groupMatches(gk).forEach(m=>{ if(pl.scores?.[m.id]) predStore[m.id]=pl.scores[m.id]; });
+        const predSorted=calcStandingsFromStore(gk, predStore);
+        if(!predSorted.length) return;
+        let correctPlaces=0;
+        realSorted.forEach((rs,pos)=>{
+          const predPos=predSorted.findIndex(ps=>ps.t.n===rs.t.n);
+          if(predPos===pos){ correctPlaces++; pts+=2; st.groupPlaces=(st.groupPlaces||0)+1; log.push({points:2,desc:`Место ${pos+1} в группе ${gk}: ${rs.t.f} ${rs.t.n}`}); }
+        });
+        if(correctPlaces===4){ pts+=2; log.push({points:2,desc:`Бонус: идеальная группа ${gk} (+2)`}); }
       });
-      // Награды
-      const aw=S.realAwards;
-      if(aw.goldenBoot&&pl.awards?.goldenBoot?.toLowerCase().trim()===aw.goldenBoot.toLowerCase().trim()){ pts+=5; st.goldenBoot=true; log.push({points:5,desc:`Золотая бутса: ${aw.goldenBoot}`}); }
-      if(aw.goldenGlove&&pl.awards?.goldenGlove?.toLowerCase().trim()===aw.goldenGlove.toLowerCase().trim()){ pts+=5; st.goldenGlove=true; log.push({points:5,desc:`Золотая перчатка: ${aw.goldenGlove}`}); }
-      if(aw.bestPlayer&&pl.awards?.bestPlayer?.toLowerCase().trim()===aw.bestPlayer.toLowerCase().trim()){ pts+=5; st.bestPlayer=true; log.push({points:5,desc:`Лучший игрок: ${aw.bestPlayer}`}); }
       await updateDoc(doc(db,'predictions',ds.id),{points:pts,pointsLog:log,stats:st});
     }
     if(S.curPage==='leaderboard') loadLeaderboard();
   } catch(e){ console.error('recalc:',e); notify('Ошибка пересчёта: '+e.message,'err'); }
 }
+
+function calcStandingsFromStore(gk, store){
+  const st={};
+  GROUPS[gk].teams.forEach(t=>{ st[t.n]={pts:0,gd:0,gf:0,t}; });
+  groupMatches(gk).forEach(m=>{
+    const s=store[m.id]; if(!s) return;
+    if(s.h>s.a){ st[m.h.n].pts+=3; }
+    else if(s.h===s.a){ st[m.h.n].pts+=1; st[m.a.n].pts+=1; }
+    else{ st[m.a.n].pts+=3; }
+    st[m.h.n].gf+=s.h; st[m.h.n].gd+=(s.h-s.a);
+    st[m.a.n].gf+=s.a; st[m.a.n].gd+=(s.a-s.h);
+  });
+  return Object.values(st).sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf);
+}
  
+/* ═══════════════════════════════════════════════════════
+   УПРАВЛЕНИЕ УЧАСТНИКАМИ (ADMIN)
+═══════════════════════════════════════════════════════ */
+async function loadAdminUsers(){
+  const c=document.getElementById('adm-users'); if(!c) return;
+  c.innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.25);padding:20px;">Загрузка...</div>';
+  try{
+    const {db,collection,getDocs}=window.FB;
+    const snap=await getDocs(collection(db,'predictions'));
+    if(!snap.docs.length){ c.innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.25);padding:20px;">Нет участников</div>'; return; }
+    c.innerHTML=snap.docs.map(d=>{
+      const p=d.data();
+      const uid=d.id;
+      const isAnon=uid.startsWith('admin_anon_');
+      return `<div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;padding:10px 12px;background:rgba(13,31,60,0.5);border:1px solid rgba(0,255,135,0.07);border-radius:7px;margin-bottom:5px;">
+        <div style="font-size:1.2rem;">${isAnon?'👤':'🔑'}</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span id="uname-${esc(uid)}" style="font-family:var(--font-u);font-weight:600;font-size:0.88rem;">${esc(p.displayName||'Аноним')}</span>
+            <span class="badge ${isAnon?'bg-purple':'bg-green'}" style="font-size:0.5rem;">${isAnon?'ADMIN-ANON':'GOOGLE'}</span>
+          </div>
+          <div style="font-family:var(--font-t);font-size:0.58rem;color:rgba(232,240,254,0.3);margin-top:2px;">${esc(uid)} · ${p.points||0} очков · ${p.submittedAt?new Date(p.submittedAt).toLocaleDateString('ru'):'—'}</div>
+        </div>
+        <button onclick="adminRenameUser('${esc(uid)}','${esc(p.displayName||'')}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;color:rgba(232,240,254,0.5);background:transparent;border:1px solid rgba(232,240,254,0.15);padding:5px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;">✏️ ПЕРЕИМ.</button>
+        <button onclick="adminResetUser('${esc(uid)}','${esc(p.displayName||'Аноним')}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;color:rgba(255,100,100,0.6);background:transparent;border:1px solid rgba(255,100,100,0.2);padding:5px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;">🔄 СБРОС</button>
+      </div>`;
+    }).join('');
+  } catch(e){ c.innerHTML=`<div style="color:rgba(255,100,100,0.4);padding:20px;">Ошибка: ${e.message}</div>`; }
+}
+
+async function adminResetUser(uid, name){
+  if(!confirm(`Сбросить прогноз "${name}"? Пользователь сможет заново отправить прогноз.`)) return;
+  try{
+    const {db,doc,updateDoc}=window.FB;
+    await updateDoc(doc(db,'predictions',uid),{
+      scores:{}, playoff:null, awards:null,
+      points:0, pointsLog:[], stats:{},
+      hasSubmitted:false, submittedAt:null
+    });
+    notify(`✅ Прогноз "${name}" сброшен`,'ok');
+    loadAdminUsers();
+  } catch(e){ notify('Ошибка: '+e.message,'err'); }
+}
+
+async function adminRenameUser(uid, currentName){
+  const newName=prompt('Новое имя для участника:', currentName);
+  if(!newName||!newName.trim()||newName.trim()===currentName) return;
+  try{
+    const {db,doc,updateDoc}=window.FB;
+    await updateDoc(doc(db,'predictions',uid),{ displayName:newName.trim() });
+    notify(`✅ Имя изменено на "${newName.trim()}"`,'ok');
+    loadAdminUsers();
+  } catch(e){ notify('Ошибка: '+e.message,'err'); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   АНОНИМНЫЕ ПРОГНОЗЫ ОТ ADMIN
+═══════════════════════════════════════════════════════ */
+const S_ANON = { scores:{} };
+
+function startAnonPred(){
+  const name=document.getElementById('anon-name')?.value?.trim();
+  if(!name){ notify('Введите имя участника!','err'); return; }
+  document.getElementById('anon-name-label').textContent=name;
+  S_ANON.scores={};
+  const c=document.getElementById('anon-groups');
+  c.innerHTML='';
+  Object.keys(GROUPS).forEach(gk=>{
+    const ms=groupMatches(gk);
+    const div=document.createElement('div');
+    div.className='wc-card mb-4';
+    div.innerHTML=`
+      <div class="group-title mb-3">ГРУППА ${gk}</div>
+      ${ms.map(m=>`
+        <div class="match-row">
+          <div class="tn h">${m.h.f} ${m.h.n}</div>
+          <input type="number" class="si" min="0" max="20" id="an_${m.id}_h" placeholder="0" oninput="onAnonScore('${m.id}','${gk}')">
+          <span class="sd">:</span>
+          <input type="number" class="si" min="0" max="20" id="an_${m.id}_a" placeholder="0" oninput="onAnonScore('${m.id}','${gk}')">
+          <div class="tn a">${m.a.n} ${m.a.f}</div>
+        </div>`).join('')}
+      <div class="group-table" id="agt-${gk}"></div>`;
+    c.appendChild(div);
+  });
+  document.getElementById('anon-form').classList.remove('hidden');
+}
+
+function onAnonScore(mid, gk){
+  const hv=document.getElementById(`an_${mid}_h`)?.value;
+  const av=document.getElementById(`an_${mid}_a`)?.value;
+  const h=parseInt(hv), a=parseInt(av);
+  if(!isNaN(h)&&!isNaN(a)&&hv!==''&&av!=='') S_ANON.scores[mid]={h,a};
+  else delete S_ANON.scores[mid];
+  // Render mini-table reusing calcStandingsFromStore
+  const el=document.getElementById(`agt-${gk}`); if(!el) return;
+  const sorted=calcStandingsFromStore(gk, S_ANON.scores);
+  el.innerHTML=sorted.map((s,i)=>`
+    <div class="gt-row ${i===0?'q1':i===1?'q2':i===2?'q3':''}">
+      <span style="color:${i<2?'var(--wc-green)':i===2?'var(--wc-gold)':'rgba(232,240,254,0.3)'};">${i+1}</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(232,240,254,0.8);">${s.t.f} ${s.t.n}</span>
+      <span style="text-align:center;color:rgba(232,240,254,0.5);">${s.gf}</span>
+      <span style="text-align:center;color:${s.gd>0?'var(--wc-green)':s.gd<0?'#FF6B6B':'rgba(232,240,254,0.5)'};">${s.gd>0?'+':''}${s.gd}</span>
+      <span style="text-align:center;color:rgba(232,240,254,0.5);">${s.gf}</span>
+      <span style="text-align:right;color:var(--wc-gold);font-weight:700;">${s.pts}</span>
+    </div>`).join('');
+}
+
+async function submitAnonPred(){
+  const name=document.getElementById('anon-name-label')?.textContent?.trim();
+  if(!name){ notify('Имя не задано!','err'); return; }
+  if(!Object.keys(S_ANON.scores).length){ notify('Заполните хотя бы один матч!','err'); return; }
+  const uid='admin_anon_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+  const pred={
+    uid, displayName:name, photoURL:'',
+    scores:{...S_ANON.scores},
+    playoff:null, awards:null,
+    points:0, pointsLog:[], stats:{},
+    submittedAt:new Date().toISOString()
+  };
+  try{
+    const {db,doc,setDoc}=window.FB;
+    await setDoc(doc(db,'predictions',uid),pred);
+    notify(`✅ Прогноз для "${name}" сохранён!`,'ok');
+    cancelAnonPred();
+    loadAdminUsers();
+  } catch(e){ notify('Ошибка: '+e.message,'err'); }
+}
+
+function cancelAnonPred(){
+  document.getElementById('anon-form').classList.add('hidden');
+  document.getElementById('anon-name').value='';
+  document.getElementById('anon-groups').innerHTML='';
+  S_ANON.scores={};
+}
+
 /* ═══════════════════════════════════════════════════════
    СКАЧИВАНИЕ
 ═══════════════════════════════════════════════════════ */
@@ -1357,7 +1545,7 @@ function dlPlayoff(mode){
   if(!pd){ notify('Сначала постройте сетку плей-офф!','err'); return; }
   const el=document.getElementById('dl-playoff-prev'); if(!el) return;
   const pm=mode==='practice'?S.pPlayoff:S.oPlayoff;
-  const {r16Pairs,r8Pairs,r4Pairs,r2Pairs,finalPair,champion}=pd;
+  const {r16Pairs,r8Pairs,r4Pairs,r2Pairs,finalPair,champion,thirdPlacePair,thirdPlaceWinner}=pd;
  
   const pBlock=(title,pairs,rnd)=>`
     <div style="margin-bottom:14px;">
@@ -1385,6 +1573,7 @@ function dlPlayoff(mode){
         <div class="prev-po-team ${champion&&finalPair[0]&&champion.n===finalPair[0].n?'w':''} ${!finalPair[0]?'tbd':''}">${finalPair[0]?`${finalPair[0].f} ${finalPair[0].n}`:'TBD'}</div>
         <div class="prev-po-team ${champion&&finalPair[1]&&champion.n===finalPair[1].n?'w':''} ${!finalPair[1]?'tbd':''}">${finalPair[1]?`${finalPair[1].f} ${finalPair[1].n}`:'TBD'}</div>
       </div></div>
+      ${mode==='practice'&&thirdPlacePair?`<div style="margin-top:16px;"><div style="font-family:var(--font-d);font-size:0.9rem;letter-spacing:3px;color:rgba(205,127,50,0.9);text-align:center;margin-bottom:6px;">🥉 МАТЧ ЗА 3-Е МЕСТО</div><div style="display:inline-block;"><div class="prev-po-match" style="min-width:150px;"><div class="prev-po-team ${thirdPlaceWinner&&thirdPlacePair[0]&&thirdPlaceWinner.n===thirdPlacePair[0].n?'w':''} ${!thirdPlacePair[0]?'tbd':''}">${thirdPlacePair[0]?`${thirdPlacePair[0].f} ${thirdPlacePair[0].n}`:'TBD'}</div><div class="prev-po-team ${thirdPlaceWinner&&thirdPlacePair[1]&&thirdPlaceWinner.n===thirdPlacePair[1].n?'w':''} ${!thirdPlacePair[1]?'tbd':''}">${thirdPlacePair[1]?`${thirdPlacePair[1].f} ${thirdPlacePair[1].n}`:'TBD'}</div></div></div>${thirdPlaceWinner?`<div style="font-family:var(--font-d);font-size:1rem;color:rgba(205,127,50,0.9);margin-top:6px;">🥉 ${thirdPlaceWinner.f} ${thirdPlaceWinner.n}</div>`:''}</div>`:''}
       ${champion?`<div style="font-family:var(--font-d);font-size:1.5rem;color:var(--wc-gold);margin-top:10px;">🏆 ${champion.f} ${champion.n}</div>`:''}
     </div>
   </div>`;
