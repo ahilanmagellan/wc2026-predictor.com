@@ -358,6 +358,13 @@ body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;backgro
         </div>
       </div>
     </div>
+
+    <!-- РУЧНАЯ КОРРЕКТИРОВКА ОЧКОВ -->
+    <div class="wc-card mb-5">
+      <h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:14px;">⚖️ РУЧНАЯ КОРРЕКТИРОВКА ОЧКОВ</h2>
+      <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(232,240,254,0.4);margin-bottom:14px;">Начисляйте или снимайте очки любому участнику. Изменение отображается в истории начислений.</p>
+      <div id="points-adj-list"><div style="text-align:center;color:rgba(232,240,254,0.25);padding:14px;font-size:0.82rem;">Обновите список участников выше ↑</div></div>
+    </div>
   </div>
  
 </main>
@@ -1245,18 +1252,20 @@ async function loadAdminData(){
   try{
     const {db,doc,getDoc}=window.FB;
     const snap=await getDoc(doc(db,'admin','results'));
-    if(!snap.exists()) return;
-    const d=snap.data();
-    S.realResults=d.scores||{}; S.realAwards=d.awards||{}; S.realPlayoff=d.playoff||{};
-    if(d.awards){
-      const map=[['r-boot','goldenBoot'],['r-glove','goldenGlove'],['r-player','bestPlayer']];
-      map.forEach(([id,k])=>{ const el=document.getElementById(id); if(el) el.value=d.awards[k]||''; });
+    if(snap.exists()){
+      const d=snap.data();
+      S.realResults=d.scores||{}; S.realAwards=d.awards||{}; S.realPlayoff=d.playoff||{};
+      if(d.awards){
+        const map=[['r-boot','goldenBoot'],['r-glove','goldenGlove'],['r-player','bestPlayer']];
+        map.forEach(([id,k])=>{ const el=document.getElementById(id); if(el) el.value=d.awards[k]||''; });
+      }
+      Object.entries(S.realResults).forEach(([mid,sc])=>{
+        const h=document.getElementById(`r_${mid}_h`), a=document.getElementById(`r_${mid}_a`);
+        if(h) h.value=sc.h; if(a) a.value=sc.a;
+      });
     }
-    Object.entries(S.realResults).forEach(([mid,sc])=>{
-      const h=document.getElementById(`r_${mid}_h`), a=document.getElementById(`r_${mid}_a`);
-      if(h) h.value=sc.h; if(a) a.value=sc.a;
-    });
   } catch(e){ console.warn('Admin load:',e.message); }
+  // Всегда загружаем список участников, даже если результатов ещё нет
   loadAdminUsers();
 }
  
@@ -1361,27 +1370,64 @@ async function loadAdminUsers(){
   const c=document.getElementById('adm-users'); if(!c) return;
   c.innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.25);padding:20px;">Загрузка...</div>';
   try{
-    const {db,collection,getDocs}=window.FB;
-    const snap=await getDocs(collection(db,'predictions'));
-    if(!snap.docs.length){ c.innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.25);padding:20px;">Нет участников</div>'; return; }
+    const {db,collection,getDocs,query,orderBy}=window.FB;
+    const q=query(collection(db,'predictions'),orderBy('points','desc'));
+    const snap=await getDocs(q);
+    if(!snap.docs.length){ 
+      c.innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.25);padding:20px;">Нет участников</div>';
+      document.getElementById('points-adj-list').innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.25);padding:14px;font-size:0.82rem;">Нет участников</div>';
+      return;
+    }
+    // Store users for points panel
+    window._adminUsers = snap.docs.map(d=>({uid:d.id, ...d.data()}));
+
     c.innerHTML=snap.docs.map(d=>{
       const p=d.data();
       const uid=d.id;
       const isAnon=uid.startsWith('admin_anon_');
-      return `<div style="display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;padding:10px 12px;background:rgba(13,31,60,0.5);border:1px solid rgba(0,255,135,0.07);border-radius:7px;margin-bottom:5px;">
+      const safeUid=esc(uid), safeName=esc(p.displayName||'Аноним');
+      return `<div style="display:grid;grid-template-columns:auto 1fr auto auto auto;gap:6px;align-items:center;padding:10px 12px;background:rgba(13,31,60,0.5);border:1px solid rgba(0,255,135,0.07);border-radius:7px;margin-bottom:5px;">
         <div style="font-size:1.2rem;">${isAnon?'👤':'🔑'}</div>
         <div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-            <span id="uname-${esc(uid)}" style="font-family:var(--font-u);font-weight:600;font-size:0.88rem;">${esc(p.displayName||'Аноним')}</span>
+            <span style="font-family:var(--font-u);font-weight:600;font-size:0.88rem;">${safeName}</span>
             <span class="badge ${isAnon?'bg-purple':'bg-green'}" style="font-size:0.5rem;">${isAnon?'ADMIN-ANON':'GOOGLE'}</span>
           </div>
-          <div style="font-family:var(--font-t);font-size:0.58rem;color:rgba(232,240,254,0.3);margin-top:2px;">${esc(uid)} · ${p.points||0} очков · ${p.submittedAt?new Date(p.submittedAt).toLocaleDateString('ru'):'—'}</div>
+          <div style="font-family:var(--font-t);font-size:0.58rem;color:rgba(232,240,254,0.3);margin-top:2px;">${esc(uid.length>24?uid.slice(0,24)+'…':uid)} · <span style="color:var(--wc-gold);">${p.points||0} очков</span> · ${p.submittedAt?new Date(p.submittedAt).toLocaleDateString('ru'):'—'}</div>
         </div>
-        <button onclick="adminRenameUser('${esc(uid)}','${esc(p.displayName||'')}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;color:rgba(232,240,254,0.5);background:transparent;border:1px solid rgba(232,240,254,0.15);padding:5px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;">✏️ ПЕРЕИМ.</button>
-        <button onclick="adminResetUser('${esc(uid)}','${esc(p.displayName||'Аноним')}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;color:rgba(255,100,100,0.6);background:transparent;border:1px solid rgba(255,100,100,0.2);padding:5px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;">🔄 СБРОС</button>
+        <button onclick="adminAdjPoints('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;color:var(--wc-gold);background:transparent;border:1px solid rgba(255,215,0,0.25);padding:5px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;">⚖️ ОЧКИ</button>
+        <button onclick="adminRenameUser('${safeUid}','${esc(p.displayName||'')}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;color:rgba(232,240,254,0.5);background:transparent;border:1px solid rgba(232,240,254,0.15);padding:5px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;">✏️ ИМЯ</button>
+        <button onclick="adminResetUser('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;color:rgba(255,100,100,0.6);background:transparent;border:1px solid rgba(255,100,100,0.2);padding:5px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;">🔄 СБРОС</button>
       </div>`;
     }).join('');
+
+    // Render points adjustment panel
+    renderPointsAdjPanel();
   } catch(e){ c.innerHTML=`<div style="color:rgba(255,100,100,0.4);padding:20px;">Ошибка: ${e.message}</div>`; }
+}
+
+function renderPointsAdjPanel(){
+  const c=document.getElementById('points-adj-list'); if(!c) return;
+  const users=window._adminUsers||[];
+  if(!users.length){ c.innerHTML='<div style="color:rgba(232,240,254,0.25);padding:14px;">Нет участников</div>'; return; }
+  c.innerHTML=users.map(p=>{
+    const safeUid=esc(p.uid), safeName=esc(p.displayName||'Аноним');
+    return `<div style="display:grid;grid-template-columns:1fr auto auto auto;gap:6px;align-items:center;padding:8px 10px;background:rgba(13,31,60,0.4);border:1px solid rgba(255,215,0,0.07);border-radius:7px;margin-bottom:4px;">
+      <div>
+        <span style="font-family:var(--font-u);font-weight:600;font-size:0.85rem;">${safeName}</span>
+        <span style="font-family:var(--font-t);font-size:0.62rem;color:var(--wc-gold);margin-left:8px;">${p.points||0} оч.</span>
+      </div>
+      <input type="number" id="adj-pts-${safeUid}" placeholder="±0" style="width:64px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,215,0,0.25);border-radius:4px;color:var(--wc-gold);font-family:var(--font-t);font-size:0.82rem;padding:5px 6px;outline:none;text-align:center;">
+      <input type="text" id="adj-reason-${safeUid}" placeholder="Причина..." style="min-width:140px;background:rgba(0,0,0,0.4);border:1px solid rgba(232,240,254,0.12);border-radius:4px;color:#E8F0FE;font-family:var(--font-u);font-size:0.78rem;padding:5px 8px;outline:none;">
+      <button onclick="applyPointsAdj('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;background:rgba(255,215,0,0.1);color:var(--wc-gold);border:1px solid rgba(255,215,0,0.3);padding:5px 12px;border-radius:4px;cursor:pointer;white-space:nowrap;">ПРИМЕНИТЬ</button>
+    </div>`;
+  }).join('');
+}
+
+async function adminAdjPoints(uid, name){
+  // Scroll to points adjustment panel and highlight the row
+  const el=document.getElementById(`adj-pts-${uid}`);
+  if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.focus(); }
 }
 
 async function adminResetUser(uid, name){
@@ -1478,6 +1524,34 @@ async function submitAnonPred(){
     await setDoc(doc(db,'predictions',uid),pred);
     notify(`✅ Прогноз для "${name}" сохранён!`,'ok');
     cancelAnonPred();
+    loadAdminUsers();
+  } catch(e){ notify('Ошибка: '+e.message,'err'); }
+}
+
+async function applyPointsAdj(uid, name){
+  const ptsEl=document.getElementById(`adj-pts-${uid}`);
+  const reasonEl=document.getElementById(`adj-reason-${uid}`);
+  if(!ptsEl||!reasonEl){ notify('Элементы не найдены','err'); return; }
+  const delta=parseInt(ptsEl.value);
+  const reason=reasonEl.value.trim();
+  if(isNaN(delta)||delta===0){ notify('Введите ненулевое количество очков (может быть отрицательным)','err'); return; }
+  if(!reason){ notify('Введите причину корректировки','err'); return; }
+  if(!confirm(`${delta>0?'Начислить':'Снять'} ${Math.abs(delta)} очков игроку "${name}"?
+Причина: ${reason}`)) return;
+  try{
+    const {db,doc,getDoc,updateDoc}=window.FB;
+    const snap=await getDoc(doc(db,'predictions',uid));
+    if(!snap.exists()){ notify('Участник не найден!','err'); return; }
+    const data=snap.data();
+    const newPts=(data.points||0)+delta;
+    const newLog=[...(data.pointsLog||[]),{points:delta,desc:`[Админ] ${reason}`}];
+    await updateDoc(doc(db,'predictions',uid),{points:newPts,pointsLog:newLog});
+    // Update local cache
+    const usr=window._adminUsers?.find(u=>u.uid===uid);
+    if(usr){ usr.points=newPts; usr.pointsLog=newLog; }
+    notify(`✅ ${delta>0?'+':''}${delta} очков для "${name}" — ${reason}`,'ok');
+    ptsEl.value='';
+    reasonEl.value='';
     loadAdminUsers();
   } catch(e){ notify('Ошибка: '+e.message,'err'); }
 }
