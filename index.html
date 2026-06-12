@@ -5,7 +5,7 @@
 <title>FIFA World Cup 2026 — Предиктор</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
  
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -42,157 +42,183 @@ const firebaseConfig = {
  
 <style>
 :root {
-  --wc-purple: #7B2FBE;
-  --wc-purple-bright: #A855F7;
-  --wc-green: #00FF87;
-  --wc-green-dark: #006847;
-  --wc-red: #FF1744;
-  --wc-blue: #050D1A;
-  --wc-blue-mid: #0D1F3C;
-  --wc-gold: #FFD700;
-  --wc-card: #0A1628;
-  --wc-card2: #0F1E35;
-  --wc-border: rgba(0,255,135,0.18);
-  --font-d: 'Bebas Neue', cursive;
-  --font-u: 'Rajdhani', sans-serif;
-  --font-t: 'Orbitron', monospace;
+  --wc-purple: #6B3FA0;
+  --wc-purple-bright: #B07CFF;
+  --wc-green: #00E68A;
+  --wc-green-dark: #00A86B;
+  --wc-red: #FF3B7F;
+  --wc-blue: #0A1535;
+  --wc-blue-mid: #142450;
+  --wc-gold: #FFD23F;
+  --wc-card: #101F45;
+  --wc-card2: #16285A;
+  --wc-border: rgba(255,255,255,0.08);
+  --font-d: 'Outfit', sans-serif;
+  --font-u: 'Outfit', sans-serif;
+  --font-t: 'Outfit', sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--wc-blue);color:#E8F0FE;font-family:var(--font-u);min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 60% at 15% 5%,rgba(255,23,68,0.12) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 85% 10%,rgba(0,100,255,0.1) 0%,transparent 50%),radial-gradient(ellipse 80% 40% at 50% 95%,rgba(0,255,135,0.08) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 90% 60%,rgba(123,47,190,0.1) 0%,transparent 50%);pointer-events:none;z-index:0;}
-body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 28px,rgba(0,255,135,0.04) 28px,rgba(0,255,135,0.04) 30px);pointer-events:none;z-index:0;}
+html{-webkit-text-size-adjust:100%;}
+body{background:var(--wc-blue);color:#FFFFFF;font-family:var(--font-u);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 10% 0%,rgba(255,59,127,0.10) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 10%,rgba(176,124,255,0.10) 0%,transparent 50%),radial-gradient(ellipse 70% 40% at 50% 100%,rgba(0,230,138,0.08) 0%,transparent 60%);pointer-events:none;z-index:0;}
+body::after{display:none;}
 #app{position:relative;z-index:1;}
  
-.header{background:rgba(5,13,26,0.97);backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,255,135,0.12);position:sticky;top:0;z-index:200;}
-.logo-text{font-family:var(--font-d);letter-spacing:4px;font-size:clamp(1rem,3vw,1.5rem);background:linear-gradient(120deg,var(--wc-red) 0%,#fff 30%,var(--wc-green) 60%,var(--wc-gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.logo-year{font-family:var(--font-t);font-size:0.6rem;letter-spacing:4px;color:rgba(232,240,254,0.3);}
+.header{background:rgba(10,21,53,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--wc-border);position:sticky;top:0;z-index:200;}
+.logo-text{font-family:var(--font-d);font-weight:800;letter-spacing:1px;font-size:clamp(0.95rem,3vw,1.4rem);color:#fff;text-transform:uppercase;}
+.logo-year{font-family:var(--font-t);font-weight:600;font-size:0.6rem;letter-spacing:1px;color:var(--wc-green);}
  
-.nav-btn{font-family:var(--font-t);font-size:0.6rem;letter-spacing:1.5px;padding:7px 14px;border-radius:4px;border:1px solid rgba(232,240,254,0.08);cursor:pointer;transition:all 0.25s;text-transform:uppercase;white-space:nowrap;color:rgba(232,240,254,0.45);background:transparent;}
-.nav-btn.active,.nav-btn:hover{background:rgba(0,255,135,0.08);border-color:var(--wc-green);color:var(--wc-green);}
-.nav-btn.adm{color:rgba(255,80,80,0.45);border-color:rgba(255,80,80,0.12);}
-.nav-btn.adm:hover{background:rgba(255,80,80,0.08);border-color:rgba(255,80,80,0.5);color:#FF6B6B;}
+.nav-btn{font-family:var(--font-t);font-weight:600;font-size:0.7rem;letter-spacing:1px;padding:8px 14px;border-radius:8px;border:1px solid var(--wc-border);cursor:pointer;transition:all 0.25s;text-transform:uppercase;white-space:nowrap;color:rgba(255,255,255,0.55);background:transparent;}
+.nav-btn.active,.nav-btn:hover{background:rgba(0,230,138,0.10);border-color:var(--wc-green);color:var(--wc-green);}
+.nav-btn.adm{color:rgba(255,80,100,0.55);border-color:rgba(255,80,100,0.15);}
+.nav-btn.adm:hover{background:rgba(255,80,100,0.10);border-color:rgba(255,80,100,0.5);color:var(--wc-red);}
  
-.wc-card{background:var(--wc-card2);border:1px solid var(--wc-border);border-radius:10px;padding:18px;position:relative;overflow:hidden;}
-.wc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--wc-red),var(--wc-purple),var(--wc-green),var(--wc-gold));}
+.wc-card{background:var(--wc-card2);border:1px solid var(--wc-border);border-radius:14px;padding:18px;position:relative;overflow:hidden;}
+.wc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--wc-red),var(--wc-purple-bright),var(--wc-green));}
  
-.btn-p{background:linear-gradient(135deg,var(--wc-purple),var(--wc-purple-bright));color:#fff;font-family:var(--font-t);font-size:0.68rem;letter-spacing:2px;padding:10px 24px;border-radius:5px;border:1px solid rgba(168,85,247,0.4);cursor:pointer;transition:all 0.25s;text-transform:uppercase;}
-.btn-p:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(123,47,190,0.45);}
-.btn-g{background:linear-gradient(135deg,#005535,#00A86B);color:#fff;font-family:var(--font-t);font-size:0.68rem;letter-spacing:2px;padding:10px 24px;border-radius:5px;border:1px solid rgba(0,168,107,0.4);cursor:pointer;transition:all 0.25s;text-transform:uppercase;}
-.btn-g:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,168,107,0.4);}
-.btn-dl{background:rgba(0,255,135,0.07);color:var(--wc-green);font-family:var(--font-t);font-size:0.6rem;letter-spacing:1.5px;padding:9px 18px;border-radius:5px;border:1px solid rgba(0,255,135,0.25);cursor:pointer;transition:all 0.25s;text-transform:uppercase;}
-.btn-dl:hover{background:rgba(0,255,135,0.15);box-shadow:0 0 18px rgba(0,255,135,0.18);}
-.btn-google{background:#fff;color:#222;font-family:var(--font-u);font-size:1rem;font-weight:700;padding:13px 28px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.25s;}
-.btn-google:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,255,255,0.25);}
+.btn-p{background:var(--wc-purple-bright);color:#15092B;font-family:var(--font-t);font-weight:700;font-size:0.78rem;letter-spacing:0.5px;padding:11px 24px;border-radius:10px;border:none;cursor:pointer;transition:all 0.2s;}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(176,124,255,0.35);}
+.btn-g{background:var(--wc-green);color:#06301F;font-family:var(--font-t);font-weight:700;font-size:0.78rem;letter-spacing:0.5px;padding:11px 24px;border-radius:10px;border:none;cursor:pointer;transition:all 0.2s;}
+.btn-g:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,230,138,0.35);}
+.btn-dl{background:rgba(0,230,138,0.08);color:var(--wc-green);font-family:var(--font-t);font-weight:600;font-size:0.7rem;letter-spacing:0.5px;padding:10px 18px;border-radius:10px;border:1px solid rgba(0,230,138,0.3);cursor:pointer;transition:all 0.2s;}
+.btn-dl:hover{background:rgba(0,230,138,0.15);}
+.btn-google{background:#fff;color:#222;font-family:var(--font-u);font-size:1rem;font-weight:700;padding:13px 28px;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.25s;}
+.btn-google:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,255,255,0.18);}
  
-.match-row{display:grid;grid-template-columns:1fr 42px 14px 42px 1fr;align-items:center;gap:6px;padding:8px 10px;background:rgba(13,31,60,0.6);border-radius:7px;border:1px solid rgba(0,255,135,0.06);margin-bottom:5px;transition:border-color 0.2s;}
-.match-row:hover{border-color:rgba(0,255,135,0.18);}
-.tn{font-family:var(--font-u);font-weight:600;font-size:0.85rem;}
+.match-row{display:grid;grid-template-columns:1fr 38px 12px 38px 1fr;align-items:center;gap:6px;padding:9px 8px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid var(--wc-border);margin-bottom:6px;transition:border-color 0.2s;}
+.match-row:hover{border-color:rgba(0,230,138,0.3);}
+.tn{font-family:var(--font-u);font-weight:600;font-size:0.85rem;min-width:0;overflow:hidden;text-overflow:ellipsis;}
 .tn.h{text-align:right;}
 .tn.a{text-align:left;}
-.si{width:42px;text-align:center;background:rgba(0,0,0,0.5);border:1px solid rgba(0,255,135,0.25);border-radius:4px;color:var(--wc-green);font-family:var(--font-t);font-size:1rem;font-weight:700;padding:4px 0;outline:none;transition:all 0.2s;}
-.si:focus{border-color:var(--wc-green);box-shadow:0 0 10px rgba(0,255,135,0.25);}
+.si{width:38px;text-align:center;background:rgba(0,0,0,0.35);border:1px solid var(--wc-border);border-radius:6px;color:var(--wc-green);font-family:var(--font-t);font-size:1rem;font-weight:700;padding:6px 0;outline:none;transition:all 0.2s;}
+.si:focus{border-color:var(--wc-green);box-shadow:0 0 0 2px rgba(0,230,138,0.18);}
 .si::-webkit-inner-spin-button,.si::-webkit-outer-spin-button{-webkit-appearance:none;}
-.sd{color:rgba(232,240,254,0.35);font-family:var(--font-t);}
+.sd{color:rgba(255,255,255,0.3);font-family:var(--font-t);}
  
-@media(max-width:480px){
-  .match-row{grid-template-columns:1fr 36px 10px 36px 1fr;gap:3px;}
-  .tn{font-size:0.72rem;}
-  .si{width:36px;font-size:0.85rem;}
+@media(max-width:640px){
+  .match-row{grid-template-columns:1fr 32px 8px 32px 1fr;gap:3px;padding:8px 6px;}
+  .tn{font-size:0.7rem;}
+  .si{width:32px;font-size:0.85rem;padding:5px 0;}
+  .wc-card{padding:12px;border-radius:12px;}
+  h1{font-size:1.6rem !important;}
 }
  
-.group-title{font-family:var(--font-d);font-size:2rem;letter-spacing:5px;color:var(--wc-green);text-shadow:0 0 25px rgba(0,255,135,0.35);}
+.group-title{font-family:var(--font-d);font-weight:800;font-size:1.5rem;letter-spacing:0.5px;color:#fff;text-transform:uppercase;}
  
-.group-table{font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;margin-top:10px;border-top:1px solid rgba(0,255,135,0.08);padding-top:8px;}
-.gt-row{display:grid;grid-template-columns:16px 1fr 30px 30px 30px 36px;gap:4px;padding:3px 4px;border-radius:4px;align-items:center;}
-.gt-row.q1{background:rgba(0,255,135,0.07);}
-.gt-row.q2{background:rgba(0,255,135,0.04);}
-.gt-row.q3{background:rgba(255,215,0,0.05);}
+.group-table{font-family:var(--font-t);font-size:0.62rem;letter-spacing:0.3px;margin-top:10px;border-top:1px solid var(--wc-border);padding-top:8px;}
+.gt-row{display:grid;grid-template-columns:16px 1fr 28px 28px 28px 32px;gap:4px;padding:4px 4px;border-radius:6px;align-items:center;}
+.gt-row.q1{background:rgba(0,230,138,0.08);}
+.gt-row.q2{background:rgba(0,230,138,0.04);}
+.gt-row.q3{background:rgba(255,210,63,0.06);}
  
 /* ══ ПЛЕЙ-ОФФ ══ */
-.po-match{border-radius:8px;border:2px solid rgba(0,255,135,0.12);overflow:hidden;transition:all 0.2s;min-width:130px;background:rgba(13,31,60,0.7);user-select:none;position:relative;}
+.po-match{border-radius:10px;border:1px solid var(--wc-border);overflow:hidden;transition:all 0.2s;min-width:130px;background:rgba(255,255,255,0.03);user-select:none;position:relative;}
 .po-match.clickable{cursor:pointer;}
-.po-match.clickable:hover{border-color:rgba(0,255,135,0.5);box-shadow:0 0 14px rgba(0,255,135,0.12);}
-.po-match.has-winner{border-color:rgba(0,255,135,0.3);}
-.po-match-label{font-family:var(--font-t);font-size:0.48rem;letter-spacing:1px;color:rgba(232,240,254,0.22);padding:3px 8px;background:rgba(0,0,0,0.35);text-align:center;border-bottom:1px solid rgba(0,255,135,0.06);}
-.po-team{padding:7px 10px;font-family:var(--font-u);font-weight:600;font-size:0.78rem;border-bottom:1px solid rgba(0,255,135,0.05);display:flex;align-items:center;gap:5px;min-height:34px;transition:background 0.2s;}
+.po-match.clickable:hover{border-color:rgba(0,230,138,0.5);}
+.po-match.has-winner{border-color:rgba(0,230,138,0.3);}
+.po-match-label{font-family:var(--font-t);font-size:0.5rem;letter-spacing:1px;color:rgba(255,255,255,0.3);padding:4px 8px;background:rgba(0,0,0,0.25);text-align:center;border-bottom:1px solid var(--wc-border);}
+.po-team{padding:8px 10px;font-family:var(--font-u);font-weight:600;font-size:0.78rem;border-bottom:1px solid var(--wc-border);display:flex;align-items:center;gap:5px;min-height:36px;transition:background 0.2s;}
 .po-team:last-child{border-bottom:none;}
-.po-team.winner{background:rgba(0,255,135,0.16);color:var(--wc-green);font-weight:700;}
+.po-team.winner{background:rgba(0,230,138,0.14);color:var(--wc-green);font-weight:700;}
 .po-team.loser{opacity:0.4;}
-.po-team.tbd{color:rgba(232,240,254,0.22);font-style:italic;font-size:0.7rem;}
+.po-team.tbd{color:rgba(255,255,255,0.25);font-style:italic;font-size:0.7rem;}
  
-.po-round-title{font-family:var(--font-d);font-size:1rem;letter-spacing:3px;color:var(--wc-gold);text-align:center;margin:18px 0 10px;}
+.po-round-title{font-family:var(--font-d);font-weight:700;font-size:0.95rem;letter-spacing:1.5px;color:var(--wc-gold);text-align:center;margin:18px 0 10px;text-transform:uppercase;}
  
 /* Выбор победителя — попап */
-.picker-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;}
-.picker-box{background:#0F1E35;border:1px solid rgba(0,255,135,0.3);border-radius:14px;padding:24px;max-width:360px;width:100%;text-align:center;}
-.picker-title{font-family:var(--font-t);font-size:0.62rem;letter-spacing:2px;color:rgba(232,240,254,0.35);margin-bottom:16px;text-transform:uppercase;}
-.picker-vs{font-family:var(--font-d);font-size:1.4rem;color:rgba(232,240,254,0.18);display:flex;align-items:center;justify-content:center;}
-.picker-team-btn{flex:1;background:rgba(13,31,60,0.9);border:2px solid rgba(0,255,135,0.14);border-radius:10px;padding:16px 10px;cursor:pointer;transition:all 0.2s;color:#E8F0FE;font-family:var(--font-u);font-weight:600;font-size:0.9rem;display:flex;flex-direction:column;align-items:center;gap:6px;}
-.picker-team-btn:hover{background:rgba(0,255,135,0.1);border-color:var(--wc-green);}
-.picker-team-btn.selected{background:rgba(0,255,135,0.15);border-color:var(--wc-green);}
-.picker-team-flag{font-size:2.2rem;}
+.picker-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;}
+.picker-box{background:var(--wc-card2);border:1px solid var(--wc-border);border-radius:16px;padding:24px;max-width:360px;width:100%;text-align:center;}
+.picker-title{font-family:var(--font-t);font-weight:600;font-size:0.68rem;letter-spacing:1.5px;color:rgba(255,255,255,0.4);margin-bottom:16px;text-transform:uppercase;}
+.picker-vs{font-family:var(--font-d);font-weight:700;font-size:1.4rem;color:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;}
+.picker-team-btn{flex:1;background:rgba(255,255,255,0.03);border:2px solid var(--wc-border);border-radius:12px;padding:16px 10px;cursor:pointer;transition:all 0.2s;color:#fff;font-family:var(--font-u);font-weight:600;font-size:0.9rem;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.picker-team-btn:hover{background:rgba(0,230,138,0.08);border-color:var(--wc-green);}
+.picker-team-btn.selected{background:rgba(0,230,138,0.14);border-color:var(--wc-green);}
+.picker-team-flag{font-size:1.8rem;}
  
 /* Таблица */
-.lb-row{display:flex;align-items:center;padding:11px 14px;border-radius:8px;border:1px solid rgba(0,255,135,0.07);margin-bottom:5px;transition:all 0.2s;cursor:pointer;background:rgba(13,31,60,0.4);}
-.lb-row:hover{background:rgba(13,31,60,0.8);border-color:rgba(0,255,135,0.22);transform:translateX(3px);}
-.lb-row.r1{border-color:rgba(255,215,0,0.35);background:rgba(255,215,0,0.04);}
-.lb-row.r2{border-color:rgba(192,192,192,0.3);}
-.lb-row.r3{border-color:rgba(205,127,50,0.3);}
+.lb-row{display:flex;align-items:center;padding:12px 14px;border-radius:12px;border:1px solid var(--wc-border);margin-bottom:6px;transition:all 0.2s;cursor:pointer;background:rgba(255,255,255,0.02);}
+.lb-row:hover{background:rgba(255,255,255,0.05);border-color:rgba(0,230,138,0.3);}
+.lb-row.r1{border-color:rgba(255,210,63,0.4);background:rgba(255,210,63,0.05);}
+.lb-row.r2{border-color:rgba(255,255,255,0.25);}
+.lb-row.r3{border-color:rgba(255,138,76,0.3);}
  
-.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(10px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity 0.3s;}
+.modal-ov{position:fixed;inset:0;background:rgba(5,10,25,0.85);backdrop-filter:blur(10px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity 0.3s;}
 .modal-ov.show{opacity:1;}
-.modal-box{background:var(--wc-card2);border:1px solid var(--wc-border);border-radius:14px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;transform:translateY(20px);transition:transform 0.3s;}
+.modal-box{background:var(--wc-card2);border:1px solid var(--wc-border);border-radius:16px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;transform:translateY(20px);transition:transform 0.3s;}
 .modal-ov.show .modal-box{transform:translateY(0);}
 .modal-hdr{padding:18px 22px;border-bottom:1px solid var(--wc-border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--wc-card2);z-index:1;}
-.modal-close{background:rgba(255,0,0,0.15);border:1px solid rgba(255,0,0,0.25);color:#FF6B6B;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
-.modal-close:hover{background:rgba(255,0,0,0.35);}
+.modal-close{background:rgba(255,59,127,0.12);border:1px solid rgba(255,59,127,0.25);color:var(--wc-red);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+.modal-close:hover{background:rgba(255,59,127,0.25);}
  
 .vb{height:7px;border-radius:4px;background:rgba(255,255,255,0.08);overflow:hidden;margin-top:3px;}
 .vb-fill{height:100%;border-radius:4px;transition:width 0.8s ease;}
-.vb-h{background:linear-gradient(90deg,var(--wc-purple),var(--wc-purple-bright));}
-.vb-d{background:linear-gradient(90deg,#444,#777);}
-.vb-a{background:linear-gradient(90deg,var(--wc-green-dark),#00CC77);}
+.vb-h{background:var(--wc-purple-bright);}
+.vb-d{background:#777;}
+.vb-a{background:var(--wc-green);}
  
-.ai{width:100%;background:rgba(0,0,0,0.45);border:1px solid rgba(0,255,135,0.22);border-radius:5px;color:#E8F0FE;font-family:var(--font-u);font-size:0.88rem;padding:9px 12px;outline:none;transition:all 0.2s;}
-.ai:focus{border-color:var(--wc-green);box-shadow:0 0 10px rgba(0,255,135,0.2);}
+.ai{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--wc-border);border-radius:8px;color:#fff;font-family:var(--font-u);font-size:0.88rem;padding:10px 12px;outline:none;transition:all 0.2s;}
+.ai:focus{border-color:var(--wc-green);box-shadow:0 0 0 2px rgba(0,230,138,0.15);}
  
-.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:20px;font-family:var(--font-t);font-size:0.58rem;letter-spacing:1px;text-transform:uppercase;}
-.bg-green{background:rgba(0,255,135,0.12);border:1px solid rgba(0,255,135,0.35);color:var(--wc-green);}
-.bg-purple{background:rgba(123,47,190,0.18);border:1px solid rgba(168,85,247,0.35);color:#C084FC;}
-.bg-gold{background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.35);color:var(--wc-gold);}
-.bg-red{background:rgba(255,23,68,0.12);border:1px solid rgba(255,23,68,0.35);color:#FF6B6B;}
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-family:var(--font-t);font-weight:600;font-size:0.6rem;letter-spacing:0.5px;text-transform:uppercase;}
+.bg-green{background:rgba(0,230,138,0.12);border:1px solid rgba(0,230,138,0.35);color:var(--wc-green);}
+.bg-purple{background:rgba(176,124,255,0.14);border:1px solid rgba(176,124,255,0.35);color:var(--wc-purple-bright);}
+.bg-gold{background:rgba(255,210,63,0.12);border:1px solid rgba(255,210,63,0.35);color:var(--wc-gold);}
+.bg-red{background:rgba(255,59,127,0.12);border:1px solid rgba(255,59,127,0.35);color:var(--wc-red);}
  
-.divider{height:1px;background:linear-gradient(90deg,transparent,var(--wc-border),transparent);margin:20px 0;}
-.log-item{padding:7px 11px;border-radius:5px;border-left:3px solid var(--wc-green);background:rgba(0,255,135,0.04);margin-bottom:5px;font-size:0.82rem;color:rgba(232,240,254,0.75);}
+.divider{height:1px;background:var(--wc-border);margin:20px 0;}
+.log-item{padding:8px 11px;border-radius:8px;border-left:3px solid var(--wc-green);background:rgba(0,230,138,0.04);margin-bottom:5px;font-size:0.82rem;color:rgba(255,255,255,0.75);}
 .log-pts{font-family:var(--font-t);color:var(--wc-gold);font-weight:700;}
  
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
-::-webkit-scrollbar-thumb{background:rgba(0,255,135,0.25);border-radius:3px;}
+::-webkit-scrollbar-thumb{background:rgba(0,230,138,0.25);border-radius:3px;}
  
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeUp 0.35s ease forwards;}
  
-.tab-btn{font-family:var(--font-t);font-size:0.62rem;letter-spacing:1px;padding:7px 16px;border-radius:4px;cursor:pointer;transition:all 0.2s;border:1px solid rgba(0,255,135,0.18);color:rgba(232,240,254,0.45);background:transparent;text-transform:uppercase;}
-.tab-btn.active{background:rgba(0,255,135,0.12);border-color:var(--wc-green);color:var(--wc-green);}
+.tab-btn{font-family:var(--font-t);font-weight:600;font-size:0.68rem;letter-spacing:0.5px;padding:8px 16px;border-radius:8px;cursor:pointer;transition:all 0.2s;border:1px solid var(--wc-border);color:rgba(255,255,255,0.5);background:transparent;text-transform:uppercase;}
+.tab-btn.active{background:rgba(0,230,138,0.12);border-color:var(--wc-green);color:var(--wc-green);}
  
-.rank-select{background:rgba(0,0,0,0.5);border:1px solid rgba(0,255,135,0.25);border-radius:4px;color:var(--wc-gold);font-family:var(--font-t);font-size:0.78rem;padding:4px 6px;outline:none;cursor:pointer;transition:border-color 0.2s;}
-.rank-select.conflict{border-color:#FF6B6B !important;color:#FF6B6B;}
+.rank-select{background:rgba(0,0,0,0.35);border:1px solid var(--wc-border);border-radius:6px;color:var(--wc-gold);font-family:var(--font-t);font-size:0.78rem;padding:5px 6px;outline:none;cursor:pointer;transition:border-color 0.2s;}
+.rank-select.conflict{border-color:var(--wc-red) !important;color:var(--wc-red);}
  
 /* Третьи места — выбор */
-.third-btn{background:rgba(13,31,60,0.8);border:1px solid rgba(255,215,0,0.2);border-radius:7px;padding:8px 12px;cursor:pointer;transition:all 0.2s;color:#E8F0FE;font-family:var(--font-u);font-weight:600;font-size:0.82rem;display:flex;align-items:center;gap:6px;width:100%;text-align:left;}
-.third-btn:hover{background:rgba(255,215,0,0.08);border-color:rgba(255,215,0,0.45);}
-.third-btn.selected{background:rgba(255,215,0,0.12);border-color:var(--wc-gold);color:var(--wc-gold);}
+.third-btn{background:rgba(255,255,255,0.03);border:1px solid var(--wc-border);border-radius:10px;padding:9px 12px;cursor:pointer;transition:all 0.2s;color:#fff;font-family:var(--font-u);font-weight:600;font-size:0.82rem;display:flex;align-items:center;gap:6px;width:100%;text-align:left;}
+.third-btn:hover{background:rgba(255,210,63,0.06);border-color:rgba(255,210,63,0.4);}
+.third-btn.selected{background:rgba(255,210,63,0.12);border-color:var(--wc-gold);color:var(--wc-gold);}
  
 /* Preview для скачивания */
-.dl-preview{background:linear-gradient(160deg,#050D1A,#0D1F3C);padding:20px;min-width:880px;}
-.prev-title{font-family:var(--font-d);letter-spacing:6px;text-align:center;background:linear-gradient(120deg,var(--wc-red),#fff,var(--wc-green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.prev-group-card{background:rgba(13,31,60,0.8);border:1px solid rgba(0,255,135,0.15);border-radius:8px;padding:12px;}
-.prev-po-match{background:rgba(13,31,60,0.9);border:1px solid rgba(0,255,135,0.2);border-radius:6px;overflow:hidden;min-width:110px;}
-.prev-po-team{padding:5px 8px;font-family:var(--font-u);font-weight:600;font-size:0.7rem;border-bottom:1px solid rgba(0,255,135,0.07);display:flex;align-items:center;gap:4px;}
+.dl-preview{background:linear-gradient(160deg,var(--wc-blue),var(--wc-blue-mid));padding:20px;min-width:880px;}
+.prev-title{font-family:var(--font-d);font-weight:800;letter-spacing:1px;text-align:center;color:#fff;text-transform:uppercase;}
+.prev-group-card{background:rgba(255,255,255,0.03);border:1px solid var(--wc-border);border-radius:10px;padding:12px;}
+.prev-po-match{background:rgba(255,255,255,0.04);border:1px solid var(--wc-border);border-radius:8px;overflow:hidden;min-width:110px;}
+.prev-po-team{padding:6px 8px;font-family:var(--font-u);font-weight:600;font-size:0.7rem;border-bottom:1px solid var(--wc-border);display:flex;align-items:center;gap:4px;}
 .prev-po-team:last-child{border-bottom:none;}
-.prev-po-team.w{background:rgba(0,255,135,0.12);color:var(--wc-green);}
-.prev-po-team.tbd{color:rgba(232,240,254,0.25);font-style:italic;font-size:0.62rem;}
+.prev-po-team.w{background:rgba(0,230,138,0.12);color:var(--wc-green);}
+.prev-po-team.tbd{color:rgba(255,255,255,0.25);font-style:italic;font-size:0.62rem;}
+
+/* Глобальная мобильная адаптация */
+@media(max-width:768px){
+  .modal-box{max-width:100%;border-radius:14px;}
+  .modal-hdr{padding:14px 16px;}
+  .gt-row{font-size:0.58rem;grid-template-columns:14px 1fr 24px 24px 24px 28px;}
+  .lb-row{padding:10px 10px;}
+  .badge{font-size:0.55rem;padding:2px 8px;}
+}
+@media(max-width:480px){
+  main{padding-left:10px !important;padding-right:10px !important;}
+  .picker-box{padding:18px;}
+  .picker-team-flag{font-size:1.8rem;}
+  .po-match{min-width:0;}
+  .po-team{font-size:0.66rem;padding:6px 6px;min-height:32px;gap:3px;}
+  .po-match-label{font-size:0.46rem;padding:3px 4px;}
+}
+@media(max-width:640px){
+  #prac-playoff .grid[style*="repeat(4"],
+  #off-playoff .grid[style*="repeat(4"]{
+    grid-template-columns:repeat(2,1fr) !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -223,15 +249,15 @@ body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;backgro
         <div id="user-profile" style="display:none;" class="flex items-center gap-2">
           <img id="user-avatar" src="" alt="" style="width:30px;height:30px;border-radius:50%;border:2px solid var(--wc-border);object-fit:cover;">
           <span id="user-name" style="font-family:var(--font-u);font-size:0.82rem;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-          <button onclick="signOutUser()" style="font-family:var(--font-t);font-size:0.55rem;color:rgba(255,100,100,0.6);background:transparent;border:1px solid rgba(255,100,100,0.18);padding:4px 8px;border-radius:4px;cursor:pointer;letter-spacing:1px;">ВЫЙТИ</button>
+          <button onclick="signOutUser()" style="font-family:var(--font-t);font-size:0.55rem;color:rgba(255,59,127,0.6);background:transparent;border:1px solid rgba(255,59,127,0.18);padding:4px 8px;border-radius:4px;cursor:pointer;letter-spacing:1px;">ВЫЙТИ</button>
         </div>
       </div>
     </div>
   </div>
-  <div class="md:hidden px-4 pb-2 flex gap-1 overflow-x-auto">
-    <button class="nav-btn active text-xs whitespace-nowrap" onclick="showPage('practice')">ПРАКТИКА</button>
-    <button class="nav-btn text-xs whitespace-nowrap" onclick="showPage('official')">ОФИЦИАЛЬНЫЙ</button>
-    <button class="nav-btn text-xs whitespace-nowrap" onclick="showPage('leaderboard')">ТАБЛИЦА</button>
+  <div class="md:hidden px-3 pb-2 flex gap-1.5 overflow-x-auto">
+    <button class="nav-btn active text-xs whitespace-nowrap" id="nbm-practice" onclick="showPage('practice')">ПРАКТИКА</button>
+    <button class="nav-btn text-xs whitespace-nowrap" id="nbm-official" onclick="showPage('official')">ОФИЦИАЛЬНЫЙ</button>
+    <button class="nav-btn text-xs whitespace-nowrap" id="nbm-leaderboard" onclick="showPage('leaderboard')">ТАБЛИЦА</button>
     <button class="nav-btn adm text-xs whitespace-nowrap" onclick="showPage('admin-login')">ADMIN</button>
   </div>
 </header>
@@ -241,9 +267,9 @@ body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;backgro
   <!-- ═══════ ПРАКТИКА ═══════ -->
   <div id="page-practice" class="page fade-in">
     <div class="mb-6 text-center" style="padding:28px 0 16px;">
-      <div style="font-family:var(--font-t);font-size:0.62rem;letter-spacing:4px;color:rgba(232,240,254,0.35);margin-bottom:6px;">РЕЖИМ ПРЕДИКТОРА</div>
-      <h1 style="font-family:var(--font-d);font-size:clamp(2rem,7vw,4.5rem);letter-spacing:5px;background:linear-gradient(135deg,var(--wc-red),#fff,var(--wc-green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">ПРАКТИКА</h1>
-      <p style="color:rgba(232,240,254,0.4);font-size:0.85rem;margin-top:8px;">Прогнозируй без регистрации · Скачивай картинки</p>
+      <div style="font-family:var(--font-t);font-size:0.62rem;letter-spacing:1px;color:rgba(255,255,255,0.35);margin-bottom:6px;">РЕЖИМ ПРЕДИКТОРА</div>
+      <h1 style="font-family:var(--font-d);font-weight:800;font-size:clamp(1.8rem,6vw,3.2rem);letter-spacing:1px;color:#fff;text-transform:uppercase;">ПРАКТИКА</h1>
+      <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-top:8px;">Прогнозируй без регистрации · Скачивай картинки</p>
     </div>
     <div class="flex gap-2 mb-5 justify-center">
       <button class="tab-btn active" id="tab-a" onclick="setPMode('A')">⚽ ПОМАТЧЕВЫЙ</button>
@@ -262,11 +288,11 @@ body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;backgro
       <div id="third-picker-section" class="hidden">
         <div class="divider"></div>
         <div class="wc-card mb-5">
-          <div style="font-family:var(--font-d);font-size:1.3rem;letter-spacing:3px;color:var(--wc-gold);margin-bottom:6px;">🥉 ВЫБЕРИТЕ 8 ЛУЧШИХ ИЗ 3-Х МЕСТ</div>
-          <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(232,240,254,0.45);margin-bottom:14px;">По правилам ФИФА 2026: 8 лучших команд, занявших 3-е место в своих группах, проходят в плей-офф. Выберите ровно 8 команд:</p>
+          <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:700;letter-spacing:1px;color:var(--wc-gold);margin-bottom:6px;">🥉 ВЫБЕРИТЕ 8 ЛУЧШИХ ИЗ 3-Х МЕСТ</div>
+          <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(255,255,255,0.45);margin-bottom:14px;">По правилам ФИФА 2026: 8 лучших команд, занявших 3-е место в своих группах, проходят в плей-офф. Выберите ровно 8 команд:</p>
           <div id="third-candidates" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"></div>
           <div style="margin-top:12px;font-family:var(--font-t);font-size:0.65rem;letter-spacing:1px;" id="third-counter">
-            <span id="third-count" style="color:var(--wc-gold);">0</span><span style="color:rgba(232,240,254,0.4);"> / 8 выбрано</span>
+            <span id="third-count" style="color:var(--wc-gold);">0</span><span style="color:rgba(255,255,255,0.4);"> / 8 выбрано</span>
           </div>
         </div>
       </div>
@@ -276,20 +302,20 @@ body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;backgro
     <div class="divider"></div>
     <div class="wc-card mb-5">
       <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
-        <h2 style="font-family:var(--font-d);font-size:1.4rem;letter-spacing:3px;color:var(--wc-purple-bright);">🏟️ ПЛЕЙ-ОФФ ЧМ-2026</h2>
+        <h2 style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;letter-spacing:1px;color:var(--wc-purple-bright);">🏟️ ПЛЕЙ-ОФФ ЧМ-2026</h2>
         <button onclick="buildPlayoff('practice')" class="btn-p">ПОСТРОИТЬ СЕТКУ</button>
       </div>
-      <div id="prac-playoff"><div style="text-align:center;color:rgba(232,240,254,0.25);font-family:var(--font-u);padding:28px 0;font-size:0.9rem;">Заполните групповой этап и нажмите «Построить сетку»</div></div>
+      <div id="prac-playoff"><div style="text-align:center;color:rgba(255,255,255,0.25);font-family:var(--font-u);padding:28px 0;font-size:0.9rem;">Заполните групповой этап и нажмите «Построить сетку»</div></div>
     </div>
  
     <!-- Награды — после плей-офф -->
     <div class="divider"></div>
     <div class="wc-card mb-5">
-      <h2 style="font-family:var(--font-d);font-size:1.4rem;letter-spacing:3px;color:var(--wc-gold);margin-bottom:14px;">🏆 ИНДИВИДУАЛЬНЫЕ НАГРАДЫ</h2>
+      <h2 style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;letter-spacing:1px;color:var(--wc-gold);margin-bottom:14px;">🏆 ИНДИВИДУАЛЬНЫЕ НАГРАДЫ</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 ЗОЛОТАЯ БУТСА</label><input type="text" class="ai" id="p-boot" placeholder="Имя игрока..."></div>
-        <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ЗОЛОТАЯ ПЕРЧАТКА</label><input type="text" class="ai" id="p-glove" placeholder="Имя вратаря..."></div>
-        <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ЛУЧШИЙ ИГРОК</label><input type="text" class="ai" id="p-player" placeholder="Имя игрока..."></div>
+        <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 ЗОЛОТАЯ БУТСА</label><input type="text" class="ai" id="p-boot" placeholder="Имя игрока..."></div>
+        <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ЗОЛОТАЯ ПЕРЧАТКА</label><input type="text" class="ai" id="p-glove" placeholder="Имя вратаря..."></div>
+        <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ЛУЧШИЙ ИГРОК</label><input type="text" class="ai" id="p-player" placeholder="Имя игрока..."></div>
       </div>
     </div>
  
@@ -301,56 +327,56 @@ body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;backgro
  
   <!-- ═══════ ОФИЦИАЛЬНЫЙ ═══════ -->
   <div id="page-official" class="page hidden fade-in">
-    <div id="off-login"><div class="text-center py-20"><div style="font-size:3.5rem;margin-bottom:14px;">🔐</div><h2 style="font-family:var(--font-d);font-size:2.2rem;letter-spacing:4px;color:var(--wc-purple-bright);margin-bottom:10px;">ОФИЦИАЛЬНЫЙ ТУРНИР</h2><p style="color:rgba(232,240,254,0.4);margin-bottom:28px;font-size:0.9rem;">Войдите через Google для участия</p><button onclick="signInGoogle()" class="btn-google mx-auto"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Войти через Google</button></div></div>
-    <div id="off-done" class="hidden"><div class="mb-5"><span class="badge bg-green">✅ ПРОГНОЗ ОТПРАВЛЕН</span><h2 style="font-family:var(--font-d);font-size:1.8rem;letter-spacing:3px;color:var(--wc-green);margin-top:8px;">ВАШ ПРОГНОЗ ЗАФИКСИРОВАН</h2></div><div id="off-my-pred"></div><div class="divider"></div><h3 style="font-family:var(--font-d);font-size:1.4rem;letter-spacing:3px;color:var(--wc-purple-bright);margin-bottom:14px;">🗣️ ГЛАС НАРОДА</h3><div id="vox-container"></div></div>
+    <div id="off-login"><div class="text-center py-20"><div style="font-size:3.5rem;margin-bottom:14px;">🔐</div><h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-purple-bright);margin-bottom:10px;">ОФИЦИАЛЬНЫЙ ТУРНИР</h2><p style="color:rgba(255,255,255,0.4);margin-bottom:28px;font-size:0.9rem;">Войдите через Google для участия</p><button onclick="signInGoogle()" class="btn-google mx-auto"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Войти через Google</button></div></div>
+    <div id="off-done" class="hidden"><div class="mb-5"><span class="badge bg-green">✅ ПРОГНОЗ ОТПРАВЛЕН</span><h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-green);margin-top:8px;">ВАШ ПРОГНОЗ ЗАФИКСИРОВАН</h2></div><div id="off-my-pred"></div><div class="divider"></div><h3 style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;letter-spacing:1px;color:var(--wc-purple-bright);margin-bottom:14px;">🗣️ ГЛАС НАРОДА</h3><div id="vox-container"></div></div>
     <div id="off-form" class="hidden">
-      <div class="mb-5"><span class="badge bg-purple">🏆 ОФИЦИАЛЬНЫЙ ТУРНИР</span><h2 style="font-family:var(--font-d);font-size:1.8rem;letter-spacing:3px;color:var(--wc-purple-bright);margin-top:8px;">ОФИЦИАЛЬНЫЙ ПРОГНОЗ</h2><p style="color:rgba(232,240,254,0.4);font-size:0.82rem;margin-top:4px;">Одна попытка!</p></div>
+      <div class="mb-5"><span class="badge bg-purple">🏆 ОФИЦИАЛЬНЫЙ ТУРНИР</span><h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-purple-bright);margin-top:8px;">ОФИЦИАЛЬНЫЙ ПРОГНОЗ</h2><p style="color:rgba(255,255,255,0.4);font-size:0.82rem;margin-top:4px;">Одна попытка!</p></div>
       <div id="off-groups"></div>
       <div class="divider"></div>
-      <div class="wc-card mb-5" style="border-color:rgba(255,215,0,0.2);">
+      <div class="wc-card mb-5" style="border-color:rgba(255,210,63,0.2);">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
           <span style="font-size:1.5rem;">⏳</span>
-          <h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:3px;color:rgba(232,240,254,0.45);">ПЛЕЙ-ОФФ — СКОРО</h2>
+          <h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.45);">ПЛЕЙ-ОФФ — СКОРО</h2>
         </div>
-        <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(232,240,254,0.3);">Прогноз на плей-офф откроется после завершения группового этапа. Сейчас принимаются только прогнозы на матчи групп.</p>
+        <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(255,255,255,0.3);">Прогноз на плей-офф откроется после завершения группового этапа. Сейчас принимаются только прогнозы на матчи групп.</p>
       </div>
-      <div class="text-center pb-6"><button onclick="submitOfficial()" class="btn-g px-12 py-4" style="font-size:0.85rem;">🚀 ОТПРАВИТЬ ПРОГНОЗ</button><p style="color:rgba(232,240,254,0.25);font-size:0.72rem;margin-top:7px;">Действие необратимо! Только групповой этап.</p></div>
+      <div class="text-center pb-6"><button onclick="submitOfficial()" class="btn-g px-12 py-4" style="font-size:0.85rem;">🚀 ОТПРАВИТЬ ПРОГНОЗ</button><p style="color:rgba(255,255,255,0.25);font-size:0.72rem;margin-top:7px;">Действие необратимо! Только групповой этап.</p></div>
     </div>
   </div>
  
   <!-- ═══════ ТАБЛИЦА ═══════ -->
   <div id="page-leaderboard" class="page hidden fade-in">
-    <div class="mb-5"><div style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:4px;color:rgba(232,240,254,0.3);margin-bottom:4px;">РЕЙТИНГ</div><h1 style="font-family:var(--font-d);font-size:2.2rem;letter-spacing:4px;color:var(--wc-gold);">ТУРНИРНАЯ ТАБЛИЦА</h1></div>
-    <div id="lb-list"><div style="text-align:center;color:rgba(232,240,254,0.25);padding:40px;">Загрузка...</div></div>
+    <div class="mb-5"><div style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:1px;color:rgba(255,255,255,0.3);margin-bottom:4px;">РЕЙТИНГ</div><h1 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-gold);">ТУРНИРНАЯ ТАБЛИЦА</h1></div>
+    <div id="lb-list"><div style="text-align:center;color:rgba(255,255,255,0.25);padding:40px;">Загрузка...</div></div>
   </div>
  
   <!-- ═══════ ADMIN LOGIN ═══════ -->
-  <div id="page-admin-login" class="page hidden fade-in"><div class="max-w-xs mx-auto mt-16"><div class="wc-card text-center"><div style="font-size:2.5rem;margin-bottom:12px;">🔒</div><h2 style="font-family:var(--font-d);font-size:1.6rem;letter-spacing:3px;color:rgba(255,100,100,0.8);margin-bottom:16px;">АДМИН</h2><input type="password" id="adm-pw" class="ai mb-4" placeholder="Пароль..." onkeydown="if(event.key==='Enter')checkAdminPw()"><button onclick="checkAdminPw()" class="btn-p w-full">ВОЙТИ</button><div id="adm-err" class="hidden mt-3" style="color:#FF6B6B;font-size:0.8rem;">Неверный пароль</div></div></div></div>
+  <div id="page-admin-login" class="page hidden fade-in"><div class="max-w-xs mx-auto mt-16"><div class="wc-card text-center"><div style="font-size:2.5rem;margin-bottom:12px;">🔒</div><h2 style="font-family:var(--font-d);font-size:1.6rem;letter-spacing:1px;color:rgba(255,59,127,0.8);margin-bottom:16px;">АДМИН</h2><input type="password" id="adm-pw" class="ai mb-4" placeholder="Пароль..." onkeydown="if(event.key==='Enter')checkAdminPw()"><button onclick="checkAdminPw()" class="btn-p w-full">ВОЙТИ</button><div id="adm-err" class="hidden mt-3" style="color:var(--wc-red);font-size:0.8rem;">Неверный пароль</div></div></div></div>
  
   <!-- ═══════ ADMIN PANEL ═══════ -->
   <div id="page-admin" class="page hidden fade-in">
-    <div class="mb-5"><span class="badge bg-red">⚙️ АДМИНИСТРАТОР</span><h1 style="font-family:var(--font-d);font-size:1.8rem;letter-spacing:3px;color:#FF6B6B;margin-top:6px;">ПАНЕЛЬ УПРАВЛЕНИЯ</h1></div>
-    <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:14px;">📊 РЕЗУЛЬТАТЫ МАТЧЕЙ</h2><div id="adm-matches"></div></div>
-    <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:14px;">🏆 РЕАЛЬНЫЕ НАГРАДЫ</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 БУТСА</label><input type="text" class="ai" id="r-boot" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ПЕРЧАТКА</label><input type="text" class="ai" id="r-glove" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ИГРОК</label><input type="text" class="ai" id="r-player" placeholder="Реальный..."></div></div><button onclick="saveAwards()" class="btn-g mt-4">СОХРАНИТЬ И ПЕРЕСЧИТАТЬ</button></div>
+    <div class="mb-5"><span class="badge bg-red">⚙️ АДМИНИСТРАТОР</span><h1 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-red);margin-top:6px;">ПАНЕЛЬ УПРАВЛЕНИЯ</h1></div>
+    <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-gold);margin-bottom:14px;">📊 РЕЗУЛЬТАТЫ МАТЧЕЙ</h2><div id="adm-matches"></div></div>
+    <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-gold);margin-bottom:14px;">🏆 РЕАЛЬНЫЕ НАГРАДЫ</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 БУТСА</label><input type="text" class="ai" id="r-boot" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ПЕРЧАТКА</label><input type="text" class="ai" id="r-glove" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ИГРОК</label><input type="text" class="ai" id="r-player" placeholder="Реальный..."></div></div><button onclick="saveAwards()" class="btn-g mt-4">СОХРАНИТЬ И ПЕРЕСЧИТАТЬ</button></div>
 
     <!-- УПРАВЛЕНИЕ УЧАСТНИКАМИ -->
     <div class="wc-card mb-5">
       <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
-        <h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:#FF6B6B;">👥 УЧАСТНИКИ</h2>
+        <h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-red);">👥 УЧАСТНИКИ</h2>
         <button onclick="loadAdminUsers()" class="btn-dl" style="font-size:0.58rem;">🔄 ОБНОВИТЬ СПИСОК</button>
       </div>
-      <div id="adm-users"><div style="text-align:center;color:rgba(232,240,254,0.25);padding:20px;font-family:var(--font-u);font-size:0.85rem;">Нажмите «Обновить список»</div></div>
+      <div id="adm-users"><div style="text-align:center;color:rgba(255,255,255,0.25);padding:20px;font-family:var(--font-u);font-size:0.85rem;">Нажмите «Обновить список»</div></div>
     </div>
 
     <!-- СОЗДАТЬ АНОНИМНЫЙ ПРОГНОЗ -->
     <div class="wc-card mb-5">
-      <h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:var(--wc-purple-bright);margin-bottom:14px;">➕ СОЗДАТЬ ПРОГНОЗ ОТ ИМЕНИ...</h2>
+      <h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-purple-bright);margin-bottom:14px;">➕ СОЗДАТЬ ПРОГНОЗ ОТ ИМЕНИ...</h2>
       <div class="flex gap-3 mb-4 flex-wrap">
         <input type="text" id="anon-name" class="ai" placeholder="Имя участника (напр. Иван Петров)" style="max-width:320px;">
         <button onclick="startAnonPred()" class="btn-p">СОЗДАТЬ ПРОГНОЗ</button>
       </div>
       <div id="anon-form" class="hidden">
-        <div style="font-family:var(--font-t);font-size:0.62rem;letter-spacing:2px;color:var(--wc-purple-bright);margin-bottom:12px;">ЗАПОЛНИТЕ ГРУППОВОЙ ЭТАП ДЛЯ: <span id="anon-name-label" style="color:var(--wc-green);"></span></div>
+        <div style="font-family:var(--font-t);font-size:0.62rem;letter-spacing:0.5px;color:var(--wc-purple-bright);margin-bottom:12px;">ЗАПОЛНИТЕ ГРУППОВОЙ ЭТАП ДЛЯ: <span id="anon-name-label" style="color:var(--wc-green);"></span></div>
         <div id="anon-groups"></div>
         <div class="flex gap-3 mt-4 justify-center flex-wrap">
           <button onclick="submitAnonPred()" class="btn-g">СОХРАНИТЬ ПРОГНОЗ</button>
@@ -361,9 +387,9 @@ body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;backgro
 
     <!-- РУЧНАЯ КОРРЕКТИРОВКА ОЧКОВ -->
     <div class="wc-card mb-5">
-      <h2 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:14px;">⚖️ РУЧНАЯ КОРРЕКТИРОВКА ОЧКОВ</h2>
-      <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(232,240,254,0.4);margin-bottom:14px;">Начисляйте или снимайте очки любому участнику. Изменение отображается в истории начислений.</p>
-      <div id="points-adj-list"><div style="text-align:center;color:rgba(232,240,254,0.25);padding:14px;font-size:0.82rem;">Обновите список участников выше ↑</div></div>
+      <h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-gold);margin-bottom:14px;">⚖️ РУЧНАЯ КОРРЕКТИРОВКА ОЧКОВ</h2>
+      <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(255,255,255,0.4);margin-bottom:14px;">Начисляйте или снимайте очки любому участнику. Изменение отображается в истории начислений.</p>
+      <div id="points-adj-list"><div style="text-align:center;color:rgba(255,255,255,0.25);padding:14px;font-size:0.82rem;">Обновите список участников выше ↑</div></div>
     </div>
   </div>
  
@@ -373,7 +399,7 @@ body::after{content:'';position:fixed;bottom:0;left:0;right:0;height:40%;backgro
 <!-- МОДАЛЬ: профиль игрока -->
 <div id="m-player" class="modal-ov" onclick="closeModal('m-player')">
   <div class="modal-box" onclick="event.stopPropagation()">
-    <div class="modal-hdr"><h3 style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:3px;color:var(--wc-green);" id="m-pname">ПРОФИЛЬ</h3><button class="modal-close" onclick="closeModal('m-player')">✕</button></div>
+    <div class="modal-hdr"><h3 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:1px;color:var(--wc-green);" id="m-pname">ПРОФИЛЬ</h3><button class="modal-close" onclick="closeModal('m-player')">✕</button></div>
     <div class="p-5" id="m-pcontent"></div>
   </div>
 </div>
@@ -507,7 +533,7 @@ function esc(s){ return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').r
  
 function notify(text, type='info'){
   const el=document.getElementById('notif'), t=document.getElementById('notif-text');
-  const c={ok:'var(--wc-green)',err:'#FF6B6B',info:'rgba(232,240,254,0.5)'};
+  const c={ok:'var(--wc-green)',err:'var(--wc-red)',info:'rgba(255,255,255,0.5)'};
   el.querySelector('div').style.borderColor=c[type]||c.info;
   t.textContent=text;
   el.style.opacity='1'; el.style.transform='translateY(0)';
@@ -542,6 +568,8 @@ function showPage(p) {
   ['practice','official','leaderboard'].forEach(n=>{
     const b=document.getElementById(`nb-${n}`);
     if(b) b.classList.toggle('active', n===p);
+    const bm=document.getElementById(`nbm-${n}`);
+    if(bm) bm.classList.toggle('active', n===p);
   });
   S.curPage=p;
   if(p==='official') handleOfficial(window.currentUser);
@@ -625,7 +653,7 @@ function renderQuickGroups(){
     div.className='wc-card mb-4';
     div.innerHTML=`
       <div class="group-title mb-3">ГРУППА ${gk}</div>
-      <div style="font-family:var(--font-t);font-size:0.58rem;letter-spacing:2px;color:rgba(232,240,254,0.35);margin-bottom:8px;">РАССТАВЬТЕ МЕСТА 1-4 (уникальные):</div>
+      <div style="font-family:var(--font-t);font-size:0.58rem;letter-spacing:0.5px;color:rgba(255,255,255,0.35);margin-bottom:8px;">РАССТАВЬТЕ МЕСТА 1-4 (уникальные):</div>
       ${GROUPS[gk].teams.map((t,i)=>`
         <div class="match-row" style="grid-template-columns:auto 1fr auto;gap:10px;">
           <span style="font-size:1.1rem;">${t.f}</span>
@@ -638,7 +666,7 @@ function renderQuickGroups(){
             <option value="4">4 место</option>
           </select>
         </div>`).join('')}
-      <div id="qwarn-${gk}" style="color:#FF6B6B;font-size:0.72rem;font-family:var(--font-t);margin-top:5px;display:none;">⚠️ Одинаковые места!</div>`;
+      <div id="qwarn-${gk}" style="color:var(--wc-red);font-size:0.72rem;font-family:var(--font-t);margin-top:5px;display:none;">⚠️ Одинаковые места!</div>`;
     c.appendChild(div);
   });
 }
@@ -675,19 +703,19 @@ function renderGroupTable(gk, pfx, elId){
   const el=document.getElementById(elId); if(!el) return;
   const sorted=calcStandings(gk,pfx);
   el.innerHTML=`
-    <div style="display:grid;grid-template-columns:16px 1fr 30px 30px 30px 36px;gap:3px;font-family:var(--font-t);font-size:0.55rem;letter-spacing:0.5px;color:rgba(232,240,254,0.3);padding:3px 4px;margin-bottom:2px;">
+    <div style="display:grid;grid-template-columns:16px 1fr 30px 30px 30px 36px;gap:3px;font-family:var(--font-t);font-size:0.55rem;letter-spacing:0.5px;color:rgba(255,255,255,0.3);padding:3px 4px;margin-bottom:2px;">
       <span>#</span><span>Команда</span><span style="text-align:center">ГЗ</span><span style="text-align:center">РМ</span><span style="text-align:center">ГЗ</span><span style="text-align:right">ОЧ</span>
     </div>
     ${sorted.map((s,i)=>`
       <div class="gt-row ${i===0?'q1':i===1?'q2':i===2?'q3':''}">
-        <span style="color:${i<2?'var(--wc-green)':i===2?'var(--wc-gold)':'rgba(232,240,254,0.3)'};">${i+1}</span>
-        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(232,240,254,0.8);">${s.t.f} ${s.t.n}</span>
-        <span style="text-align:center;color:rgba(232,240,254,0.5);">${s.gf}</span>
-        <span style="text-align:center;color:${s.gd>0?'var(--wc-green)':s.gd<0?'#FF6B6B':'rgba(232,240,254,0.5)'};">${s.gd>0?'+':''}${s.gd}</span>
-        <span style="text-align:center;color:rgba(232,240,254,0.5);">${s.gf}</span>
+        <span style="color:${i<2?'var(--wc-green)':i===2?'var(--wc-gold)':'rgba(255,255,255,0.3)'};">${i+1}</span>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(255,255,255,0.8);">${s.t.f} ${s.t.n}</span>
+        <span style="text-align:center;color:rgba(255,255,255,0.5);">${s.gf}</span>
+        <span style="text-align:center;color:${s.gd>0?'var(--wc-green)':s.gd<0?'var(--wc-red)':'rgba(255,255,255,0.5)'};">${s.gd>0?'+':''}${s.gd}</span>
+        <span style="text-align:center;color:rgba(255,255,255,0.5);">${s.gf}</span>
         <span style="text-align:right;color:var(--wc-gold);font-weight:700;">${s.pts}</span>
       </div>`).join('')}
-    <div style="font-size:0.52rem;color:rgba(0,255,135,0.35);margin-top:4px;font-family:var(--font-t);">🟢 1-2 место = плей-офф &nbsp; 🟡 3 место = борьба за плей-офф</div>`;
+    <div style="font-size:0.52rem;color:rgba(0,230,138,0.35);margin-top:4px;font-family:var(--font-t);">🟢 1-2 место = плей-офф &nbsp; 🟡 3 место = борьба за плей-офф</div>`;
 }
  
 /* ═══════════════════════════════════════════════════════
@@ -739,7 +767,7 @@ function renderThirdPicker(){
             data-tidx="${i}">
       <span style="font-size:1.2rem;">${t.f}</span>
       <span>${esc(t.n)}</span>
-      <span style="font-family:var(--font-t);font-size:0.6rem;color:rgba(232,240,254,0.4);margin-left:auto;">Гр.${t.gk}</span>
+      <span style="font-family:var(--font-t);font-size:0.6rem;color:rgba(255,255,255,0.4);margin-left:auto;">Гр.${t.gk}</span>
     </button>`).join('');
   updateThirdCount();
 }
@@ -879,13 +907,13 @@ function buildBracketHTML(mode, r16Pairs, r8Pairs, r4Pairs, r2Pairs, finalPair, 
   let h='';
  
   // 1/16
-  h+=`<div class="po-round-title">1/16 ФИНАЛА <span style="font-size:0.7rem;color:rgba(232,240,254,0.3);">(32→16)</span></div>`;
+  h+=`<div class="po-round-title">1/16 ФИНАЛА <span style="font-size:0.7rem;color:rgba(255,255,255,0.3);">(32→16)</span></div>`;
   h+=`<div class="grid gap-2 mb-1" style="grid-template-columns:repeat(4,1fr);">`;
   r16Pairs.forEach(([tA,tB],i)=>{ h+=matchCard(mode,'r16',i,tA,tB,r16W[i],R16_PAIRS[i].label); });
   h+=`</div>`;
  
   // 1/8
-  h+=`<div class="po-round-title">1/8 ФИНАЛА <span style="font-size:0.7rem;color:rgba(232,240,254,0.3);">(16→8)</span></div>`;
+  h+=`<div class="po-round-title">1/8 ФИНАЛА <span style="font-size:0.7rem;color:rgba(255,255,255,0.3);">(16→8)</span></div>`;
   h+=`<div class="grid gap-2 mb-1" style="grid-template-columns:repeat(4,1fr);">`;
   r8Pairs.forEach(([tA,tB],i)=>{
     const la=R16_PAIRS[R8_PAIRS[i][0]].label, lb=R16_PAIRS[R8_PAIRS[i][1]].label;
@@ -894,7 +922,7 @@ function buildBracketHTML(mode, r16Pairs, r8Pairs, r4Pairs, r2Pairs, finalPair, 
   h+=`</div>`;
  
   // 1/4
-  h+=`<div class="po-round-title">ЧЕТВЕРТЬФИНАЛЫ <span style="font-size:0.7rem;color:rgba(232,240,254,0.3);">(8→4)</span></div>`;
+  h+=`<div class="po-round-title">ЧЕТВЕРТЬФИНАЛЫ <span style="font-size:0.7rem;color:rgba(255,255,255,0.3);">(8→4)</span></div>`;
   h+=`<div class="grid gap-2 mb-1" style="grid-template-columns:repeat(4,1fr);">`;
   r4Pairs.forEach(([tA,tB],i)=>{
     h+=matchCard(mode,'r4',i,tA,tB,r4W[i],`ЧФ-${i+1}`);
@@ -902,7 +930,7 @@ function buildBracketHTML(mode, r16Pairs, r8Pairs, r4Pairs, r2Pairs, finalPair, 
   h+=`</div>`;
  
   // 1/2
-  h+=`<div class="po-round-title">ПОЛУФИНАЛЫ <span style="font-size:0.7rem;color:rgba(232,240,254,0.3);">(4→2)</span></div>`;
+  h+=`<div class="po-round-title">ПОЛУФИНАЛЫ <span style="font-size:0.7rem;color:rgba(255,255,255,0.3);">(4→2)</span></div>`;
   h+=`<div class="grid gap-2 mb-1 max-w-lg mx-auto" style="grid-template-columns:1fr 1fr;">`;
   r2Pairs.forEach(([tA,tB],i)=>{
     h+=matchCard(mode,'r2',i,tA,tB,r2W[i],`ПФ-${i+1}`);
@@ -922,12 +950,12 @@ function buildBracketHTML(mode, r16Pairs, r8Pairs, r4Pairs, r2Pairs, finalPair, 
     h+=matchCard(mode,'3rd',0,thirdPlacePair[0],thirdPlacePair[1],thirdPlaceWinner,'3-е место');
     h+=`</div>`;
     if(thirdPlaceWinner){
-      h+=`<div class="text-center pb-2"><div style="font-family:var(--font-d);font-size:1.1rem;letter-spacing:3px;color:rgba(205,127,50,0.9);">🥉 3-Е МЕСТО: ${thirdPlaceWinner.f} ${thirdPlaceWinner.n}</div></div>`;
+      h+=`<div class="text-center pb-2"><div style="font-family:var(--font-d);font-size:1.1rem;letter-spacing:1px;color:rgba(205,127,50,0.9);">🥉 3-Е МЕСТО: ${thirdPlaceWinner.f} ${thirdPlaceWinner.n}</div></div>`;
     }
   }
 
   if(champion){
-    h+=`<div class="text-center py-4"><div style="font-family:var(--font-d);font-size:clamp(1.5rem,5vw,2.5rem);letter-spacing:4px;color:var(--wc-gold);text-shadow:0 0 30px rgba(255,215,0,0.5);">🏆 ЧЕМПИОН: ${champion.f} ${champion.n}</div></div>`;
+    h+=`<div class="text-center py-4"><div style="font-family:var(--font-d);font-size:clamp(1.5rem,5vw,2.5rem);letter-spacing:1px;color:var(--wc-gold);text-shadow:0 0 30px rgba(255,210,63,0.5);">🏆 ЧЕМПИОН: ${champion.f} ${champion.n}</div></div>`;
   }
 
   return h;
@@ -1007,8 +1035,8 @@ function openPicker(k, mode, tA, tB, current){
         </button>
       </div>
       <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-        ${current?'<button id="pk-clear" style="font-family:var(--font-t);font-size:0.58rem;letter-spacing:1px;color:rgba(255,100,100,0.6);background:transparent;border:1px solid rgba(255,100,100,0.2);padding:5px 14px;border-radius:4px;cursor:pointer;">СБРОСИТЬ</button>':''}
-        <button id="pk-close" style="font-family:var(--font-t);font-size:0.58rem;letter-spacing:1px;color:rgba(232,240,254,0.4);background:transparent;border:1px solid rgba(232,240,254,0.1);padding:5px 14px;border-radius:4px;cursor:pointer;">ЗАКРЫТЬ</button>
+        ${current?'<button id="pk-clear" style="font-family:var(--font-t);font-size:0.58rem;letter-spacing:1px;color:rgba(255,59,127,0.6);background:transparent;border:1px solid rgba(255,59,127,0.2);padding:5px 14px;border-radius:4px;cursor:pointer;">СБРОСИТЬ</button>':''}
+        <button id="pk-close" style="font-family:var(--font-t);font-size:0.58rem;letter-spacing:1px;color:rgba(255,255,255,0.4);background:transparent;border:1px solid rgba(255,255,255,0.1);padding:5px 14px;border-radius:4px;cursor:pointer;">ЗАКРЫТЬ</button>
       </div>
     </div>`;
  
@@ -1108,23 +1136,23 @@ function renderMyPred(pred){
   const el=document.getElementById('off-my-pred'); if(!el) return;
   const matchCount=Object.keys(pred.scores||{}).length;
   el.innerHTML=`<div class="wc-card">
-    <div style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:2px;color:rgba(232,240,254,0.35);margin-bottom:8px;">ГРУППОВОЙ ЭТАП · ПРОГНОЗ ПРИНЯТ</div>
-    <div style="font-family:var(--font-u);font-size:0.9rem;color:rgba(232,240,254,0.7);margin-bottom:10px;">Заполнено матчей: <span style="color:var(--wc-green);font-weight:700;">${matchCount}</span></div>
-    <div style="font-family:var(--font-u);font-size:0.82rem;color:rgba(232,240,254,0.4);">Плей-офф прогноз откроется позже. Очки будут начислены по завершении матчей.</div>
+    <div style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:rgba(255,255,255,0.35);margin-bottom:8px;">ГРУППОВОЙ ЭТАП · ПРОГНОЗ ПРИНЯТ</div>
+    <div style="font-family:var(--font-u);font-size:0.9rem;color:rgba(255,255,255,0.7);margin-bottom:10px;">Заполнено матчей: <span style="color:var(--wc-green);font-weight:700;">${matchCount}</span></div>
+    <div style="font-family:var(--font-u);font-size:0.82rem;color:rgba(255,255,255,0.4);">Плей-офф прогноз откроется позже. Очки будут начислены по завершении матчей.</div>
     <div class="mt-4 pt-4" style="border-top:1px solid var(--wc-border);"><span class="badge bg-gold">ОЧКИ: ${pred.points||0}</span></div>
   </div>`;
 }
  
 async function loadVox(){
   const c=document.getElementById('vox-container'); if(!c) return;
-  c.innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.3);padding:18px;">Загрузка...</div>';
+  c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.3);padding:18px;">Загрузка...</div>';
   try{
     const {db,collection,getDocs}=window.FB;
     const snap=await getDocs(collection(db,'predictions'));
     const all=snap.docs.map(d=>d.data());
     const total=all.length;
-    if(!total){ c.innerHTML='<div style="color:rgba(232,240,254,0.3);padding:18px;text-align:center;">Пока нет других прогнозов</div>'; return; }
-    let h=`<div style="font-family:var(--font-t);font-size:0.62rem;letter-spacing:2px;color:rgba(232,240,254,0.3);margin-bottom:14px;">НА ОСНОВЕ ${total} ПРОГНОЗОВ</div>`;
+    if(!total){ c.innerHTML='<div style="color:rgba(255,255,255,0.3);padding:18px;text-align:center;">Пока нет других прогнозов</div>'; return; }
+    let h=`<div style="font-family:var(--font-t);font-size:0.62rem;letter-spacing:0.5px;color:rgba(255,255,255,0.3);margin-bottom:14px;">НА ОСНОВЕ ${total} ПРОГНОЗОВ</div>`;
     Object.keys(GROUPS).forEach(gk=>{
       h+=`<div class="wc-card mb-4"><div class="group-title mb-3">ГРУППА ${gk}</div>`;
       groupMatches(gk).forEach(m=>{
@@ -1132,17 +1160,17 @@ async function loadVox(){
         all.forEach(p=>{ const s=p.scores?.[m.id]; if(s){ if(s.h>s.a)hw++; else if(s.h===s.a)dr++; else aw++; }});
         const cnt=hw+dr+aw; if(!cnt) return;
         const ph=Math.round(hw/cnt*100),pd=Math.round(dr/cnt*100),pa=100-ph-pd;
-        h+=`<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:3px;"><span>${m.h.f} ${m.h.n}</span><span style="color:rgba(232,240,254,0.35);">vs</span><span>${m.a.n} ${m.a.f}</span></div>
+        h+=`<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:3px;"><span>${m.h.f} ${m.h.n}</span><span style="color:rgba(255,255,255,0.35);">vs</span><span>${m.a.n} ${m.a.f}</span></div>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-family:var(--font-t);font-size:0.65rem;">
             <div><div style="color:var(--wc-purple-bright);">П1:${ph}%</div><div class="vb"><div class="vb-fill vb-h" style="width:${ph}%"></div></div></div>
-            <div><div style="color:rgba(232,240,254,0.4);">X:${pd}%</div><div class="vb"><div class="vb-fill vb-d" style="width:${pd}%"></div></div></div>
+            <div><div style="color:rgba(255,255,255,0.4);">X:${pd}%</div><div class="vb"><div class="vb-fill vb-d" style="width:${pd}%"></div></div></div>
             <div><div style="color:var(--wc-green);">П2:${pa}%</div><div class="vb"><div class="vb-fill vb-a" style="width:${pa}%"></div></div></div>
           </div></div>`;
       });
       h+=`</div>`;
     });
     c.innerHTML=h;
-  } catch(e){ c.innerHTML=`<div style="color:rgba(255,100,100,0.4);padding:18px;">Firebase не настроен: ${e.message}</div>`; }
+  } catch(e){ c.innerHTML=`<div style="color:rgba(255,59,127,0.4);padding:18px;">Firebase не настроен: ${e.message}</div>`; }
 }
  
 /* ═══════════════════════════════════════════════════════
@@ -1150,23 +1178,23 @@ async function loadVox(){
 ═══════════════════════════════════════════════════════ */
 async function loadLeaderboard(){
   const el=document.getElementById('lb-list'); if(!el) return;
-  el.innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.25);padding:40px;">Загрузка...</div>';
+  el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.25);padding:40px;">Загрузка...</div>';
   try{
     const {db,collection,getDocs,query,orderBy}=window.FB;
     const q=query(collection(db,'predictions'),orderBy('points','desc'));
     const snap=await getDocs(q);
     const players=snap.docs.map(d=>d.data());
-    if(!players.length){ el.innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.25);padding:40px;">Пока нет участников</div>'; return; }
+    if(!players.length){ el.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.25);padding:40px;">Пока нет участников</div>'; return; }
     el.innerHTML=players.map((p,i)=>{
       const ec=['🥇','🥈','🥉'],rc=['var(--wc-gold)','rgba(192,192,192,0.9)','rgba(205,127,50,0.9)'];
       return `<div class="lb-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}" onclick="openPlayerModal('${esc(p.uid)}')">
-        <div style="font-family:var(--font-t);font-size:0.75rem;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);color:${rc[i]||'rgba(232,240,254,0.3)'};margin-right:10px;flex-shrink:0;">${ec[i]||i+1}</div>
-        ${p.photoURL?`<img src="${esc(p.photoURL)}" alt="" style="width:34px;height:34px;border-radius:50%;border:2px solid var(--wc-border);object-fit:cover;margin-right:10px;flex-shrink:0;" onerror="this.style.display='none'">`:`<div style="width:34px;height:34px;border-radius:50%;border:2px solid var(--wc-border);background:rgba(123,47,190,0.2);display:flex;align-items:center;justify-content:center;margin-right:10px;flex-shrink:0;font-size:0.9rem;">👤</div>`}
-        <div style="flex:1;min-width:0;"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.displayName||'Аноним')}</div><div style="font-size:0.7rem;color:rgba(232,240,254,0.35);font-family:var(--font-t);">${(p.pointsLog||[]).length} событий</div></div>
+        <div style="font-family:var(--font-t);font-size:0.75rem;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);color:${rc[i]||'rgba(255,255,255,0.3)'};margin-right:10px;flex-shrink:0;">${ec[i]||i+1}</div>
+        ${p.photoURL?`<img src="${esc(p.photoURL)}" alt="" style="width:34px;height:34px;border-radius:50%;border:2px solid var(--wc-border);object-fit:cover;margin-right:10px;flex-shrink:0;" onerror="this.style.display='none'">`:`<div style="width:34px;height:34px;border-radius:50%;border:2px solid var(--wc-border);background:rgba(107,63,160,0.2);display:flex;align-items:center;justify-content:center;margin-right:10px;flex-shrink:0;font-size:0.9rem;">👤</div>`}
+        <div style="flex:1;min-width:0;"><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.displayName||'Аноним')}</div><div style="font-size:0.7rem;color:rgba(255,255,255,0.35);font-family:var(--font-t);">${(p.pointsLog||[]).length} событий</div></div>
         <div style="font-family:var(--font-t);font-size:1rem;font-weight:700;color:var(--wc-gold);margin-left:8px;">${p.points||0}</div>
       </div>`;
     }).join('');
-  } catch(e){ el.innerHTML=`<div style="text-align:center;color:rgba(255,100,100,0.4);padding:40px;">Firebase не настроен.<br><small>${e.message}</small></div>`; }
+  } catch(e){ el.innerHTML=`<div style="text-align:center;color:rgba(255,59,127,0.4);padding:40px;">Firebase не настроен.<br><small>${e.message}</small></div>`; }
 }
  
 /* ═══════════════════════════════════════════════════════
@@ -1174,47 +1202,65 @@ async function loadLeaderboard(){
 ═══════════════════════════════════════════════════════ */
 async function openPlayerModal(uid){
   document.getElementById('m-pname').textContent='ПРОФИЛЬ';
-  document.getElementById('m-pcontent').innerHTML='<div style="text-align:center;padding:28px;color:rgba(232,240,254,0.3);">Загрузка...</div>';
+  document.getElementById('m-pcontent').innerHTML='<div style="text-align:center;padding:28px;color:rgba(255,255,255,0.3);">Загрузка...</div>';
   showModal('m-player');
   try{
     const {db,doc,getDoc}=window.FB;
     const snap=await getDoc(doc(db,'predictions',uid));
-    if(!snap.exists()){ document.getElementById('m-pcontent').innerHTML='<div style="color:rgba(255,100,100,0.5);">Не найдено</div>'; return; }
+    if(!snap.exists()){ document.getElementById('m-pcontent').innerHTML='<div style="color:rgba(255,59,127,0.5);">Не найдено</div>'; return; }
     const pl=snap.data();
     document.getElementById('m-pname').textContent=pl.displayName||'Игрок';
     const st=pl.stats||{}, log=pl.pointsLog||[];
-    const champK=Object.keys(pl.playoff||{}).find(k=>k.includes('__final__'));
-    const champ=champK?pl.playoff[champK]:null;
+
+    // Прогнозы только на завершённые матчи (есть реальный результат)
+    const finishedRows=[];
+    Object.entries(S.realResults||{}).forEach(([mid,real])=>{
+      const pred=pl.scores?.[mid]; if(!pred) return;
+      const p=mid.split('_');
+      const g=GROUPS[p[0]]; if(!g) return;
+      const ht=g.teams[parseInt(p[1])], at=g.teams[parseInt(p[2])];
+      if(!ht||!at) return;
+      finishedRows.push({ht,at,pred,real});
+    });
+
     document.getElementById('m-pcontent').innerHTML=`
-      <div class="grid grid-cols-2 gap-4 mb-5">
-        <div class="text-center">
-          <img src="${esc(pl.photoURL||'')}" alt="" style="width:72px;height:72px;border-radius:50%;border:3px solid var(--wc-border);object-fit:cover;margin:0 auto 8px;" onerror="this.style.display='none'">
-          <div style="font-weight:600;">${esc(pl.displayName||'Аноним')}</div>
-          <span class="badge bg-gold mt-2">${pl.points||0} ОЧ.</span>
-        </div>
-        <div>
-          <div style="font-family:var(--font-t);font-size:0.58rem;letter-spacing:2px;color:rgba(232,240,254,0.3);margin-bottom:6px;">ПРОГНОЗ</div>
-          ${champ?`<div style="font-family:var(--font-d);font-size:1.1rem;color:var(--wc-gold);margin-bottom:6px;">🏆 ${champ.f} ${champ.n}</div>`:''}
-          <div style="font-size:0.8rem;color:rgba(232,240,254,0.45);">👟 ${esc(pl.awards?.goldenBoot||'—')}</div>
-          <div style="font-size:0.8rem;color:rgba(232,240,254,0.45);">🧤 ${esc(pl.awards?.goldenGlove||'—')}</div>
-          <div style="font-size:0.8rem;color:rgba(232,240,254,0.45);">⭐ ${esc(pl.awards?.bestPlayer||'—')}</div>
-        </div>
+      <div class="text-center mb-5">
+        ${pl.photoURL?`<img src="${esc(pl.photoURL)}" alt="" style="width:104px;height:104px;border-radius:50%;border:3px solid var(--wc-border);object-fit:cover;margin:0 auto 10px;">`:`<div style="width:104px;height:104px;border-radius:50%;border:3px solid var(--wc-border);background:rgba(176,124,255,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:2.6rem;">👤</div>`}
+        <div style="font-weight:700;font-size:1.1rem;">${esc(pl.displayName||'Аноним')}</div>
+        <span class="badge bg-gold mt-2">${pl.points||0} ОЧ.</span>
       </div>
       <div class="divider"></div>
       <div class="wc-card mb-4">
-        <div style="font-family:var(--font-d);font-size:1rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:10px;">📊 СТАТИСТИКА</div>
+        <div style="font-family:var(--font-d);font-size:1rem;letter-spacing:0.5px;color:var(--wc-gold);margin-bottom:10px;">📊 СТАТИСТИКА</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px;font-size:0.82rem;">
           ${sRow('Угаданных исходов',st.outcomes||0)}${sRow('Точных счетов',st.exactScores||0)}
-          ${sRow('Правильных мест в группах',st.groupPlaces||0)}
+          ${sRow('Угаданных сумм голов',st.totalGoals||0)}${sRow('Правильных мест в группах',st.groupPlaces||0)}
         </div>
       </div>
+      <div class="wc-card mb-4">
+        <div style="font-family:var(--font-d);font-size:1rem;letter-spacing:0.5px;color:var(--wc-green);margin-bottom:10px;">⚽ ПРОГНОЗЫ НА СЫГРАННЫЕ МАТЧИ</div>
+        ${finishedRows.length?finishedRows.map(r=>{
+          const exact=r.pred.h===r.real.h&&r.pred.a===r.real.a;
+          const po=r.pred.h>r.pred.a?'H':r.pred.h===r.pred.a?'D':'A';
+          const ro=r.real.h>r.real.a?'H':r.real.h===r.real.a?'D':'A';
+          const outcomeOk=po===ro;
+          return `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 4px;border-bottom:1px solid var(--wc-border);font-size:0.8rem;gap:6px;">
+            <div style="flex:1;text-align:right;overflow:hidden;text-overflow:ellipsis;">${esc(r.ht.f)} ${esc(r.ht.n)}</div>
+            <div style="display:flex;align-items:center;gap:6px;font-family:var(--font-t);font-weight:700;flex-shrink:0;">
+              <span style="color:${exact?'var(--wc-green)':outcomeOk?'var(--wc-gold)':'rgba(255,255,255,0.4)'};">${r.pred.h}:${r.pred.a}</span>
+              <span style="color:rgba(255,255,255,0.25);font-size:0.7rem;">/ ${r.real.h}:${r.real.a}</span>
+            </div>
+            <div style="flex:1;overflow:hidden;text-overflow:ellipsis;">${esc(r.at.n)} ${esc(r.at.f)}</div>
+          </div>`;
+        }).join(''):'<div style="color:rgba(255,255,255,0.25);font-size:0.82rem;">Матчи ещё не сыграны</div>'}
+      </div>
       <div>
-        <div style="font-family:var(--font-d);font-size:1rem;letter-spacing:2px;color:var(--wc-purple-bright);margin-bottom:10px;">📋 ИСТОРИЯ ОЧКОВ</div>
-        ${log.length?log.map(l=>`<div class="log-item"><span class="log-pts">${l.points>0?'+':''}${l.points}</span> — ${esc(l.desc)}</div>`).join(''):'<div style="color:rgba(232,240,254,0.25);font-size:0.82rem;">Очки ещё не начислены</div>'}
+        <div style="font-family:var(--font-d);font-size:1rem;letter-spacing:0.5px;color:var(--wc-purple-bright);margin-bottom:10px;">📋 ИСТОРИЯ ОЧКОВ</div>
+        ${log.length?log.map(l=>`<div class="log-item"><span class="log-pts">${l.points>0?'+':''}${l.points}</span> — ${esc(l.desc)}</div>`).join(''):'<div style="color:rgba(255,255,255,0.25);font-size:0.82rem;">Очки ещё не начислены</div>'}
       </div>`;
-  } catch(e){ document.getElementById('m-pcontent').innerHTML=`<div style="color:rgba(255,100,100,0.5);">Ошибка: ${e.message}</div>`; }
+  } catch(e){ document.getElementById('m-pcontent').innerHTML=`<div style="color:rgba(255,59,127,0.5);">Ошибка: ${e.message}</div>`; }
 }
-function sRow(l,v){ return `<div style="padding:5px 8px;border-bottom:1px solid rgba(0,255,135,0.05);color:rgba(232,240,254,0.55);">${l}</div><div style="padding:5px 8px;border-bottom:1px solid rgba(0,255,135,0.05);font-family:var(--font-t);color:var(--wc-gold);text-align:right;">${v}</div>`; }
+function sRow(l,v){ return `<div style="padding:5px 8px;border-bottom:1px solid rgba(0,230,138,0.05);color:rgba(255,255,255,0.55);">${l}</div><div style="padding:5px 8px;border-bottom:1px solid rgba(0,230,138,0.05);font-family:var(--font-t);color:var(--wc-gold);text-align:right;">${v}</div>`; }
  
 /* ═══════════════════════════════════════════════════════
    АДМИНИСТРАТОР
@@ -1230,7 +1276,7 @@ function renderAdminMatches(){
   c.innerHTML='';
   Object.keys(GROUPS).forEach(gk=>{
     const div=document.createElement('div'); div.className='mb-4';
-    div.innerHTML=`<div style="font-family:var(--font-d);font-size:1rem;letter-spacing:3px;color:var(--wc-green);margin-bottom:6px;">ГРУППА ${gk}</div>`;
+    div.innerHTML=`<div style="font-family:var(--font-d);font-size:1rem;letter-spacing:1px;color:var(--wc-green);margin-bottom:6px;">ГРУППА ${gk}</div>`;
     groupMatches(gk).forEach(m=>{
       const row=document.createElement('div');
       row.className='match-row mb-1';
@@ -1314,9 +1360,15 @@ async function recalcAll(){
         const hn=g.teams[parseInt(p[1])]?.n||'?', an=g.teams[parseInt(p[2])]?.n||'?';
         const po=pred.h>pred.a?'H':pred.h===pred.a?'D':'A';
         const ro=real.h>real.a?'H':real.h===real.a?'D':'A';
-        if(pred.h===real.h&&pred.a===real.a){ pts+=5; st.exactScores++; st.outcomes++; log.push({points:5,desc:`Точный счёт ${hn}—${an} (${real.h}:${real.a})`}); }
-        else if(po===ro&&(pred.h-pred.a)===(real.h-real.a)){ pts+=3; st.outcomes++; log.push({points:3,desc:`Разница+исход ${hn}—${an} (${pred.h}:${pred.a}→${real.h}:${real.a})`}); }
-        else if(po===ro){ pts+=2; st.outcomes++; log.push({points:2,desc:`Исход ${hn}—${an} (${pred.h}:${pred.a}→${real.h}:${real.a})`}); }
+        if(pred.h===real.h&&pred.a===real.a){
+          pts+=5; st.exactScores++; st.outcomes++;
+          log.push({points:5,desc:`Точный счёт ${hn}—${an} (${real.h}:${real.a})`});
+        } else {
+          let mp=0; const parts=[];
+          if(po===ro){ mp+=3; st.outcomes++; parts.push('исход'); }
+          if((pred.h+pred.a)===(real.h+real.a)){ mp+=1; st.totalGoals=(st.totalGoals||0)+1; parts.push('сумма голов'); }
+          if(mp>0){ pts+=mp; log.push({points:mp,desc:`${parts.join(' + ')} ${hn}—${an} (${pred.h}:${pred.a}→${real.h}:${real.a})`}); }
+        }
       });
       // Бонусы за места в группах
       // Реальные места берём из S.realResults через calcStandings
@@ -1368,14 +1420,14 @@ function calcStandingsFromStore(gk, store){
 ═══════════════════════════════════════════════════════ */
 async function loadAdminUsers(){
   const c=document.getElementById('adm-users'); if(!c) return;
-  c.innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.25);padding:20px;">Загрузка...</div>';
+  c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.25);padding:20px;">Загрузка...</div>';
   try{
     const {db,collection,getDocs,query,orderBy}=window.FB;
     const q=query(collection(db,'predictions'),orderBy('points','desc'));
     const snap=await getDocs(q);
     if(!snap.docs.length){ 
-      c.innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.25);padding:20px;">Нет участников</div>';
-      document.getElementById('points-adj-list').innerHTML='<div style="text-align:center;color:rgba(232,240,254,0.25);padding:14px;font-size:0.82rem;">Нет участников</div>';
+      c.innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.25);padding:20px;">Нет участников</div>';
+      document.getElementById('points-adj-list').innerHTML='<div style="text-align:center;color:rgba(255,255,255,0.25);padding:14px;font-size:0.82rem;">Нет участников</div>';
       return;
     }
     // Store users for points panel
@@ -1386,40 +1438,43 @@ async function loadAdminUsers(){
       const uid=d.id;
       const isAnon=uid.startsWith('admin_anon_');
       const safeUid=esc(uid), safeName=esc(p.displayName||'Аноним');
-      return `<div style="display:grid;grid-template-columns:auto 1fr auto auto auto;gap:6px;align-items:center;padding:10px 12px;background:rgba(13,31,60,0.5);border:1px solid rgba(0,255,135,0.07);border-radius:7px;margin-bottom:5px;">
-        <div style="font-size:1.2rem;">${isAnon?'👤':'🔑'}</div>
-        <div>
+      return `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--wc-border);border-radius:10px;margin-bottom:6px;">
+        ${p.photoURL?`<img src="${esc(p.photoURL)}" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--wc-border);flex-shrink:0;">`:`<div style="width:34px;height:34px;border-radius:50%;background:rgba(176,124,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">${isAnon?'👤':'🔑'}</div>`}
+        <div style="flex:1;min-width:140px;">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
             <span style="font-family:var(--font-u);font-weight:600;font-size:0.88rem;">${safeName}</span>
             <span class="badge ${isAnon?'bg-purple':'bg-green'}" style="font-size:0.5rem;">${isAnon?'ADMIN-ANON':'GOOGLE'}</span>
           </div>
-          <div style="font-family:var(--font-t);font-size:0.58rem;color:rgba(232,240,254,0.3);margin-top:2px;">${esc(uid.length>24?uid.slice(0,24)+'…':uid)} · <span style="color:var(--wc-gold);">${p.points||0} очков</span> · ${p.submittedAt?new Date(p.submittedAt).toLocaleDateString('ru'):'—'}</div>
+          <div style="font-family:var(--font-t);font-size:0.58rem;color:rgba(255,255,255,0.3);margin-top:2px;">${esc(uid.length>24?uid.slice(0,24)+'…':uid)} · <span style="color:var(--wc-gold);">${p.points||0} очков</span> · ${p.submittedAt?new Date(p.submittedAt).toLocaleDateString('ru'):'—'}</div>
         </div>
-        <button onclick="adminAdjPoints('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;color:var(--wc-gold);background:transparent;border:1px solid rgba(255,215,0,0.25);padding:5px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;">⚖️ ОЧКИ</button>
-        <button onclick="adminRenameUser('${safeUid}','${esc(p.displayName||'')}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;color:rgba(232,240,254,0.5);background:transparent;border:1px solid rgba(232,240,254,0.15);padding:5px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;">✏️ ИМЯ</button>
-        <button onclick="adminResetUser('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;color:rgba(255,100,100,0.6);background:transparent;border:1px solid rgba(255,100,100,0.2);padding:5px 10px;border-radius:4px;cursor:pointer;white-space:nowrap;">🔄 СБРОС</button>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;">
+          <button onclick="adminAdjPoints('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);background:transparent;border:1px solid rgba(255,210,63,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">⚖️ ОЧКИ</button>
+          <button onclick="adminSetPhoto('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-purple-bright);background:transparent;border:1px solid rgba(176,124,255,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📷 ФОТО</button>
+          <button onclick="adminRenameUser('${safeUid}','${esc(p.displayName||'')}')" style="font-family:var(--font-t);font-size:0.6rem;color:rgba(255,255,255,0.55);background:transparent;border:1px solid var(--wc-border);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">✏️ ИМЯ</button>
+          <button onclick="adminResetUser('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-red);background:transparent;border:1px solid rgba(255,59,127,0.2);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">🔄 СБРОС</button>
+        </div>
       </div>`;
     }).join('');
 
     // Render points adjustment panel
     renderPointsAdjPanel();
-  } catch(e){ c.innerHTML=`<div style="color:rgba(255,100,100,0.4);padding:20px;">Ошибка: ${e.message}</div>`; }
+  } catch(e){ c.innerHTML=`<div style="color:rgba(255,59,127,0.4);padding:20px;">Ошибка: ${e.message}</div>`; }
 }
 
 function renderPointsAdjPanel(){
   const c=document.getElementById('points-adj-list'); if(!c) return;
   const users=window._adminUsers||[];
-  if(!users.length){ c.innerHTML='<div style="color:rgba(232,240,254,0.25);padding:14px;">Нет участников</div>'; return; }
+  if(!users.length){ c.innerHTML='<div style="color:rgba(255,255,255,0.25);padding:14px;">Нет участников</div>'; return; }
   c.innerHTML=users.map(p=>{
     const safeUid=esc(p.uid), safeName=esc(p.displayName||'Аноним');
-    return `<div style="display:grid;grid-template-columns:1fr auto auto auto;gap:6px;align-items:center;padding:8px 10px;background:rgba(13,31,60,0.4);border:1px solid rgba(255,215,0,0.07);border-radius:7px;margin-bottom:4px;">
+    return `<div style="display:grid;grid-template-columns:1fr auto auto auto;gap:6px;align-items:center;padding:8px 10px;background:rgba(13,31,60,0.4);border:1px solid rgba(255,210,63,0.07);border-radius:7px;margin-bottom:4px;">
       <div>
         <span style="font-family:var(--font-u);font-weight:600;font-size:0.85rem;">${safeName}</span>
         <span style="font-family:var(--font-t);font-size:0.62rem;color:var(--wc-gold);margin-left:8px;">${p.points||0} оч.</span>
       </div>
-      <input type="number" id="adj-pts-${safeUid}" placeholder="±0" style="width:64px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,215,0,0.25);border-radius:4px;color:var(--wc-gold);font-family:var(--font-t);font-size:0.82rem;padding:5px 6px;outline:none;text-align:center;">
-      <input type="text" id="adj-reason-${safeUid}" placeholder="Причина..." style="min-width:140px;background:rgba(0,0,0,0.4);border:1px solid rgba(232,240,254,0.12);border-radius:4px;color:#E8F0FE;font-family:var(--font-u);font-size:0.78rem;padding:5px 8px;outline:none;">
-      <button onclick="applyPointsAdj('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;background:rgba(255,215,0,0.1);color:var(--wc-gold);border:1px solid rgba(255,215,0,0.3);padding:5px 12px;border-radius:4px;cursor:pointer;white-space:nowrap;">ПРИМЕНИТЬ</button>
+      <input type="number" id="adj-pts-${safeUid}" placeholder="±0" style="width:64px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,210,63,0.25);border-radius:4px;color:var(--wc-gold);font-family:var(--font-t);font-size:0.82rem;padding:5px 6px;outline:none;text-align:center;">
+      <input type="text" id="adj-reason-${safeUid}" placeholder="Причина..." style="min-width:140px;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.12);border-radius:4px;color:#FFFFFF;font-family:var(--font-u);font-size:0.78rem;padding:5px 8px;outline:none;">
+      <button onclick="applyPointsAdj('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.55rem;letter-spacing:1px;background:rgba(255,210,63,0.1);color:var(--wc-gold);border:1px solid rgba(255,210,63,0.3);padding:5px 12px;border-radius:4px;cursor:pointer;white-space:nowrap;">ПРИМЕНИТЬ</button>
     </div>`;
   }).join('');
 }
@@ -1447,6 +1502,17 @@ async function adminRenameUser(uid, currentName){
     const {db,doc,updateDoc}=window.FB;
     await updateDoc(doc(db,'predictions',uid),{ displayName:newName.trim() });
     notify(`✅ Имя изменено на "${newName.trim()}"`,'ok');
+    loadAdminUsers();
+  } catch(e){ notify('Ошибка: '+e.message,'err'); }
+}
+
+async function adminSetPhoto(uid, name){
+  const url=prompt(`Ссылка на фото профиля для "${name}" (пусто — убрать фото):`);
+  if(url===null) return; // cancel
+  try{
+    const {db,doc,updateDoc}=window.FB;
+    await updateDoc(doc(db,'predictions',uid),{ photoURL:url.trim() });
+    notify(url.trim()?`✅ Фото для "${name}" обновлено`:`✅ Фото для "${name}" убрано`,'ok');
     loadAdminUsers();
   } catch(e){ notify('Ошибка: '+e.message,'err'); }
 }
@@ -1494,11 +1560,11 @@ function onAnonScore(mid, gk){
   const sorted=calcStandingsFromStore(gk, S_ANON.scores);
   el.innerHTML=sorted.map((s,i)=>`
     <div class="gt-row ${i===0?'q1':i===1?'q2':i===2?'q3':''}">
-      <span style="color:${i<2?'var(--wc-green)':i===2?'var(--wc-gold)':'rgba(232,240,254,0.3)'};">${i+1}</span>
-      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(232,240,254,0.8);">${s.t.f} ${s.t.n}</span>
-      <span style="text-align:center;color:rgba(232,240,254,0.5);">${s.gf}</span>
-      <span style="text-align:center;color:${s.gd>0?'var(--wc-green)':s.gd<0?'#FF6B6B':'rgba(232,240,254,0.5)'};">${s.gd>0?'+':''}${s.gd}</span>
-      <span style="text-align:center;color:rgba(232,240,254,0.5);">${s.gf}</span>
+      <span style="color:${i<2?'var(--wc-green)':i===2?'var(--wc-gold)':'rgba(255,255,255,0.3)'};">${i+1}</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(255,255,255,0.8);">${s.t.f} ${s.t.n}</span>
+      <span style="text-align:center;color:rgba(255,255,255,0.5);">${s.gf}</span>
+      <span style="text-align:center;color:${s.gd>0?'var(--wc-green)':s.gd<0?'var(--wc-red)':'rgba(255,255,255,0.5)'};">${s.gd>0?'+':''}${s.gd}</span>
+      <span style="text-align:center;color:rgba(255,255,255,0.5);">${s.gf}</span>
       <span style="text-align:right;color:var(--wc-gold);font-weight:700;">${s.pts}</span>
     </div>`).join('');
 }
@@ -1567,8 +1633,8 @@ function dlGroups(){
   const el=document.getElementById('dl-groups-prev'); if(!el) return;
   const pfx=S.pMode==='B'?'B':'p';
   let h=`<div class="dl-preview">
-    <div class="prev-title" style="font-size:2.2rem;margin-bottom:6px;">FIFA WORLD CUP 2026</div>
-    <div style="font-family:var(--font-t);font-size:0.65rem;letter-spacing:3px;text-align:center;color:rgba(232,240,254,0.3);margin-bottom:18px;">ГРУППОВОЙ ЭТАП · ПРОГНОЗ</div>
+    <div class="prev-title" style="font-size:1.8rem;margin-bottom:6px;">FIFA WORLD CUP 2026</div>
+    <div style="font-family:var(--font-t);font-size:0.65rem;letter-spacing:1px;text-align:center;color:rgba(255,255,255,0.3);margin-bottom:18px;">ГРУППОВОЙ ЭТАП · ПРОГНОЗ</div>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">`;
   Object.keys(GROUPS).forEach(gk=>{
     let sorted;
@@ -1580,11 +1646,11 @@ function dlGroups(){
     } else {
       sorted=calcStandings(gk,pfx);
     }
-    h+=`<div class="prev-group-card"><div style="font-family:var(--font-d);font-size:1.2rem;letter-spacing:3px;color:var(--wc-green);margin-bottom:8px;">ГР. ${gk}</div>`;
+    h+=`<div class="prev-group-card"><div style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:1px;color:var(--wc-green);margin-bottom:8px;">ГР. ${gk}</div>`;
     sorted.forEach((s,i)=>{
       const t=s.t||s;
-      h+=`<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid rgba(0,255,135,0.06);${i>=2?'opacity:0.45':''}">
-        <span style="font-family:var(--font-t);font-size:0.6rem;color:${i<2?'var(--wc-green)':'rgba(232,240,254,0.35)'};width:12px;">${i+1}</span>
+      h+=`<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid rgba(0,230,138,0.06);${i>=2?'opacity:0.45':''}">
+        <span style="font-family:var(--font-t);font-size:0.6rem;color:${i<2?'var(--wc-green)':'rgba(255,255,255,0.35)'};width:12px;">${i+1}</span>
         <span>${t.f}</span>
         <span style="font-size:0.7rem;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.n}</span>
         <span style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);">${s.pts}</span>
@@ -1595,8 +1661,8 @@ function dlGroups(){
   const boot=document.getElementById('p-boot')?.value, glove=document.getElementById('p-glove')?.value, player=document.getElementById('p-player')?.value;
   h+=`</div>`;
   if(boot||glove||player){
-    h+=`<div style="margin-top:16px;background:rgba(13,31,60,0.8);border:1px solid rgba(255,215,0,0.2);border-radius:8px;padding:14px;">
-      <div style="font-family:var(--font-d);font-size:1rem;letter-spacing:2px;color:var(--wc-gold);margin-bottom:8px;">🏆 ИНДИВИДУАЛЬНЫЕ НАГРАДЫ</div>
+    h+=`<div style="margin-top:16px;background:rgba(13,31,60,0.8);border:1px solid rgba(255,210,63,0.2);border-radius:8px;padding:14px;">
+      <div style="font-family:var(--font-d);font-size:1rem;letter-spacing:0.5px;color:var(--wc-gold);margin-bottom:8px;">🏆 ИНДИВИДУАЛЬНЫЕ НАГРАДЫ</div>
       <div style="display:flex;gap:24px;font-family:var(--font-u);font-size:0.85rem;flex-wrap:wrap;">
         ${boot?`<div>👟 <b>${boot}</b></div>`:''}${glove?`<div>🧤 <b>${glove}</b></div>`:''}${player?`<div>⭐ <b>${player}</b></div>`:''}
       </div></div>`;
@@ -1619,7 +1685,7 @@ function dlPlayoff(mode){
  
   const pBlock=(title,pairs,rnd)=>`
     <div style="margin-bottom:14px;">
-      <div style="font-family:var(--font-d);font-size:0.9rem;letter-spacing:3px;color:var(--wc-gold);text-align:center;margin-bottom:8px;">${title}</div>
+      <div style="font-family:var(--font-d);font-size:0.9rem;letter-spacing:1px;color:var(--wc-gold);text-align:center;margin-bottom:8px;">${title}</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;">
         ${pairs.map(([a,b],i)=>{
           const w=pm[poKey(mode,rnd,i)]||null;
@@ -1638,12 +1704,12 @@ function dlPlayoff(mode){
     ${pBlock('ЧЕТВЕРТЬФИНАЛЫ',r4Pairs,'r4')}
     ${pBlock('ПОЛУФИНАЛЫ',r2Pairs,'r2')}
     <div style="text-align:center;margin-top:10px;">
-      <div style="font-family:var(--font-d);font-size:1rem;letter-spacing:3px;color:var(--wc-gold);margin-bottom:6px;">🏆 ФИНАЛ</div>
+      <div style="font-family:var(--font-d);font-size:1rem;letter-spacing:1px;color:var(--wc-gold);margin-bottom:6px;">🏆 ФИНАЛ</div>
       <div style="display:inline-block;"><div class="prev-po-match" style="min-width:180px;">
         <div class="prev-po-team ${champion&&finalPair[0]&&champion.n===finalPair[0].n?'w':''} ${!finalPair[0]?'tbd':''}">${finalPair[0]?`${finalPair[0].f} ${finalPair[0].n}`:'TBD'}</div>
         <div class="prev-po-team ${champion&&finalPair[1]&&champion.n===finalPair[1].n?'w':''} ${!finalPair[1]?'tbd':''}">${finalPair[1]?`${finalPair[1].f} ${finalPair[1].n}`:'TBD'}</div>
       </div></div>
-      ${mode==='practice'&&thirdPlacePair?`<div style="margin-top:16px;"><div style="font-family:var(--font-d);font-size:0.9rem;letter-spacing:3px;color:rgba(205,127,50,0.9);text-align:center;margin-bottom:6px;">🥉 МАТЧ ЗА 3-Е МЕСТО</div><div style="display:inline-block;"><div class="prev-po-match" style="min-width:150px;"><div class="prev-po-team ${thirdPlaceWinner&&thirdPlacePair[0]&&thirdPlaceWinner.n===thirdPlacePair[0].n?'w':''} ${!thirdPlacePair[0]?'tbd':''}">${thirdPlacePair[0]?`${thirdPlacePair[0].f} ${thirdPlacePair[0].n}`:'TBD'}</div><div class="prev-po-team ${thirdPlaceWinner&&thirdPlacePair[1]&&thirdPlaceWinner.n===thirdPlacePair[1].n?'w':''} ${!thirdPlacePair[1]?'tbd':''}">${thirdPlacePair[1]?`${thirdPlacePair[1].f} ${thirdPlacePair[1].n}`:'TBD'}</div></div></div>${thirdPlaceWinner?`<div style="font-family:var(--font-d);font-size:1rem;color:rgba(205,127,50,0.9);margin-top:6px;">🥉 ${thirdPlaceWinner.f} ${thirdPlaceWinner.n}</div>`:''}</div>`:''}
+      ${mode==='practice'&&thirdPlacePair?`<div style="margin-top:16px;"><div style="font-family:var(--font-d);font-size:0.9rem;letter-spacing:1px;color:rgba(205,127,50,0.9);text-align:center;margin-bottom:6px;">🥉 МАТЧ ЗА 3-Е МЕСТО</div><div style="display:inline-block;"><div class="prev-po-match" style="min-width:150px;"><div class="prev-po-team ${thirdPlaceWinner&&thirdPlacePair[0]&&thirdPlaceWinner.n===thirdPlacePair[0].n?'w':''} ${!thirdPlacePair[0]?'tbd':''}">${thirdPlacePair[0]?`${thirdPlacePair[0].f} ${thirdPlacePair[0].n}`:'TBD'}</div><div class="prev-po-team ${thirdPlaceWinner&&thirdPlacePair[1]&&thirdPlaceWinner.n===thirdPlacePair[1].n?'w':''} ${!thirdPlacePair[1]?'tbd':''}">${thirdPlacePair[1]?`${thirdPlacePair[1].f} ${thirdPlacePair[1].n}`:'TBD'}</div></div></div>${thirdPlaceWinner?`<div style="font-family:var(--font-d);font-size:1rem;color:rgba(205,127,50,0.9);margin-top:6px;">🥉 ${thirdPlaceWinner.f} ${thirdPlaceWinner.n}</div>`:''}</div>`:''}
       ${champion?`<div style="font-family:var(--font-d);font-size:1.5rem;color:var(--wc-gold);margin-top:10px;">🏆 ${champion.f} ${champion.n}</div>`:''}
     </div>
   </div>`;
@@ -1656,7 +1722,7 @@ async function doDownload(elId, filename){
   el.style.position='fixed'; el.style.top='0'; el.style.left='0'; el.style.zIndex='9999';
   await new Promise(r=>setTimeout(r,100));
   try{
-    const canvas=await html2canvas(el,{backgroundColor:'#050D1A',scale:2,useCORS:true,allowTaint:true});
+    const canvas=await html2canvas(el,{backgroundColor:'var(--wc-blue)',scale:2,useCORS:true,allowTaint:true});
     const link=document.createElement('a');
     link.download=`${filename}-${Date.now()}.png`; link.href=canvas.toDataURL('image/png'); link.click();
     notify('✅ Изображение сохранено!','ok');
