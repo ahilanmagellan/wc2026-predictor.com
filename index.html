@@ -1459,6 +1459,7 @@ async function loadAdminUsers(){
           <div style="font-family:var(--font-t);font-size:0.58rem;color:rgba(255,255,255,0.3);margin-top:2px;">${esc(uid.length>24?uid.slice(0,24)+'…':uid)} · <span style="color:var(--wc-gold);">${p.points||0} очков</span> · ${p.submittedAt?new Date(p.submittedAt).toLocaleDateString('ru'):'—'}</div>
         </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap;">
+          <button onclick="downloadSinglePrediction('${safeUid}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-green);background:transparent;border:1px solid rgba(0,230,138,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📸 PNG</button>
           <button onclick="adminAdjPoints('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);background:transparent;border:1px solid rgba(255,210,63,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">⚖️ ОЧКИ</button>
           <button onclick="adminSetPhoto('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-purple-bright);background:transparent;border:1px solid rgba(176,124,255,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📷 ФОТО</button>
           <button onclick="adminRenameUser('${safeUid}','${esc(p.displayName||'')}')" style="font-family:var(--font-t);font-size:0.6rem;color:rgba(255,255,255,0.55);background:transparent;border:1px solid var(--wc-border);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">✏️ ИМЯ</button>
@@ -1614,6 +1615,75 @@ async function downloadComparison(){
   h+=`</div>`;
   el.innerHTML=h;
   await doDownload('dl-compare-prev','wc2026-comparison');
+}
+
+async function downloadSinglePrediction(uid){
+  let user=(window._adminUsers||[]).find(u=>u.uid===uid);
+  if(!user){
+    // Подгружаем напрямую, если кэш ещё не готов
+    try{
+      const {db,doc,getDoc}=window.FB;
+      const snap=await getDoc(doc(db,'predictions',uid));
+      if(!snap.exists()){ notify('Прогноз не найден','err'); return; }
+      user={uid, ...snap.data()};
+    } catch(e){ notify('Ошибка: '+e.message,'err'); return; }
+  }
+
+  const el=document.getElementById('dl-compare-prev'); if(!el) return;
+
+  let h=`<div class="dl-preview" style="min-width:520px;">
+    <div class="prev-title" style="font-size:1.8rem;margin-bottom:4px;">FIFA WORLD CUP 2026</div>
+    <div style="font-family:var(--font-t);font-size:0.65rem;letter-spacing:1px;text-align:center;color:rgba(255,255,255,0.3);margin-bottom:18px;">ПРОГНОЗ · ГРУППОВОЙ ЭТАП</div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px;">
+      ${user.photoURL?`<img src="${esc(user.photoURL)}" alt="" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--wc-border);">`:`<div style="width:48px;height:48px;border-radius:50%;background:rgba(176,124,255,0.15);display:flex;align-items:center;justify-content:center;font-size:1.4rem;">👤</div>`}
+      <div>
+        <div style="font-family:var(--font-u);font-weight:700;font-size:1.1rem;">${esc(user.displayName||'Аноним')}</div>
+        <div style="font-family:var(--font-t);font-size:0.75rem;color:var(--wc-gold);">${user.points||0} очков</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">`;
+
+  Object.keys(GROUPS).forEach(gk=>{
+    const ms=groupMatches(gk);
+    // Таблица группы по прогнозу пользователя
+    const predStore={};
+    ms.forEach(m=>{ if(user.scores?.[m.id]) predStore[m.id]=user.scores[m.id]; });
+    const sorted=calcStandingsFromStore(gk, predStore);
+
+    h+=`<div class="prev-group-card">
+      <div style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:1px;color:var(--wc-green);margin-bottom:8px;">ГР. ${gk}</div>`;
+    sorted.forEach((s,i)=>{
+      h+=`<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid rgba(0,230,138,0.06);${i>=2?'opacity:0.45':''}">
+        <span style="font-family:var(--font-t);font-size:0.6rem;color:${i<2?'var(--wc-green)':'rgba(255,255,255,0.35)'};width:12px;">${i+1}</span>
+        <span>${s.t.f}</span>
+        <span style="font-size:0.7rem;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${s.t.n}</span>
+        <span style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);">${s.pts}</span>
+      </div>`;
+    });
+    h+=`<div style="margin-top:8px;border-top:1px solid var(--wc-border);padding-top:6px;">`;
+    ms.forEach(m=>{
+      const pred=user.scores?.[m.id];
+      const real=S.realResults?.[m.id];
+      let color='rgba(255,255,255,0.6)';
+      if(pred&&real){
+        const exact=pred.h===real.h&&pred.a===real.a;
+        const po=pred.h>pred.a?'H':pred.h===pred.a?'D':'A';
+        const ro=real.h>real.a?'H':real.h===real.a?'D':'A';
+        if(exact) color='var(--wc-green)';
+        else if(po===ro) color='var(--wc-gold)';
+        else color='var(--wc-red)';
+      }
+      h+=`<div style="display:flex;align-items:center;justify-content:space-between;font-size:0.62rem;padding:2px 0;">
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${m.h.f}${m.h.n.slice(0,3)}—${m.a.n.slice(0,3)}${m.a.f}</span>
+        <span style="font-family:var(--font-t);font-weight:700;color:${color};margin-left:4px;flex-shrink:0;">${pred?`${pred.h}:${pred.a}`:'—'}</span>
+      </div>`;
+    });
+    h+=`</div></div>`;
+  });
+
+  h+=`</div></div>`;
+  el.innerHTML=h;
+  await doDownload('dl-compare-prev', `wc2026-${(user.displayName||'player').replace(/[^a-zA-Zа-яА-Я0-9]+/g,'_')}`);
 }
 
 /* ═══════════════════════════════════════════════════════
