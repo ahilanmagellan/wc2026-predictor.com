@@ -1886,12 +1886,75 @@ function dlPlayoff(mode){
   doDownload('dl-playoff-prev',`wc2026-playoff-${mode}`);
 }
  
+// Карта CSS-переменных на литеральные значения (html2canvas не понимает var())
+const CSS_VAR_MAP = {
+  '--wc-purple': '#6B3FA0',
+  '--wc-purple-bright': '#B07CFF',
+  '--wc-green': '#00E68A',
+  '--wc-green-dark': '#00A86B',
+  '--wc-red': '#FF3B7F',
+  '--wc-blue': '#0A1535',
+  '--wc-blue-mid': '#142450',
+  '--wc-gold': '#FFD23F',
+  '--wc-card': '#101F45',
+  '--wc-card2': '#16285A',
+  '--wc-border': 'rgba(255,255,255,0.08)',
+  '--font-d': "'Outfit', sans-serif",
+  '--font-u': "'Outfit', sans-serif",
+  '--font-t': "'Outfit', sans-serif"
+};
+
+// Рекурсивно заменяет var(--xxx) на литеральные значения в style-атрибутах и <style> внутри элемента
+function resolveCssVars(root){
+  const replaceVars=(str)=>{
+    if(!str) return str;
+    let out=str, changed=true, guard=0;
+    while(changed && guard<10){
+      changed=false; guard++;
+      out=out.replace(/var\((--[a-zA-Z0-9-]+)\)/g, (m,name)=>{
+        if(CSS_VAR_MAP[name]!==undefined){ changed=true; return CSS_VAR_MAP[name]; }
+        return m;
+      });
+    }
+    return out;
+  };
+  // style-атрибуты
+  const all=root.querySelectorAll('*');
+  root.style.cssText=replaceVars(root.style.cssText);
+  all.forEach(node=>{
+    if(node.style && node.style.cssText && node.style.cssText.includes('var(')){
+      node.style.cssText=replaceVars(node.style.cssText);
+    }
+  });
+  // <style> теги
+  root.querySelectorAll('style').forEach(styleTag=>{
+    styleTag.textContent=replaceVars(styleTag.textContent);
+  });
+}
+
 async function doDownload(elId, filename){
   const el=document.getElementById(elId);
   el.style.position='fixed'; el.style.top='0'; el.style.left='0'; el.style.zIndex='9999';
   await new Promise(r=>setTimeout(r,100));
   try{
-    const canvas=await html2canvas(el,{backgroundColor:'var(--wc-blue)',scale:2,useCORS:true,allowTaint:true});
+    const canvas=await html2canvas(el,{
+      backgroundColor:CSS_VAR_MAP['--wc-blue'],
+      scale:2,
+      useCORS:true,
+      allowTaint:true,
+      onclone:(clonedDoc)=>{
+        const clonedEl=clonedDoc.getElementById(elId);
+        if(clonedEl) resolveCssVars(clonedEl);
+        // Глобально заменяем var() в общем стиле документа клона
+        clonedDoc.querySelectorAll('style').forEach(styleTag=>{
+          let css=styleTag.textContent;
+          Object.entries(CSS_VAR_MAP).forEach(([k,v])=>{
+            css=css.split(`var(${k})`).join(v);
+          });
+          styleTag.textContent=css;
+        });
+      }
+    });
     const link=document.createElement('a');
     link.download=`${filename}-${Date.now()}.png`; link.href=canvas.toDataURL('image/png'); link.click();
     notify('✅ Изображение сохранено!','ok');
