@@ -541,6 +541,8 @@ function groupMatches(gk) {
 }
  
 function esc(s){ return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''; }
+// Экранирование для вставки строки внутрь одинарных кавычек в JS (onclick="...('...')")
+function escJs(s){ return s?String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"):''; }
  
 function notify(text, type='info'){
   const el=document.getElementById('notif'), t=document.getElementById('notif-text');
@@ -562,6 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderQuickGroups();
   renderAdminMatches();
   showPage('practice');
+  loadRealResults(); // нужно всем пользователям для профилей и таблиц
   window.onAuthChange = (user) => {
     updateUserUI(user);
     if(S.curPage==='official') handleOfficial(user);
@@ -1216,6 +1219,7 @@ async function openPlayerModal(uid){
   document.getElementById('m-pcontent').innerHTML='<div style="text-align:center;padding:28px;color:rgba(255,255,255,0.3);">Загрузка...</div>';
   showModal('m-player');
   try{
+    await loadRealResults(); // обновляем реальные результаты на случай свежих изменений
     const {db,doc,getDoc}=window.FB;
     const snap=await getDoc(doc(db,'predictions',uid));
     if(!snap.exists()){ document.getElementById('m-pcontent').innerHTML='<div style="color:rgba(255,59,127,0.5);">Не найдено</div>'; return; }
@@ -1298,30 +1302,39 @@ function renderAdminMatches(){
         <span class="sd">:</span>
         <input type="number" class="si" min="0" max="20" id="r_${m.id}_a" placeholder="0">
         <div class="tn a">${m.a.n} ${m.a.f}</div>
-        <button onclick="saveMatch('${m.id}','${esc(m.h.n)}','${esc(m.a.n)}')" class="btn-g ml-1" style="padding:5px 10px;font-size:0.6rem;white-space:nowrap;">СОХР.</button>`;
+        <button onclick="saveMatch('${m.id}','${escJs(m.h.n)}','${escJs(m.a.n)}')" class="btn-g ml-1" style="padding:5px 10px;font-size:0.6rem;white-space:nowrap;">СОХР.</button>`;
       div.appendChild(row);
     });
     c.appendChild(div);
   });
 }
  
-async function loadAdminData(){
+// Загружает реальные результаты матчей — нужно ВСЕМ пользователям (не только админу),
+// чтобы в профилях видеть прогнозы на сыгранные матчи и считать вероятности.
+async function loadRealResults(){
   try{
     const {db,doc,getDoc}=window.FB;
     const snap=await getDoc(doc(db,'admin','results'));
     if(snap.exists()){
       const d=snap.data();
       S.realResults=d.scores||{}; S.realAwards=d.awards||{}; S.realPlayoff=d.playoff||{};
-      if(d.awards){
-        const map=[['r-boot','goldenBoot'],['r-glove','goldenGlove'],['r-player','bestPlayer']];
-        map.forEach(([id,k])=>{ const el=document.getElementById(id); if(el) el.value=d.awards[k]||''; });
-      }
-      Object.entries(S.realResults).forEach(([mid,sc])=>{
-        const h=document.getElementById(`r_${mid}_h`), a=document.getElementById(`r_${mid}_a`);
-        if(h) h.value=sc.h; if(a) a.value=sc.a;
-      });
+      return true;
     }
-  } catch(e){ console.warn('Admin load:',e.message); }
+  } catch(e){ console.warn('loadRealResults:',e.message); }
+  return false;
+}
+
+async function loadAdminData(){
+  await loadRealResults();
+  const d={awards:S.realAwards||{}};
+  if(d.awards){
+    const map=[['r-boot','goldenBoot'],['r-glove','goldenGlove'],['r-player','bestPlayer']];
+    map.forEach(([id,k])=>{ const el=document.getElementById(id); if(el) el.value=d.awards[k]||''; });
+  }
+  Object.entries(S.realResults||{}).forEach(([mid,sc])=>{
+    const h=document.getElementById(`r_${mid}_h`), a=document.getElementById(`r_${mid}_a`);
+    if(h) h.value=sc.h; if(a) a.value=sc.a;
+  });
   // Всегда загружаем список участников, даже если результатов ещё нет
   loadAdminUsers();
 }
@@ -1448,7 +1461,7 @@ async function loadAdminUsers(){
       const p=d.data();
       const uid=d.id;
       const isAnon=uid.startsWith('admin_anon_');
-      const safeUid=esc(uid), safeName=esc(p.displayName||'Аноним');
+      const safeUid=esc(uid), safeName=esc(p.displayName||'Аноним'), jsName=escJs(p.displayName||'Аноним'), jsUid=escJs(uid);
       return `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--wc-border);border-radius:10px;margin-bottom:6px;">
         ${p.photoURL?`<img src="${esc(p.photoURL)}" alt="" style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--wc-border);flex-shrink:0;">`:`<div style="width:34px;height:34px;border-radius:50%;background:rgba(176,124,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem;">${isAnon?'👤':'🔑'}</div>`}
         <div style="flex:1;min-width:140px;">
@@ -1459,11 +1472,11 @@ async function loadAdminUsers(){
           <div style="font-family:var(--font-t);font-size:0.58rem;color:rgba(255,255,255,0.3);margin-top:2px;">${esc(uid.length>24?uid.slice(0,24)+'…':uid)} · <span style="color:var(--wc-gold);">${p.points||0} очков</span> · ${p.submittedAt?new Date(p.submittedAt).toLocaleDateString('ru'):'—'}</div>
         </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap;">
-          <button onclick="downloadSinglePrediction('${safeUid}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-green);background:transparent;border:1px solid rgba(0,230,138,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📸 PNG</button>
-          <button onclick="adminAdjPoints('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);background:transparent;border:1px solid rgba(255,210,63,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">⚖️ ОЧКИ</button>
-          <button onclick="adminSetPhoto('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-purple-bright);background:transparent;border:1px solid rgba(176,124,255,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📷 ФОТО</button>
-          <button onclick="adminRenameUser('${safeUid}','${esc(p.displayName||'')}')" style="font-family:var(--font-t);font-size:0.6rem;color:rgba(255,255,255,0.55);background:transparent;border:1px solid var(--wc-border);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">✏️ ИМЯ</button>
-          <button onclick="adminResetUser('${safeUid}','${safeName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-red);background:transparent;border:1px solid rgba(255,59,127,0.2);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">🔄 СБРОС</button>
+          <button onclick="downloadSinglePrediction('${jsUid}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-green);background:transparent;border:1px solid rgba(0,230,138,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📸 PNG</button>
+          <button onclick="adminAdjPoints('${jsUid}','${jsName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);background:transparent;border:1px solid rgba(255,210,63,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">⚖️ ОЧКИ</button>
+          <button onclick="adminSetPhoto('${jsUid}','${jsName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-purple-bright);background:transparent;border:1px solid rgba(176,124,255,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📷 ФОТО</button>
+          <button onclick="adminRenameUser('${jsUid}','${jsName}')" style="font-family:var(--font-t);font-size:0.6rem;color:rgba(255,255,255,0.55);background:transparent;border:1px solid var(--wc-border);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">✏️ ИМЯ</button>
+          <button onclick="adminResetUser('${jsUid}','${jsName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-red);background:transparent;border:1px solid rgba(255,59,127,0.2);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">🔄 СБРОС</button>
         </div>
       </div>`;
     }).join('');
