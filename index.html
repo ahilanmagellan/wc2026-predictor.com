@@ -1227,15 +1227,14 @@ async function openPlayerModal(uid){
     document.getElementById('m-pname').textContent=pl.displayName||'Игрок';
     const st=pl.stats||{}, log=pl.pointsLog||[];
 
-    // Прогнозы только на завершённые матчи (есть реальный результат)
+    // Все завершённые матчи (есть реальный результат) — в детерминированном порядке групп A..L
     const finishedRows=[];
-    Object.entries(S.realResults||{}).forEach(([mid,real])=>{
-      const pred=pl.scores?.[mid]; if(!pred) return;
-      const p=mid.split('_');
-      const g=GROUPS[p[0]]; if(!g) return;
-      const ht=g.teams[parseInt(p[1])], at=g.teams[parseInt(p[2])];
-      if(!ht||!at) return;
-      finishedRows.push({ht,at,pred,real});
+    Object.keys(GROUPS).forEach(gk=>{
+      groupMatches(gk).forEach(m=>{
+        const real=S.realResults?.[m.id]; if(!real) return; // матч ещё не сыграл
+        const pred=pl.scores?.[m.id]||null; // может отсутствовать — пользователь не предсказал
+        finishedRows.push({ht:m.h, at:m.a, pred, real, gk});
+      });
     });
 
     document.getElementById('m-pcontent').innerHTML=`
@@ -1255,15 +1254,22 @@ async function openPlayerModal(uid){
       <div class="wc-card mb-4">
         <div style="font-family:var(--font-d);font-size:1rem;letter-spacing:0.5px;color:var(--wc-green);margin-bottom:10px;">⚽ ПРОГНОЗЫ НА СЫГРАННЫЕ МАТЧИ</div>
         ${finishedRows.length?finishedRows.map(r=>{
-          const exact=r.pred.h===r.real.h&&r.pred.a===r.real.a;
-          const po=r.pred.h>r.pred.a?'H':r.pred.h===r.pred.a?'D':'A';
-          const ro=r.real.h>r.real.a?'H':r.real.h===r.real.a?'D':'A';
-          const outcomeOk=po===ro;
+          let scoreHtml;
+          if(r.pred){
+            const exact=r.pred.h===r.real.h&&r.pred.a===r.real.a;
+            const po=r.pred.h>r.pred.a?'H':r.pred.h===r.pred.a?'D':'A';
+            const ro=r.real.h>r.real.a?'H':r.real.h===r.real.a?'D':'A';
+            const outcomeOk=po===ro;
+            scoreHtml=`<span style="color:${exact?'var(--wc-green)':outcomeOk?'var(--wc-gold)':'rgba(255,255,255,0.4)'};">${r.pred.h}:${r.pred.a}</span>
+              <span style="color:rgba(255,255,255,0.25);font-size:0.7rem;">/ ${r.real.h}:${r.real.a}</span>`;
+          } else {
+            scoreHtml=`<span style="color:rgba(255,255,255,0.25);font-style:italic;font-size:0.7rem;">нет прогноза</span>
+              <span style="color:rgba(255,255,255,0.25);font-size:0.7rem;">/ ${r.real.h}:${r.real.a}</span>`;
+          }
           return `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 4px;border-bottom:1px solid var(--wc-border);font-size:0.8rem;gap:6px;">
             <div style="flex:1;text-align:right;overflow:hidden;text-overflow:ellipsis;">${esc(r.ht.f)} ${esc(r.ht.n)}</div>
             <div style="display:flex;align-items:center;gap:6px;font-family:var(--font-t);font-weight:700;flex-shrink:0;">
-              <span style="color:${exact?'var(--wc-green)':outcomeOk?'var(--wc-gold)':'rgba(255,255,255,0.4)'};">${r.pred.h}:${r.pred.a}</span>
-              <span style="color:rgba(255,255,255,0.25);font-size:0.7rem;">/ ${r.real.h}:${r.real.a}</span>
+              ${scoreHtml}
             </div>
             <div style="flex:1;overflow:hidden;text-overflow:ellipsis;">${esc(r.at.n)} ${esc(r.at.f)}</div>
           </div>`;
