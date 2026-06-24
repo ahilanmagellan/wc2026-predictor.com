@@ -172,6 +172,63 @@ body::after{display:none;}
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
 ::-webkit-scrollbar-thumb{background:rgba(0,230,138,0.25);border-radius:3px;}
+
+/* ═══ РЕЗУЛЬТАТЫ — статичная сетка плей-офф ═══ */
+.res-bracket{display:flex;flex-direction:column;gap:0;}
+.res-round{margin-bottom:14px;}
+.res-round-title{font-family:var(--font-d);font-weight:700;font-size:0.82rem;letter-spacing:0.5px;color:rgba(255,255,255,0.5);text-transform:uppercase;text-align:center;padding:5px 0;margin-bottom:8px;border-bottom:1px solid var(--wc-border);}
+.res-matches-grid{display:grid;gap:6px;}
+.res-match{background:rgba(255,255,255,0.03);border:1px solid var(--wc-border);border-radius:10px;overflow:hidden;}
+.res-match.real{border-color:rgba(0,230,138,0.15);}
+.res-match.pred{border-color:rgba(176,124,255,0.15);}
+.res-match-label{font-family:var(--font-t);font-size:0.48rem;letter-spacing:1px;color:rgba(255,255,255,0.25);padding:3px 8px;background:rgba(0,0,0,0.2);text-align:center;border-bottom:1px solid var(--wc-border);}
+.res-team{padding:7px 8px;font-family:var(--font-u);font-weight:600;font-size:0.72rem;border-bottom:1px solid var(--wc-border);display:flex;align-items:center;gap:4px;min-height:32px;}
+.res-team:last-child{border-bottom:none;}
+.res-team.winner{color:var(--wc-green);font-weight:700;}
+.res-team.nd{color:rgba(255,255,255,0.25);font-style:italic;font-size:0.66rem;}
+.res-team .flag{flex-shrink:0;}
+.res-team .chk{margin-left:auto;font-size:0.65rem;color:var(--wc-green);}
+
+/* ═══ УЛУЧШЕННАЯ МОБИЛЬНАЯ АДАПТАЦИЯ ═══ */
+@media(max-width:768px){
+  /* Убираем горизонтальное переполнение */
+  html,body{overflow-x:hidden;max-width:100vw;}
+  main{padding-left:12px !important;padding-right:12px !important;}
+  /* Шапка — компактная */
+  .logo-text{font-size:0.85rem;}
+  .logo-year{font-size:0.5rem;}
+  #user-name{max-width:60px;font-size:0.72rem;}
+  /* Матч-ряды */
+  .match-row{grid-template-columns:1fr 30px 8px 30px 1fr;gap:2px;padding:7px 5px;}
+  .tn{font-size:0.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .si{width:30px;font-size:0.8rem;padding:5px 0;}
+  /* Карточки */
+  .wc-card{padding:12px;border-radius:12px;}
+  /* Плей-офф — скролл по горизонтали */
+  #prac-playoff,#off-playoff{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  #prac-playoff > *,#off-playoff > *{min-width:700px;}
+  /* Таблицы */
+  .gt-row{font-size:0.55rem;grid-template-columns:12px 1fr 22px 22px 22px 26px;gap:2px;}
+  /* Таблица лидеров */
+  .lb-row{padding:9px 10px;}
+  /* Модалки */
+  .modal-box{max-height:85vh;border-radius:14px 14px 0 0;align-self:flex-end;}
+  .modal-ov{align-items:flex-end;padding:0;}
+  /* Кнопки */
+  .btn-g,.btn-p,.btn-dl{font-size:0.72rem;padding:9px 16px;}
+  /* Сетка результатов */
+  .res-matches-grid{grid-template-columns:repeat(2,1fr);}
+  .res-team{font-size:0.65rem;padding:5px 6px;min-height:28px;}
+}
+@media(max-width:480px){
+  .match-row{grid-template-columns:1fr 28px 6px 28px 1fr;gap:1px;padding:6px 4px;}
+  .tn{font-size:0.58rem;}
+  .si{width:28px;font-size:0.75rem;}
+  h1{font-size:1.4rem !important;}
+  .group-title{font-size:1.1rem;}
+  .res-matches-grid{grid-template-columns:repeat(2,1fr);}
+  .badge{font-size:0.52rem;padding:2px 6px;}
+}
  
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 .fade-in{animation:fadeUp 0.35s ease forwards;}
@@ -239,6 +296,7 @@ body::after{display:none;}
         <button class="nav-btn active" id="nb-practice" onclick="showPage('practice')">ПРАКТИКА</button>
         <button class="nav-btn" id="nb-official" onclick="showPage('official')">ОФИЦИАЛЬНЫЙ</button>
         <button class="nav-btn" id="nb-leaderboard" onclick="showPage('leaderboard')">ТАБЛИЦА</button>
+        <button class="nav-btn" id="nb-results" onclick="showPage('results')">ИТОГИ</button>
         <button class="nav-btn adm" onclick="showPage('admin-login')">ADMIN</button>
       </nav>
       <div id="user-area">
@@ -258,6 +316,7 @@ body::after{display:none;}
     <button class="nav-btn active text-xs whitespace-nowrap" id="nbm-practice" onclick="showPage('practice')">ПРАКТИКА</button>
     <button class="nav-btn text-xs whitespace-nowrap" id="nbm-official" onclick="showPage('official')">ОФИЦИАЛЬНЫЙ</button>
     <button class="nav-btn text-xs whitespace-nowrap" id="nbm-leaderboard" onclick="showPage('leaderboard')">ТАБЛИЦА</button>
+    <button class="nav-btn text-xs whitespace-nowrap" id="nbm-results" onclick="showPage('results')">ИТОГИ</button>
     <button class="nav-btn adm text-xs whitespace-nowrap" onclick="showPage('admin-login')">ADMIN</button>
   </div>
 </header>
@@ -403,6 +462,42 @@ body::after{display:none;}
     </div>
   </div>
  
+  <!-- ═══════ ИТОГИ ГРУППОВОГО ЭТАПА ═══════ -->
+  <div id="page-results" class="page hidden fade-in">
+    <div class="mb-5">
+      <span class="badge bg-green">📊 ИТОГИ</span>
+      <h1 style="font-family:var(--font-d);font-weight:800;font-size:clamp(1.4rem,5vw,2.2rem);color:#fff;margin-top:6px;text-transform:uppercase;">ИТОГИ ГРУППОВОГО ЭТАПА</h1>
+      <p id="res-status" style="font-family:var(--font-u);font-size:0.82rem;color:rgba(255,255,255,0.4);margin-top:4px;"></p>
+    </div>
+    <div class="flex gap-2 mb-5 overflow-x-auto pb-1">
+      <button class="tab-btn active" id="restab-brackets" onclick="switchResTab('brackets')">🏆 СЕТКИ ПЛЕЙ-ОФФ</button>
+      <button class="tab-btn" id="restab-groups" onclick="switchResTab('groups')">📋 ТАБЛИЦЫ ГРУПП</button>
+    </div>
+    <div id="res-brackets">
+      <div class="grid grid-cols-1 gap-6">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <div style="width:4px;height:22px;background:var(--wc-green);border-radius:2px;flex-shrink:0;"></div>
+            <h2 style="font-family:var(--font-d);font-weight:700;font-size:1.05rem;color:#fff;">РЕАЛЬНАЯ СЕТКА</h2>
+            <span class="badge bg-green" style="font-size:0.5rem;">ОФИЦИАЛЬНО</span>
+          </div>
+          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div id="res-real-bracket-inner" style="min-width:320px;"></div></div>
+        </div>
+        <div id="res-user-bracket-wrap">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <div style="width:4px;height:22px;background:var(--wc-purple-bright);border-radius:2px;flex-shrink:0;"></div>
+            <h2 style="font-family:var(--font-d);font-weight:700;font-size:1.05rem;color:#fff;">ВАШ ПРОГНОЗ</h2>
+            <span class="badge bg-purple" style="font-size:0.5rem;">ПРОГНОЗ</span>
+          </div>
+          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;"><div id="res-user-bracket-inner" style="min-width:320px;"></div></div>
+        </div>
+      </div>
+    </div>
+    <div id="res-groups" class="hidden">
+      <div id="res-groups-grid" class="grid grid-cols-1 gap-4"></div>
+    </div>
+  </div>
+
 </main>
 </div>
  
@@ -579,7 +674,7 @@ function showPage(p) {
   document.querySelectorAll('.page').forEach(el=>el.classList.add('hidden'));
   const pg=document.getElementById(`page-${p}`);
   if(pg){ pg.classList.remove('hidden'); pg.classList.remove('fade-in'); void pg.offsetWidth; pg.classList.add('fade-in'); }
-  ['practice','official','leaderboard'].forEach(n=>{
+  ['practice','official','leaderboard','results'].forEach(n=>{
     const b=document.getElementById(`nb-${n}`);
     if(b) b.classList.toggle('active', n===p);
     const bm=document.getElementById(`nbm-${n}`);
@@ -589,6 +684,7 @@ function showPage(p) {
   if(p==='official') handleOfficial(window.currentUser);
   else if(p==='leaderboard') loadLeaderboard();
   else if(p==='admin'){ renderAdminMatches(); loadAdminData(); }
+  else if(p==='results'){ loadResultsPage(); }
 }
  
 /* ═══════════════════════════════════════════════════════
@@ -1811,6 +1907,220 @@ function cancelAnonPred(){
   document.getElementById('anon-name').value='';
   document.getElementById('anon-groups').innerHTML='';
   S_ANON.scores={};
+}
+
+/* ═══════════════════════════════════════════════════════
+   СТРАНИЦА ИТОГОВ ГРУППОВОГО ЭТАПА
+═══════════════════════════════════════════════════════ */
+
+function switchResTab(tab){
+  document.getElementById('res-brackets').classList.toggle('hidden', tab!=='brackets');
+  document.getElementById('res-groups').classList.toggle('hidden', tab!=='groups');
+  document.getElementById('restab-brackets').classList.toggle('active', tab==='brackets');
+  document.getElementById('restab-groups').classList.toggle('active', tab==='groups');
+}
+
+async function loadResultsPage(){
+  await loadRealResults();
+
+  // Проверяем завершение всех групп (все матчи 3-го тура сыграны)
+  const totalMatches = Object.keys(GROUPS).length * 6; // 12 групп × 6 матчей = 72
+  const playedCount  = Object.keys(S.realResults||{}).length;
+  const statusEl = document.getElementById('res-status');
+  if(statusEl) statusEl.textContent = `Сыграно матчей группового этапа: ${playedCount} / ${totalMatches}`;
+
+  // ── РЕАЛЬНАЯ СЕТКА (из S.realResults) ──
+  const realR16 = buildR16FromResults('real');
+  renderResultsBracket('res-real-bracket-inner', realR16, 'real');
+
+  // ── СЕТКА ПОЛЬЗОВАТЕЛЯ ──
+  const userWrap = document.getElementById('res-user-bracket-wrap');
+  const user = window.currentUser;
+  if(user){
+    try{
+      const {db,doc,getDoc} = window.FB;
+      const snap = await getDoc(doc(db,'predictions',user.uid));
+      if(snap.exists()){
+        const data = snap.data();
+        // Кешируем для buildResultsGroups
+        S._cachedUserScores = data.scores||{};
+        const userR16 = buildR16FromUserScores(S._cachedUserScores);
+        renderResultsBracket('res-user-bracket-inner', userR16, 'pred');
+        if(userWrap) userWrap.style.display='';
+      } else {
+        if(userWrap) userWrap.innerHTML=`<div class="wc-card" style="text-align:center;color:rgba(255,255,255,0.3);padding:24px;">Вы не отправили официальный прогноз</div>`;
+      }
+    } catch(e){ console.warn('User bracket:', e.message); }
+  } else {
+    if(userWrap) userWrap.innerHTML=`<div class="wc-card" style="text-align:center;color:rgba(255,255,255,0.3);padding:24px;">Войдите, чтобы увидеть свой прогноз</div>`;
+  }
+
+  // ── ТАБЛИЦЫ ГРУПП ──
+  buildResultsGroups();
+}
+
+// Строит пары 1/16 из реальных результатов матчей
+function buildR16FromResults(src){
+  const getTeam = (gk, pos) => {
+    const sorted = calcStandingsFromStore(gk, S.realResults||{});
+    const t = sorted[pos-1]?.t;
+    if(!t) return null;
+    // Проверяем что группа полностью сыграна
+    const played = groupMatches(gk).filter(m=>S.realResults[m.id]).length;
+    if(played < 6) return {nd:true, hint:`${gk}${pos}`}; // ещё не определено
+    return t;
+  };
+  return R16_PAIRS.map(r=>{
+    const tA = r.a.g==='3rd' ? {nd:true,hint:'3-е место'} : getTeam(r.a.g, r.a.p);
+    const tB = r.b.g==='3rd' ? {nd:true,hint:'3-е место'} : getTeam(r.b.g, r.b.p);
+    return {label:r.label, tA, tB};
+  });
+}
+
+// Строит пары 1/16 из пользовательских счётов
+function buildR16FromUserScores(scores){
+  const getTeam = (gk, pos) => {
+    const sorted = calcStandingsFromStore(gk, scores);
+    return sorted[pos-1]?.t || null;
+  };
+  return R16_PAIRS.map(r=>{
+    const tA = r.a.g==='3rd' ? {nd:true,hint:'3-е место'} : getTeam(r.a.g, r.a.p);
+    const tB = r.b.g==='3rd' ? {nd:true,hint:'3-е место'} : getTeam(r.b.g, r.b.p);
+    return {label:r.label, tA, tB};
+  });
+}
+
+// Рендерит статичную сетку плей-офф (только 1/16 — команды из групп)
+// Показывает дерево матчей визуально по раундам, без кликов
+function renderResultsBracket(containerId, r16pairs, type){
+  const el = document.getElementById(containerId); if(!el) return;
+
+  const teamEl = (t, won) => {
+    if(!t) return `<div class="res-team nd"><span class="flag">⏳</span> TBD</div>`;
+    if(t.nd) return `<div class="res-team nd"><span class="flag">❓</span> НД${t.hint?' · '+t.hint:''}</div>`;
+    const cls = won===true?'winner':won===false?'loser':'';
+    return `<div class="res-team ${cls}">
+      <span class="flag">${t.f||''}</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.n||'?')}</span>
+      ${won===true?'<span class="chk">✓</span>':''}
+    </div>`;
+  };
+
+  const matchEl = (label, tA, tB, won) => {
+    const wA = won?won.n===tA?.n:null;
+    const wB = won?won.n===tB?.n:null;
+    return `<div class="res-match ${type}">
+      <div class="res-match-label">${label}</div>
+      ${teamEl(tA, wA!==null?wA:undefined)}
+      ${teamEl(tB, wB!==null?wB:undefined)}
+    </div>`;
+  };
+
+  // 1/16 — 16 матчей → 4 колонки
+  const r16Html = r16pairs.map(p=>matchEl(p.label, p.tA, p.tB, null)).join('');
+
+  // 1/8 — победители 1/16 (НД если неизвестен)
+  const r8Html = R8_PAIRS.map(([a,b],i)=>{
+    const tA = {nd:true,hint:`Пр.${r16pairs[a]?.label}`};
+    const tB = {nd:true,hint:`Пр.${r16pairs[b]?.label}`};
+    return matchEl(`1/8 · М${i+1}`, tA, tB, null);
+  }).join('');
+
+  // 1/4
+  const r4Html = R4_PAIRS.map(([a,b],i)=>{
+    const la = R8_PAIRS[a], lb = R8_PAIRS[b];
+    const tA = {nd:true,hint:`Пр.1/8·${i*2+1}`};
+    const tB = {nd:true,hint:`Пр.1/8·${i*2+2}`};
+    return matchEl(`1/4 · М${i+1}`, tA, tB, null);
+  }).join('');
+
+  // Полуфинал
+  const r2Html = R2_PAIRS.map(([a,b],i)=>{
+    return matchEl(`Полуфинал ${i+1}`, {nd:true,hint:`Пр.1/4·${a+1}`}, {nd:true,hint:`Пр.1/4·${b+1}`}, null);
+  }).join('');
+
+  const cols16 = 'repeat(4,minmax(120px,1fr))';
+  const cols8  = 'repeat(4,minmax(120px,1fr))';
+  const cols4  = 'repeat(4,minmax(120px,1fr))';
+  const cols2  = 'repeat(2,minmax(140px,1fr))';
+
+  el.innerHTML = `<div class="res-bracket">
+    <div class="res-round">
+      <div class="res-round-title">🏟 1/16 ФИНАЛА <span style="color:rgba(255,255,255,0.25);font-size:0.65rem;">${r16pairs.length} матчей</span></div>
+      <div class="res-matches-grid" style="grid-template-columns:${cols16};">${r16Html}</div>
+    </div>
+    <div class="res-round">
+      <div class="res-round-title">⚡ 1/8 ФИНАЛА</div>
+      <div class="res-matches-grid" style="grid-template-columns:${cols8};">${r8Html}</div>
+    </div>
+    <div class="res-round">
+      <div class="res-round-title">🔥 ЧЕТВЕРТЬФИНАЛЫ</div>
+      <div class="res-matches-grid" style="grid-template-columns:${cols4};">${r4Html}</div>
+    </div>
+    <div class="res-round">
+      <div class="res-round-title">💫 ПОЛУФИНАЛЫ</div>
+      <div class="res-matches-grid" style="grid-template-columns:${cols2};max-width:500px;">${r2Html}</div>
+    </div>
+    <div class="res-round">
+      <div class="res-round-title" style="color:var(--wc-gold);">🏆 ФИНАЛ</div>
+      <div class="res-matches-grid" style="grid-template-columns:1fr;max-width:220px;">${matchEl('ФИНАЛ', {nd:true,hint:'Пр.ПФ-1'}, {nd:true,hint:'Пр.ПФ-2'}, null)}</div>
+    </div>
+  </div>`;
+}
+
+function buildResultsGroups(){
+  const el = document.getElementById('res-groups-grid'); if(!el) return;
+  const user = window.currentUser;
+  let userScores = {};
+
+  // Мы не можем делать async здесь напрямую, поэтому используем кешированные данные
+  // (загрузка пользователя происходит в loadResultsPage async выше)
+  // Берём из кеша загруженного в loadResultsPage, затем из S.oScores
+  userScores = S._cachedUserScores || S.oScores||{};
+
+  el.innerHTML = Object.keys(GROUPS).map(gk=>{
+    const teams = GROUPS[gk].teams;
+
+    // Реальная таблица
+    const realSorted = calcStandingsFromStore(gk, S.realResults||{});
+    const playedInGroup = groupMatches(gk).filter(m=>S.realResults[m.id]).length;
+
+    // Прогнозная таблица (из S.oScores)
+    const predSorted = calcStandingsFromStore(gk, userScores);
+
+    const tableRow = (s, i, predPos) => {
+      const advancing = i < 2;
+      const matchPos = predPos !== undefined && predPos === i;
+      return `<div style="display:flex;align-items:center;gap:6px;padding:5px 6px;border-radius:6px;${advancing?'background:rgba(0,230,138,0.06);':''}">
+        <span style="font-family:var(--font-t);font-size:0.65rem;color:${advancing?'var(--wc-green)':'rgba(255,255,255,0.3)'};width:14px;flex-shrink:0;">${i+1}</span>
+        <span style="font-size:0.9rem;flex-shrink:0;">${s.t.f}</span>
+        <span style="font-size:0.75rem;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(s.t.n)}</span>
+        <span style="font-family:var(--font-t);font-size:0.7rem;color:rgba(255,255,255,0.4);width:22px;text-align:center;">${s.gf}</span>
+        <span style="font-family:var(--font-t);font-size:0.7rem;color:${s.gd>0?'var(--wc-green)':s.gd<0?'var(--wc-red)':'rgba(255,255,255,0.4)'};width:28px;text-align:center;">${s.gd>0?'+':''}${s.gd}</span>
+        <span style="font-family:var(--font-t);font-size:0.75rem;font-weight:700;color:var(--wc-gold);width:24px;text-align:right;">${s.pts}</span>
+      </div>`;
+    };
+
+    return `<div class="wc-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="font-family:var(--font-d);font-weight:800;font-size:1.3rem;color:var(--wc-green);">Г. ${gk}</div>
+        <span style="font-family:var(--font-t);font-size:0.58rem;color:rgba(255,255,255,0.3);">${playedInGroup}/6 матчей</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div style="font-family:var(--font-t);font-size:0.58rem;letter-spacing:0.5px;color:var(--wc-green);margin-bottom:5px;text-align:center;">РЕАЛЬНЫЙ ИСХОД</div>
+          ${realSorted.length ? realSorted.map((s,i)=>tableRow(s,i)).join('') : `<div style="color:rgba(255,255,255,0.2);font-size:0.75rem;text-align:center;padding:8px;">Матчи ещё не сыграны</div>`}
+        </div>
+        <div>
+          <div style="font-family:var(--font-t);font-size:0.58rem;letter-spacing:0.5px;color:var(--wc-purple-bright);margin-bottom:5px;text-align:center;">ВАШ ПРОГНОЗ</div>
+          ${predSorted.length && Object.keys(userScores).some(k=>k.startsWith(gk+'_')) ? predSorted.map((s,i)=>{
+            const realPos = realSorted.findIndex(r=>r.t.n===s.t.n);
+            return tableRow(s,i, realPos===i?i:undefined);
+          }).join('') : `<div style="color:rgba(255,255,255,0.2);font-size:0.75rem;text-align:center;padding:8px;">Нет данных</div>`}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 /* ═══════════════════════════════════════════════════════
