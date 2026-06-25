@@ -1001,19 +1001,22 @@ function buildPlayoff(mode){
   const pm=mode==='practice'?S.pPlayoff:S.oPlayoff;
   const pfx=mode==='practice'?(S.pMode==='B'?'B':'p'):'official';
  
-  // Получаем 8 лучших 3-х мест → распределяем по слотам без попаданий в свою группу
-  let thirdsSlotted = new Array(8).fill(null);
+  // Получаем 3-и места — для практики берём выбранные пользователем (режим B)
+  // или вычисляем из счётов (режим A / official)
+  let allThirds=[];
   if(pfx==='B'){
-    thirdsSlotted = assignThirds([...S.pThirds]);
+    allThirds=[...S.pThirds];
   } else {
-    const scoreStore = pfx==='official'?S.oScores:S.pScores;
-    const allThirds=Object.keys(GROUPS).map(gk=>{
-      const s=calcStandingsFromStore(gk, scoreStore);
-      return s[2]?{...s[2].t, pts:s[2].pts, gd:s[2].gd, gf:s[2].gf, gk}:null;
+    const scoreStore=pfx==='official'?S.oScores:S.pScores;
+    allThirds=Object.keys(GROUPS).map(gk=>{
+      const s=calcStandingsFromStore(gk,scoreStore);
+      return s[2]?{...s[2].t,pts:s[2].pts,gd:s[2].gd,gf:s[2].gf,gk}:null;
     }).filter(Boolean);
     allThirds.sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf);
-    thirdsSlotted = assignThirds(allThirds.slice(0,8));
+    allThirds=allThirds.slice(0,8);
   }
+  // Используем assignThirds только для ПРАКТИКИ (интерактивный предиктор)
+  const thirdsSlotted = assignThirds(allThirds);
 
   // Строим пары R32 (1/16 финала)
   const r16Pairs=R16_PAIRS.map(r=>{
@@ -2017,27 +2020,15 @@ async function loadResultsPage(){
 }
 
 // Вычисляет 3-и места и распределяет по слотам для сетки результатов
-function computeThirdsSlotted(store){
-  const allThirds = Object.keys(GROUPS).map(gk=>{
-    const s = calcStandingsFromStore(gk, store);
-    const played = groupMatches(gk).filter(m=>store[m.id]).length;
-    if(played < 6) return null; // группа не завершена — не считаем
-    return s[2] ? {...s[2].t, pts:s[2].pts, gd:s[2].gd, gf:s[2].gf, gk} : null;
-  }).filter(Boolean);
-  allThirds.sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf);
-  const best8 = allThirds.slice(0,8);
-  return assignThirds(best8);
-}
-
 // Строит пары R32 из реальных результатов матчей
+// Для 3-х мест просто показываем метку "X3" — без распределения по слотам
 function buildR16FromResults(){
   const store = S.realResults||{};
-  const thirdsSlotted = computeThirdsSlotted(store);
 
   const getTeam = (side) => {
     if(side.g==='3rd'){
-      const t = thirdsSlotted[side.slot];
-      return t || {nd:true, hint:`3-е место·слот${side.slot+1}`};
+      // Показываем "?3" — конкретная группа определяется жеребьёвкой FIFA
+      return {label3:'?3', nd:false};
     }
     const gk = side.g, pos = side.p;
     const played = groupMatches(gk).filter(m=>store[m.id]).length;
@@ -2050,20 +2041,35 @@ function buildR16FromResults(){
 }
 
 // Строит пары R32 из пользовательских счётов
+// Для 3-х мест — показываем реальную команду из прогноза пользователя (3-е место группы)
+// но БЕЗ распределения по конкретным слотам (просто "X3")
 function buildR16FromUserScores(scores){
-  // Определяем 3-х мест только из завершённых групп по прогнозу
-  const allThirds = Object.keys(GROUPS).map(gk=>{
+  // Собираем 3-и места из прогноза по группам
+  const userThirds = {};
+  Object.keys(GROUPS).forEach(gk=>{
+    const hasAny = groupMatches(gk).some(m=>scores[m.id]);
+    if(!hasAny) return;
+    const s = calcStandingsFromStore(gk, scores);
+    if(s[2]) userThirds[gk] = s[2].t;
+  });
+
+  // Определяем 8 лучших 3-х мест по прогнозу (только для отображения метки)
+  const sortedThirds = Object.keys(GROUPS).map(gk=>{
     const s = calcStandingsFromStore(gk, scores);
     const hasAny = groupMatches(gk).some(m=>scores[m.id]);
-    if(!hasAny) return null;
-    return s[2] ? {...s[2].t, pts:s[2].pts, gd:s[2].gd, gf:s[2].gf, gk} : null;
-  }).filter(Boolean);
-  allThirds.sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf);
-  const thirdsSlotted = assignThirds(allThirds.slice(0,8));
+    if(!hasAny||!s[2]) return null;
+    return {gk, ...s[2].t, pts:s[2].pts, gd:s[2].gd, gf:s[2].gf};
+  }).filter(Boolean).sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf);
+  const top8groups = new Set(sortedThirds.slice(0,8).map(t=>t.gk));
 
   const getTeam = (side) => {
-    if(side.g==='3rd') return thirdsSlotted[side.slot] || {nd:true, hint:`3-е место·слот${side.slot+1}`};
+    if(side.g==='3rd'){
+      // Не знаем точного слота — показываем "?3"
+      return {label3:'?3', nd:false};
+    }
     const sorted = calcStandingsFromStore(side.g, scores);
+    const hasAny = groupMatches(side.g).some(m=>scores[m.id]);
+    if(!hasAny) return {nd:true, hint:`${side.g}${side.p}`};
     return sorted[side.p-1]?.t || {nd:true, hint:`${side.g}${side.p}`};
   };
 
@@ -2080,18 +2086,20 @@ function renderResultsBracket(containerId, r16pairs, type, realR16pairs){
 
   const teamEl = (t, slot, isA) => {
     if(!t) return `<div class="res-team nd">⏳ TBD</div>`;
-    if(t.nd) return `<div class="res-team nd">❓ ${t.hint||'НД'}</div>`;
+    if(t.nd) return `<div class="res-team nd" style="color:rgba(255,255,255,0.3);font-style:italic;">❓ ${t.hint||'НД'}</div>`;
+
+    // 3-е место — просто метка "?3", конкретная группа определяется ФИФА
+    if(t.label3) return `<div class="res-team nd" style="color:rgba(255,210,63,0.7);font-style:italic;font-weight:600;">${t.label3}</div>`;
 
     let colorStyle = '';
     if(compareWith && slot !== undefined){
-      // Определяем реальную команду на этой позиции
       const realPair = compareWith[slot];
       const realT = isA ? realPair?.tA : realPair?.tB;
-      if(realT && !realT.nd){
-        if(realT.n === t.n) colorStyle = 'color:#00E68A;font-weight:700;'; // угадал ✓
-        else colorStyle = 'color:#FF3B7F;'; // не угадал ✗
+      // Только сравниваем реальные команды (не НД и не label3)
+      if(realT && !realT.nd && !realT.label3){
+        if(realT.n === t.n) colorStyle = 'color:#00E68A;font-weight:700;';
+        else colorStyle = 'color:#FF3B7F;';
       }
-      // Если реального результата ещё нет — без цвета
     }
 
     return `<div class="res-team" style="${colorStyle}">
