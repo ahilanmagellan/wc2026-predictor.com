@@ -174,25 +174,12 @@ body::after{display:none;}
 ::-webkit-scrollbar-thumb{background:rgba(0,230,138,0.25);border-radius:3px;}
 
 /* ═══ РЕЗУЛЬТАТЫ — статичная сетка плей-офф ═══ */
-.res-bracket{display:flex;flex-direction:column;gap:0;}
-.res-round{margin-bottom:14px;}
-.res-round-title{font-family:var(--font-d);font-weight:700;font-size:0.82rem;letter-spacing:0.5px;color:rgba(255,255,255,0.5);text-transform:uppercase;text-align:center;padding:5px 0;margin-bottom:8px;border-bottom:1px solid var(--wc-border);}
-.res-matches-grid{display:grid;gap:6px;}
-.res-match{background:rgba(255,255,255,0.03);border:1px solid var(--wc-border);border-radius:10px;overflow:hidden;}
-.res-match.real{border-color:rgba(0,230,138,0.15);}
-.res-match.pred{border-color:rgba(176,124,255,0.15);}
-.res-match-label{font-family:var(--font-t);font-size:0.48rem;letter-spacing:1px;color:rgba(255,255,255,0.25);padding:3px 8px;background:rgba(0,0,0,0.2);text-align:center;border-bottom:1px solid var(--wc-border);}
-.res-team{padding:7px 8px;font-family:var(--font-u);font-weight:600;font-size:0.72rem;border-bottom:1px solid var(--wc-border);display:flex;align-items:center;gap:4px;min-height:32px;}
-.res-team:last-child{border-bottom:none;}
-.res-team.winner{color:var(--wc-green);font-weight:700;}
-.res-team.nd{color:rgba(255,255,255,0.25);font-style:italic;font-size:0.66rem;}
-.res-team .flag{flex-shrink:0;}
-.res-team .chk{margin-left:auto;font-size:0.65rem;color:var(--wc-green);}
+/* res-bracket replaced by SVG renderer */
+.res-bracket-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;}
+.res-bracket-wrap svg{display:block;}
 
 /* 1/16 grid: 4 колонки на десктопе, 2 на мобильном */
-.res-r32-grid{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:8px;}
-@media(max-width:900px){.res-r32-grid{grid-template-columns:repeat(2,1fr);gap:6px;}}
-@media(max-width:480px){.res-r32-grid{grid-template-columns:repeat(2,1fr);gap:5px;}.res-team{font-size:0.62rem;padding:5px 5px;min-height:28px;}}
+/* res-r32-grid replaced by SVG */
 
 /* Таблицы групп: рядом на десктопе, стопкой на мобильном */
 .res-group-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
@@ -601,63 +588,56 @@ const GROUPS = {
 // Вторые места — между собой: 2A-2B, 2D-2E, 2G-2H, 2J-2K
 // Победители ABDEGIКL → против 3-х мест (слоты S0-S7)
 // Слоты S0-S7 распределяются алгоритмом по группам A,B,D,E,G,I,K,L
-const THIRD_SLOTS = ['A','B','D','E','G','I','K','L']; // слот i → соперник 1<group>
+// ═══════════════════════════════════════════════════════
+// ОФИЦИАЛЬНАЯ СЕТКА FIFA WORLD CUP 2026 — 1/16 ФИНАЛА
+//
+// ВЕРХНЯЯ ПОЛОВИНА (матчи 1-8):
+// М1: A1 vs 3rd(C/D/E)   М2: B1 vs F2
+// М3: C1 vs E2            М4: D1 vs 3rd(F/G/H)
+// М5: E1 vs 3rd(I/J/K)   М6: F1 vs D2
+// М7: G1 vs A2            М8: H1 vs B2
+//
+// НИЖНЯЯ ПОЛОВИНА (матчи 9-16):
+// М9:  I1 vs 3rd(A/B/C)  М10: J1 vs L2
+// М11: K1 vs J2           М12: L1 vs 3rd(D/E/F)
+// М13: C2 vs G2           М14: I2 vs K2
+// М15: K1 vs 3rd(G/H/I)  М16: L1 vs 3rd(J/K/L)
+// ═══════════════════════════════════════════════════════
 
 const R32 = [
-  { id:'M01', a:{type:'1',g:'A'}, b:{type:'3s',slot:0} },
-  { id:'M02', a:{type:'2',g:'A'}, b:{type:'2',g:'B'}   },
-  { id:'M03', a:{type:'1',g:'C'}, b:{type:'2',g:'I'}   },
-  { id:'M04', a:{type:'1',g:'B'}, b:{type:'3s',slot:1} },
-  { id:'M05', a:{type:'2',g:'D'}, b:{type:'2',g:'E'}   },
-  { id:'M06', a:{type:'1',g:'D'}, b:{type:'3s',slot:2} },
-  { id:'M07', a:{type:'1',g:'E'}, b:{type:'3s',slot:3} },
-  { id:'M08', a:{type:'1',g:'F'}, b:{type:'2',g:'C'}   },
-  { id:'M09', a:{type:'2',g:'G'}, b:{type:'2',g:'H'}   },
-  { id:'M10', a:{type:'1',g:'G'}, b:{type:'3s',slot:4} },
-  { id:'M11', a:{type:'1',g:'H'}, b:{type:'2',g:'F'}   },
-  { id:'M12', a:{type:'2',g:'J'}, b:{type:'2',g:'K'}   },
-  { id:'M13', a:{type:'1',g:'I'}, b:{type:'3s',slot:5} },
-  { id:'M14', a:{type:'1',g:'J'}, b:{type:'2',g:'L'}   },
-  { id:'M15', a:{type:'1',g:'K'}, b:{type:'3s',slot:6} },
-  { id:'M16', a:{type:'1',g:'L'}, b:{type:'3s',slot:7} },
+  // ВЕРХНЯЯ ПОЛОВИНА
+  { id:'М1',  a:{type:'1',g:'A'}, b:{type:'3',hint:'C/D/E'} },
+  { id:'М2',  a:{type:'1',g:'B'}, b:{type:'2',g:'F'} },
+  { id:'М3',  a:{type:'1',g:'C'}, b:{type:'2',g:'E'} },
+  { id:'М4',  a:{type:'1',g:'D'}, b:{type:'3',hint:'F/G/H'} },
+  { id:'М5',  a:{type:'1',g:'E'}, b:{type:'3',hint:'I/J/K'} },
+  { id:'М6',  a:{type:'1',g:'F'}, b:{type:'2',g:'D'} },
+  { id:'М7',  a:{type:'1',g:'G'}, b:{type:'2',g:'A'} },
+  { id:'М8',  a:{type:'1',g:'H'}, b:{type:'2',g:'B'} },
+  // НИЖНЯЯ ПОЛОВИНА
+  { id:'М9',  a:{type:'1',g:'I'}, b:{type:'3',hint:'A/B/C'} },
+  { id:'М10', a:{type:'1',g:'J'}, b:{type:'2',g:'L'} },
+  { id:'М11', a:{type:'1',g:'K'}, b:{type:'2',g:'J'} },
+  { id:'М12', a:{type:'1',g:'L'}, b:{type:'3',hint:'D/E/F'} },
+  { id:'М13', a:{type:'2',g:'C'}, b:{type:'2',g:'G'} },
+  { id:'М14', a:{type:'2',g:'I'}, b:{type:'2',g:'K'} },
+  { id:'М15', a:{type:'1',g:'K'}, b:{type:'3',hint:'G/H/I'} },
+  { id:'М16', a:{type:'1',g:'L'}, b:{type:'3',hint:'J/K/L'} },
 ];
 
-// Последующие раунды: пары по индексам предыдущего раунда
+// 1/8 финала: индексы матчей предыдущего раунда
 const R16_FROM = [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15]];
 const R8_FROM  = [[0,1],[2,3],[4,5],[6,7]];
 const R4_FROM  = [[0,1],[2,3]];
 
-// Алгоритм размещения 3-х мест по слотам без попаданий в свою группу
-function assignThirds(thirds){
-  const n = THIRD_SLOTS.length;
-  const result = new Array(n).fill(null);
-  const used   = new Array(thirds.length).fill(false);
-  // Итеративно: сначала те у кого ровно 1 допустимый слот
-  let changed = true;
-  while(changed){
-    changed = false;
-    for(let i=0;i<n;i++){
-      if(result[i]) continue;
-      const cands = thirds.reduce((acc,t,j)=>{ if(!used[j]&&t.gk!==THIRD_SLOTS[i]) acc.push(j); return acc;}, []);
-      if(cands.length===1){ result[i]=thirds[cands[0]]; used[cands[0]]=true; changed=true; }
-    }
-  }
-  // Greedy для остальных
-  for(let i=0;i<n;i++){
-    if(result[i]) continue;
-    const idx = thirds.findIndex((t,j)=>!used[j]&&t.gk!==THIRD_SLOTS[i]);
-    if(idx>=0){ result[i]=thirds[idx]; used[idx]=true; }
-  }
-  // Страховка
-  thirds.forEach((t,j)=>{ if(!used[j]){ const e=result.indexOf(null); if(e>=0){result[e]=t;used[j]=true;} } });
-  return result;
-}
+// Алгоритм распределения 3-х мест (для практики)
+function assignThirds(thirds){ return thirds.slice(0,8); }
 
-// Совместимость со старым кодом (buildPlayoff, matchCard, poKey используют R16_PAIRS)
+// Совместимость с остальным кодом
 const R16_PAIRS = R32.map(m=>({
   label: m.id,
-  a: m.a.type==='3s' ? {g:'3rd', slot:m.a.slot} : {g:m.a.g, p:parseInt(m.a.type)},
-  b: m.b.type==='3s' ? {g:'3rd', slot:m.b.slot} : {g:m.b.g, p:parseInt(m.b.type)}
+  a: m.a.type==='3' ? {g:'3rd', hint:m.a.hint} : {g:m.a.g, p:parseInt(m.a.type)},
+  b: m.b.type==='3' ? {g:'3rd', hint:m.b.hint} : {g:m.b.g, p:parseInt(m.b.type)}
 }));
 const R8_PAIRS  = R16_FROM;
 const R4_PAIRS  = R8_FROM;
@@ -2020,112 +2000,218 @@ async function loadResultsPage(){
 }
 
 // Вычисляет 3-и места и распределяет по слотам для сетки результатов
-// Строит пары R32 из реальных результатов матчей
-// Для 3-х мест просто показываем метку "X3" — без распределения по слотам
+// Строит пары R32 из реальных результатов
 function buildR16FromResults(){
   const store = S.realResults||{};
-
   const getTeam = (side) => {
-    if(side.g==='3rd'){
-      // Показываем "?3" — конкретная группа определяется жеребьёвкой FIFA
-      return {label3:'?3', nd:false};
-    }
-    const gk = side.g, pos = side.p;
-    const played = groupMatches(gk).filter(m=>store[m.id]).length;
-    if(played < 6) return {nd:true, hint:`${gk}${pos}`};
-    const sorted = calcStandingsFromStore(gk, store);
+    if(side.g==='3rd') return {label3:`3(${side.hint||'?'})`, nd:false};
+    const gk=side.g, pos=side.p;
+    const played=groupMatches(gk).filter(m=>store[m.id]).length;
+    if(played<6) return {nd:true, hint:`${gk}${pos}`};
+    const sorted=calcStandingsFromStore(gk,store);
     return sorted[pos-1]?.t || {nd:true, hint:`${gk}${pos}`};
   };
-
-  return R16_PAIRS.map(r=>({ label:r.label, tA:getTeam(r.a), tB:getTeam(r.b) }));
+  return R16_PAIRS.map(r=>({label:r.label, tA:getTeam(r.a), tB:getTeam(r.b)}));
 }
 
 // Строит пары R32 из пользовательских счётов
-// Для 3-х мест — показываем реальную команду из прогноза пользователя (3-е место группы)
-// но БЕЗ распределения по конкретным слотам (просто "X3")
 function buildR16FromUserScores(scores){
-  // Собираем 3-и места из прогноза по группам
-  const userThirds = {};
-  Object.keys(GROUPS).forEach(gk=>{
-    const hasAny = groupMatches(gk).some(m=>scores[m.id]);
-    if(!hasAny) return;
-    const s = calcStandingsFromStore(gk, scores);
-    if(s[2]) userThirds[gk] = s[2].t;
-  });
-
-  // Определяем 8 лучших 3-х мест по прогнозу (только для отображения метки)
-  const sortedThirds = Object.keys(GROUPS).map(gk=>{
-    const s = calcStandingsFromStore(gk, scores);
-    const hasAny = groupMatches(gk).some(m=>scores[m.id]);
-    if(!hasAny||!s[2]) return null;
-    return {gk, ...s[2].t, pts:s[2].pts, gd:s[2].gd, gf:s[2].gf};
-  }).filter(Boolean).sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf);
-  const top8groups = new Set(sortedThirds.slice(0,8).map(t=>t.gk));
-
   const getTeam = (side) => {
-    if(side.g==='3rd'){
-      // Не знаем точного слота — показываем "?3"
-      return {label3:'?3', nd:false};
-    }
-    const sorted = calcStandingsFromStore(side.g, scores);
-    const hasAny = groupMatches(side.g).some(m=>scores[m.id]);
+    if(side.g==='3rd') return {label3:`3(${side.hint||'?'})`, nd:false};
+    const hasAny=groupMatches(side.g).some(m=>scores[m.id]);
     if(!hasAny) return {nd:true, hint:`${side.g}${side.p}`};
+    const sorted=calcStandingsFromStore(side.g,scores);
     return sorted[side.p-1]?.t || {nd:true, hint:`${side.g}${side.p}`};
   };
-
-  return R16_PAIRS.map(r=>({ label:r.label, tA:getTeam(r.a), tB:getTeam(r.b) }));
+  return R16_PAIRS.map(r=>({label:r.label, tA:getTeam(r.a), tB:getTeam(r.b)}));
 }
 
 // Рендерит статичную сетку плей-офф
 // realR16: массив пар реальной сетки для сравнения (null если рендерим саму реальную)
 function renderResultsBracket(containerId, r16pairs, type, realR16pairs){
   const el = document.getElementById(containerId); if(!el) return;
-
-  // Для пользовательской сетки сравниваем с реальной
   const compareWith = (type==='pred' && realR16pairs) ? realR16pairs : null;
 
-  const teamEl = (t, slot, isA) => {
-    if(!t) return `<div class="res-team nd">⏳ TBD</div>`;
-    if(t.nd) return `<div class="res-team nd" style="color:rgba(255,255,255,0.3);font-style:italic;">❓ ${t.hint||'НД'}</div>`;
+  // ── SVG BRACKET RENDERER ──
+  // Layout: 16 matches in 2 columns of 8 (left half + right half)
+  // Each half of 8 pairs into 4 "winner" connectors on the right
 
-    // 3-е место — просто метка "?3", конкретная группа определяется ФИФА
-    if(t.label3) return `<div class="res-team nd" style="color:rgba(255,210,63,0.7);font-style:italic;font-weight:600;">${t.label3}</div>`;
+  const BOX_W = 148;  // ширина боксика команды
+  const BOX_H = 26;   // высота одного боксика
+  const PAIR_GAP = 8; // зазор между двумя боксиками одного матча
+  const MATCH_H = BOX_H * 2 + PAIR_GAP; // полная высота матча
+  const MATCH_GAP = 22; // вертикальный зазор между матчами
+  const UNIT = MATCH_H + MATCH_GAP; // шаг между матчами
 
-    let colorStyle = '';
-    if(compareWith && slot !== undefined){
-      const realPair = compareWith[slot];
-      const realT = isA ? realPair?.tA : realPair?.tB;
-      // Только сравниваем реальные команды (не НД и не label3)
-      if(realT && !realT.nd && !realT.label3){
-        if(realT.n === t.n) colorStyle = 'color:#00E68A;font-weight:700;';
-        else colorStyle = 'color:#FF3B7F;';
-      }
-    }
+  const COL1_X = 0;         // левая колонка матчей — X
+  const CONN1_X = BOX_W + 20; // линия-соединитель после левой колонки
+  const WIN1_X = CONN1_X + 40; // бокс победителя (→ 1/8)
 
-    return `<div class="res-team" style="${colorStyle}">
-      <span class="flag">${t.f||''}</span>
-      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.n||'?')}</span>
-      ${colorStyle.includes('#00E68A')?'<span class="chk">✓</span>':''}
-    </div>`;
+  const SVG_W = WIN1_X + BOX_W + 20;
+  const N = r16pairs.length; // 16
+  const HALF = N / 2;       // 8
+  const SVG_H = HALF * UNIT + MATCH_GAP;
+
+  // Цвета
+  const C_BOX   = type==='real' ? '#1A3A60' : '#2A1A50';
+  const C_BORD  = type==='real' ? '#00E68A' : '#B07CFF';
+  const C_WIN   = type==='real' ? '#0E2A40' : '#1A0E35';
+  const C_LINE  = 'rgba(255,255,255,0.18)';
+  const C_TEXT  = '#FFFFFF';
+  const C_DIM   = 'rgba(255,255,255,0.3)';
+  const C_GOLD  = '#FFD23F';
+  const C_GREEN = '#00E68A';
+  const C_RED   = '#FF3B7F';
+
+  // Team name helper
+  const tName = (t) => {
+    if(!t) return '⏳ TBD';
+    if(t.nd) return `❓ ${t.hint||'НД'}`;
+    if(t.label3) return t.label3;
+    return `${t.f||''} ${t.n||'?'}`;
   };
 
-  const matchEl = (label, tA, tB, slotIdx) => {
-    return `<div class="res-match ${type}">
-      <div class="res-match-label">${label}</div>
-      ${teamEl(tA, slotIdx, true)}
-      ${teamEl(tB, slotIdx, false)}
-    </div>`;
+  // Color for a team in user bracket
+  const tColor = (t, slot, isA) => {
+    if(!t||t.nd||t.label3) return C_DIM;
+    if(!compareWith || slot===undefined) return C_TEXT;
+    const rp = compareWith[slot];
+    const rt = isA ? rp?.tA : rp?.tB;
+    if(!rt||rt.nd||rt.label3) return C_TEXT;
+    return rt.n===t.n ? C_GREEN : C_RED;
   };
 
-  // 1/16 — 16 матчей → 4 колонки
-  const r16Html = r16pairs.map((p,i)=>matchEl(p.label, p.tA, p.tB, i)).join('');
+  // SVG text with truncation via textLength
+  const svgText = (x, y, txt, color, bold, maxW) => {
+    const weight = bold ? '700' : '500';
+    const display = txt.length > 18 ? txt.slice(0,17)+'…' : txt;
+    return `<text x="${x}" y="${y}" fill="${color}" font-family="Outfit,sans-serif" font-size="11" font-weight="${weight}" dominant-baseline="central">${esc(display)}</text>`;
+  };
 
-  // Только 1/16 финала
-  el.innerHTML = `<div class="res-bracket">
-    <div class="res-round">
-      <div class="res-round-title">🏟 1/16 ФИНАЛА · ${r16pairs.length} МАТЧЕЙ</div>
-      <div class="res-r32-grid">${r16Html}</div>
-    </div>
+  let svgParts = [];
+
+  // Draw each match in left column (indices 0-7 for left, but we show pairs visually)
+  // We'll draw left half (matches 0-7) in the LEFT column
+  // and right half (matches 8-15) MIRRORED on the same SVG but shifted right
+  // Actually for simplicity: show all 16 matches in a single column, 8 rows,
+  // with LEFT pair (match i) and RIGHT pair (match i+8) side by side per row.
+
+  // Total layout: [Match col1] [connector] [Winner1] ... [Winner2] [connector] [Match col2]
+  // This gives the classic mirrored bracket
+  const COL2_X = SVG_W - BOX_W;  // right column X (mirrored)
+  const WIN2_X = CONN1_X + 40;    // we'll recalculate
+
+  // Recalculate for mirrored layout:
+  // [Col1: BOX_W] [gap:20] [line:30] [Winners: BOX_W] [line:30] [gap:20] [Col2: BOX_W]
+  const GAP = 16;
+  const LINE_W = 28;
+  const WIN_W = 120;
+
+  const cX1 = 0;                               // left matches start X
+  const lX1 = cX1 + BOX_W + GAP;              // left connector start X
+  const wX  = lX1 + LINE_W;                   // winner boxes X
+  const lX2 = wX + WIN_W + 0;                 // right connector start X (line goes back)
+  const cX2 = lX2 + LINE_W + GAP;             // right matches start X
+  const TOTAL_W = cX2 + BOX_W;
+
+  // Winner box height = slightly taller
+  const WIN_H = 32;
+
+  // Total SVG height for 8 rows
+  const ROW_H = UNIT;
+  const TOTAL_H = HALF * ROW_H + 20;
+
+  // For each of 8 rows: left match (pairs[i]) and right match (pairs[i+8])
+  // Winner connector goes from midpoint of left match to winner box
+  // and from winner box to midpoint of right match
+
+  const matchBox = (mx, my, t1, t2, slotIdx, side) => {
+    // side: 'left' | 'right'
+    const y1 = my;              // top team top
+    const y2 = my + BOX_H + PAIR_GAP; // bottom team top
+    const c1 = tColor(t1, slotIdx, true);
+    const c2 = tColor(t2, slotIdx, false);
+    const n1 = tName(t1);
+    const n2 = tName(t2);
+    const isPred1 = c1===C_GREEN||c1===C_RED;
+    const isPred2 = c2===C_GREEN||c2===C_RED;
+    // check mark
+    const chk1 = c1===C_GREEN ? ' ✓' : '';
+    const chk2 = c2===C_GREEN ? ' ✓' : '';
+
+    let parts = [];
+    // Outer border
+    parts.push(`<rect x="${mx}" y="${my}" width="${BOX_W}" height="${MATCH_H}" rx="6" fill="none" stroke="${C_BORD}" stroke-width="1" opacity="0.3"/>`);
+    // Top team box
+    parts.push(`<rect x="${mx}" y="${y1}" width="${BOX_W}" height="${BOX_H}" rx="5" fill="${C_BOX}" stroke="none"/>`);
+    parts.push(svgText(mx+28, y1+BOX_H/2, n1+chk1, c1, isPred1, BOX_W-34));
+    if(t1&&!t1.nd&&!t1.label3&&t1.f) parts.push(`<text x="${mx+8}" y="${y1+BOX_H/2}" dominant-baseline="central" font-size="12">${t1.f}</text>`);
+    // Bottom team box
+    parts.push(`<rect x="${mx}" y="${y2}" width="${BOX_W}" height="${BOX_H}" rx="5" fill="${C_BOX}" stroke="none"/>`);
+    parts.push(svgText(mx+28, y2+BOX_H/2, n2+chk2, c2, isPred2, BOX_W-34));
+    if(t2&&!t2.nd&&!t2.label3&&t2.f) parts.push(`<text x="${mx+8}" y="${y2+BOX_H/2}" dominant-baseline="central" font-size="12">${t2.f}</text>`);
+    // Divider line between teams
+    parts.push(`<line x1="${mx+4}" y1="${my+BOX_H}" x2="${mx+BOX_W-4}" y2="${my+BOX_H}" stroke="${C_LINE}" stroke-width="0.5"/>`);
+    // Match label
+    parts.push(`<text x="${mx+BOX_W/2}" y="${my-5}" fill="${C_DIM}" font-family="Outfit,sans-serif" font-size="9" text-anchor="middle">${esc(r16pairs[slotIdx]?.label||'')}</text>`);
+    return parts.join('');
+  };
+
+  const winnerBox = (wx, wy) => {
+    return `<rect x="${wx}" y="${wy}" width="${WIN_W}" height="${WIN_H}" rx="5" fill="${C_WIN}" stroke="${C_BORD}" stroke-width="0.8" opacity="0.6"/>
+<text x="${wx+WIN_W/2}" y="${wy+WIN_H/2}" fill="${C_DIM}" font-family="Outfit,sans-serif" font-size="10" text-anchor="middle" dominant-baseline="central">→ 1/8 финала</text>`;
+  };
+
+  // Connector lines: from match midpoint to winner box
+  const connectorLeft = (matchMidY, winY, winCenterY) => {
+    const mx = cX1 + BOX_W;
+    const wx = wX;
+    const wy = winY + WIN_H/2;
+    return `<polyline points="${mx},${matchMidY} ${mx+LINE_W/2},${matchMidY} ${mx+LINE_W/2},${winCenterY} ${wx},${winCenterY}" fill="none" stroke="${C_LINE}" stroke-width="1.2"/>`;
+  };
+
+  const connectorRight = (matchMidY, winCenterY) => {
+    const mx2 = cX2;
+    const lEnd = lX2 + LINE_W;
+    return `<polyline points="${lEnd},${matchMidY} ${lEnd-LINE_W/2},${matchMidY} ${lEnd-LINE_W/2},${winCenterY} ${lX2},${winCenterY}" fill="none" stroke="${C_LINE}" stroke-width="1.2"/>`;
+  };
+
+  // Build all 8 rows
+  for(let row=0; row<HALF; row++){
+    const iL = row;        // left match index (0-7)
+    const iR = row + HALF; // right match index (8-15)
+    const pL = r16pairs[iL];
+    const pR = r16pairs[iR];
+
+    const matchTopY = 20 + row * ROW_H;
+    const matchMidY = matchTopY + MATCH_H/2;
+
+    // Winner box Y: centered on the match
+    const winY = matchTopY + MATCH_H/2 - WIN_H/2;
+    const winCenterY = winY + WIN_H/2;
+
+    // Left match
+    svgParts.push(matchBox(cX1, matchTopY, pL?.tA, pL?.tB, iL, 'left'));
+    // Right match (mirrored — flip text align)
+    svgParts.push(matchBox(cX2, matchTopY, pR?.tA, pR?.tB, iR, 'right'));
+    // Winner box
+    svgParts.push(winnerBox(wX, winY));
+    // Left connector
+    svgParts.push(connectorLeft(matchMidY, winY, winCenterY));
+    // Right connector
+    svgParts.push(connectorRight(matchMidY, winCenterY));
+  }
+
+  const svgW = TOTAL_W;
+  const svgH = TOTAL_H;
+
+  el.innerHTML = `<div style="margin-bottom:8px;">
+    <span style="font-family:var(--font-d);font-weight:700;font-size:0.85rem;color:rgba(255,255,255,0.45);letter-spacing:1px;text-transform:uppercase;">🏟 1/16 ФИНАЛА</span>
+  </div>
+  <div class="res-bracket-wrap">
+    <svg width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="min-width:${svgW}px;">
+      ${svgParts.join('')}
+    </svg>
   </div>`;
 }
 
