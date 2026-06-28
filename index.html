@@ -402,7 +402,7 @@ body::after{display:none;}
           <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin-top:4px;">Кликните на матч → выберите победителя → заполните всю сетку</p>
         </div>
         <!-- SVG турнирная сетка -->
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;">
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;width:100%;">
           <div id="off-bracket-svg"></div>
         </div>
         <div style="text-align:center;margin-bottom:16px;">
@@ -427,7 +427,7 @@ body::after{display:none;}
       <div id="off-playoff-done" class="hidden">
         <div id="off-playoff-summary"></div>
         <!-- показываем сетку только для просмотра -->
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;">
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;width:100%;">
           <div id="off-bracket-svg-done"></div>
         </div>
         <div style="text-align:center;margin-bottom:16px;">
@@ -820,18 +820,18 @@ function buildOfficialBracket(){
 }
 
 function renderPoBracketSVG(viewOnly=false){
-  // ── Constants ──
-  const R   = 18;              // flag circle radius
-  const D   = R*2;             // 36px per circle
-  const VS  = 10;              // gap between two team circles in one match
-  const MH  = D*2 + VS;       // match height = 82px
-  const RG  = 22;              // row gap between matches
-  const RU  = MH + RG;        // row unit = 104px
-  const NW  = 90;              // name label width
-  const CW  = D + 8 + NW;     // one team slot width (circle + gap + name) = 134px
-  const MW  = CW;              // match column width = 134px (one side)
-  const GC  = 36;              // gap between round columns
-  const PAD = 14;              // outer padding
+  // ── Constants — compact to fit full bracket on screen ──
+  const R   = 13;              // flag circle radius (smaller)
+  const D   = R*2;             // 26px per circle
+  const VS  = 6;               // gap between two team circles
+  const MH  = D*2 + VS;       // match height = 58px
+  const RG  = 14;              // row gap between matches
+  const RU  = MH + RG;        // row unit = 72px → 8 rows = 576px
+  const NW  = 80;              // name label width
+  const CW  = D + 6 + NW;     // one team slot width = 112px
+  const MW  = CW;              // match column width
+  const GC  = 28;              // gap between round columns
+  const PAD = 12;              // outer padding
 
   const GOLD  = '#C9A84C';
   const GDIM  = 'rgba(201,168,76,0.4)';
@@ -854,7 +854,7 @@ function renderPoBracketSVG(viewOnly=false){
   const R0 = R1 + MW + GC;                // r32 right
 
   const TOTAL_W = R0 + MW + PAD;
-  const TOP = 42;
+  const TOP = 34;
   const rowY = i => TOP + i * RU;
   const midY = i => rowY(i) + MH/2;       // vertical center of match i
 
@@ -871,11 +871,11 @@ function renderPoBracketSVG(viewOnly=false){
     const sw = sel ? 2.2 : 1;
     parts.push(`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`);
     if(team){
-      parts.push(`<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="20">${team.f||'?'}</text>`);
-      const nm = team.n.length>12 ? team.n.slice(0,11)+'…' : team.n;
-      parts.push(`<text x="${nx}" y="${cy}" text-anchor="${ta}" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="10.5" font-weight="${sel?700:400}" fill="${sel?GREEN:WHITE}">${esc(nm)}</text>`);
+      parts.push(`<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="16">${team.f||'?'}</text>`);
+      const nm = team.n.length>11 ? team.n.slice(0,10)+'…' : team.n;
+      parts.push(`<text x="${nx}" y="${cy}" text-anchor="${ta}" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="9.5" font-weight="${sel?700:400}" fill="${sel?GREEN:WHITE}">${esc(nm)}</text>`);
     } else {
-      parts.push(`<text x="${nx}" y="${cy}" text-anchor="${ta}" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="9" fill="${DIM}" font-style="italic">ожидается</text>`);
+      parts.push(`<text x="${nx}" y="${cy}" text-anchor="${ta}" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="8" fill="${DIM}" font-style="italic">?</text>`);
     }
   }
 
@@ -891,13 +891,13 @@ function renderPoBracketSVG(viewOnly=false){
     // VS badge
     const bx = side==='L' ? colX + R : colX + MW - R;
     const by = topY + MH/2;
-    parts.push(`<rect x="${bx-10}" y="${by-7}" width="20" height="14" rx="7" fill="#0d0d1a" stroke="${GOLD}" stroke-width="0.8"/>`);
-    parts.push(`<text x="${bx}" y="${by}" text-anchor="middle" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="7.5" font-weight="700" fill="${GOLD}">VS</text>`);
+    parts.push(`<rect x="${bx-8}" y="${by-5}" width="16" height="10" rx="5" fill="#0d0d1a" stroke="${GOLD}" stroke-width="0.7"/>`);
+    parts.push(`<text x="${bx}" y="${by}" text-anchor="middle" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="6.5" font-weight="700" fill="${GOLD}">VS</text>`);
     // match label
     const allM=[...PO_MATCHES.r32,...PO_MATCHES.r16,...PO_MATCHES.r8,...PO_MATCHES.r4,PO_MATCHES.final,PO_MATCHES.r3rd];
     const lbl = allM.find(m=>m.id===mid)?.label||'';
     const lx2 = colX + MW/2;
-    parts.push(`<text x="${lx2}" y="${topY-6}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="8" fill="${GDIM}">${lbl}</text>`);
+    parts.push(`<text x="${lx2}" y="${topY-4}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="7" fill="${GDIM}">${lbl}</text>`);
     // click zone
     if(!viewOnly&&(tA||tB)){
       parts.push(`<rect x="${colX}" y="${topY-4}" width="${MW}" height="${MH+8}" fill="transparent" style="cursor:pointer;" onclick="handlePoClick('${mid}')"/>`);
@@ -993,7 +993,7 @@ function renderPoBracketSVG(viewOnly=false){
     line(exitL(L3), sfY+MH/2, FC, sfY+MH/2);
     // right SF → final
     line(exitR(R3), sfY+MH/2, exitL(FC), sfY+MH/2);
-    parts.push(`<text x="${FC+MW/2}" y="${sfY-14}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="11" font-weight="800" fill="${GOLD}">🏆 ФИНАЛ</text>`);
+    parts.push(`<text x="${FC+MW/2}" y="${sfY-10}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="10" font-weight="800" fill="${GOLD}">🏆 ФИНАЛ</text>`);
   }
 
   // ════════ RIGHT CONNECTORS (done after so they draw over nothing) ════════
@@ -1028,17 +1028,17 @@ function renderPoBracketSVG(viewOnly=false){
   }
 
   // ════════ 3RD PLACE ════════
-  const trd3Y = sfY + MH + 50;
+  const trd3Y = sfY + MH + 32;
   {
     const {a,b} = getPoTeams3rd();
     match(FC, trd3Y, a, b, PO_MATCHES.r3rd.id, 'L');
-    parts.push(`<text x="${FC+MW/2}" y="${trd3Y-14}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="10" font-weight="700" fill="rgba(205,127,50,0.9)">🥉 МАТЧ ЗА 3-Е МЕСТО</text>`);
+    parts.push(`<text x="${FC+MW/2}" y="${trd3Y-10}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="9" font-weight="700" fill="rgba(205,127,50,0.9)">🥉 МАТЧ ЗА 3-Е МЕСТО</text>`);
   }
 
   // ════════ ROUND HEADERS ════════
-  const hY = TOP - 16;
+  const hY = TOP - 12;
   [[L0,'1/16'],[L1,'1/8'],[L2,'1/4'],[L3,'1/2'],[FC,'ФИНАЛ'],[R3,'1/2'],[R2,'1/4'],[R1,'1/8'],[R0,'1/16']].forEach(([x,t])=>{
-    parts.push(`<text x="${x+MW/2}" y="${hY}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="9.5" font-weight="700" fill="${GOLD}" letter-spacing="0.5">${t}</text>`);
+    parts.push(`<text x="${x+MW/2}" y="${hY}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="8" font-weight="700" fill="${GOLD}" letter-spacing="0.5">${t}</text>`);
   });
 
   const SVG_H = trd3Y + MH + 24;
@@ -1046,7 +1046,10 @@ function renderPoBracketSVG(viewOnly=false){
   svg.setAttribute('width', TOTAL_W);
   svg.setAttribute('height', SVG_H);
   svg.setAttribute('viewBox', `0 0 ${TOTAL_W} ${SVG_H}`);
-  svg.style.cssText = `background:#0d0d1a;border-radius:12px;display:block;width:100%;height:auto;min-width:600px;`;
+  // Use explicit pixel size — container scrolls horizontally, no height distortion
+  svg.setAttribute('width', TOTAL_W);
+  svg.setAttribute('height', SVG_H);
+  svg.style.cssText = `background:#0d0d1a;border-radius:12px;display:block;`;
   svg.innerHTML = parts.join('');
   return svg;
 }
