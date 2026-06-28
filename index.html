@@ -792,340 +792,236 @@ function buildOfficialBracket(){
 }
 
 function renderPoBracketSVG(viewOnly=false){
-  // ══════════════════════════════════════════════════════
-  // Стиль: флаги в кружках, как Fabrizio Romano / FIFA
-  // Левая колонка (М1-М8), правая (М5-М16 зеркально)
-  // Линии сходятся к центру через 1/8 → 1/4 → 1/2 → ФИНАЛ
-  // ══════════════════════════════════════════════════════
-  const R = 22;            // radius of flag circle
-  const D = R*2;           // diameter
-  const GAP_PAIR = 8;      // gap between two flag circles in one match (home/away stacked)
-  const MATCH_H = D*2+GAP_PAIR; // height of one match unit
-  const ROW_GAP = 28;      // vertical gap between matches in same column
-  const ROW_UNIT = MATCH_H + ROW_GAP;
+  // ── Constants ──
+  const R   = 18;              // flag circle radius
+  const D   = R*2;             // 36px per circle
+  const VS  = 10;              // gap between two team circles in one match
+  const MH  = D*2 + VS;       // match height = 82px
+  const RG  = 22;              // row gap between matches
+  const RU  = MH + RG;        // row unit = 104px
+  const NW  = 90;              // name label width
+  const CW  = D + 8 + NW;     // one team slot width (circle + gap + name) = 134px
+  const MW  = CW;              // match column width = 134px (one side)
+  const GC  = 36;              // gap between round columns
+  const PAD = 14;              // outer padding
 
-  const LINE_CLR  = '#C9A84C';  // golden bracket lines
-  const LINE_W    = 1.5;
-  const CIRCLE_BG = '#1a1a2e';  // dark circle bg
-  const CIRCLE_SEL= '#2a1a50';  // selected
-  const TEXT_CLR  = '#ffffff';
-  const DIM_CLR   = 'rgba(255,255,255,0.3)';
-  const GOLD      = '#FFD23F';
-  const GREEN     = '#00E68A';
-  const RED       = '#FF3B7F';
-  const BADGE_BG  = '#101F45';
+  const GOLD  = '#C9A84C';
+  const GDIM  = 'rgba(201,168,76,0.4)';
+  const WHITE = '#ffffff';
+  const DIM   = 'rgba(255,255,255,0.28)';
+  const GREEN = '#00E68A';
+  const CBGN  = '#12122a';     // circle bg normal
+  const CBGS  = '#1e0e3a';     // circle bg selected
 
-  const HCOL = 260;   // width of one r32 column (flag + name label)
-  const LABEL_W = 110; // text label next to flag
-  const GAP_COL = 55;  // horizontal gap between rounds
+  // Column X positions (left half then centre then right half mirrored)
+  // Left: r32→r16→r8→r4→final
+  const L0 = PAD;                          // r32 left col
+  const L1 = L0 + MW + GC;                // r16 left
+  const L2 = L1 + MW + GC;                // r8  left
+  const L3 = L2 + MW + GC;                // r4  left (SF)
+  const FC = L3 + MW + GC;                // FINAL col
+  const R3 = FC + MW + GC;                // r4  right (SF)
+  const R2 = R3 + MW + GC;                // r8  right
+  const R1 = R2 + MW + GC;                // r16 right
+  const R0 = R1 + MW + GC;                // r32 right
 
-  // X positions of each round (left half)
-  const lx32 = 10;
-  const lx16 = lx32 + HCOL + GAP_COL;
-  const lx8  = lx16 + HCOL + GAP_COL;
-  const lx4  = lx8  + HCOL + GAP_COL;
-  const finX = lx4  + HCOL + GAP_COL;
-
-  // Right half mirrors: rx32 is rightmost, etc.
-  // We'll compute right side X positions such that rx32 = finX + HCOL + GAP_COL*4 + HCOL
-  // Actually let's compute from center outward:
-  const rx4  = finX + HCOL + GAP_COL;
-  const rx8  = rx4  + HCOL + GAP_COL;
-  const rx16 = rx8  + HCOL + GAP_COL;
-  const rx32 = rx16 + HCOL + GAP_COL;
-
-  const TOTAL_W = rx32 + HCOL + 10;
-
-  // 8 rows
-  const TOP_PAD = 50;
-  const rowY = (i) => TOP_PAD + i * ROW_UNIT;
-  const matchCY = (i) => rowY(i) + MATCH_H/2; // center Y of match i
+  const TOTAL_W = R0 + MW + PAD;
+  const TOP = 42;
+  const rowY = i => TOP + i * RU;
+  const midY = i => rowY(i) + MH/2;       // vertical center of match i
 
   const parts = [];
 
-  // ── helper: render one team slot (flag circle + name) ──
-  function teamSlot(cx, cy, team, isSelected, isRight){
-    const flagCX = isRight ? cx + HCOL - R : cx + R;
-    const namX   = isRight ? flagCX - R - 6 : flagCX + R + 6;
-    const anchor = isRight ? 'end' : 'start';
-    const circleFill = isSelected ? CIRCLE_SEL : CIRCLE_BG;
-    const circleBorder = isSelected ? GREEN : LINE_CLR;
-
-    parts.push(`<circle cx="${flagCX}" cy="${cy}" r="${R}" fill="${circleFill}" stroke="${circleBorder}" stroke-width="${isSelected?2:1.2}"/>`);
-
+  // ─── team slot: circle + name ───
+  // side='L': circle on left, name right; side='R': circle on right, name left
+  function slot(colX, cy, team, sel, side){
+    const cx = side==='L' ? colX + R : colX + MW - R;
+    const nx = side==='L' ? cx + R + 6 : cx - R - 6;
+    const ta = side==='L' ? 'start' : 'end';
+    const fill = sel ? CBGS : CBGN;
+    const stroke = sel ? GREEN : GOLD;
+    const sw = sel ? 2.2 : 1;
+    parts.push(`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`);
     if(team){
-      // Flag emoji
-      parts.push(`<text x="${flagCX}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="22">${team.f||'?'}</text>`);
-      // Name label
-      const nm = team.n.length > 14 ? team.n.slice(0,13)+'…' : team.n;
-      parts.push(`<text x="${namX}" y="${cy}" text-anchor="${anchor}" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="11" font-weight="${isSelected?'700':'400'}" fill="${isSelected?GREEN:TEXT_CLR}">${esc(nm)}</text>`);
-      if(isSelected){
-        const chkX = isRight ? flagCX + R + 28 : flagCX - R - 28;
-        parts.push(`<text x="${chkX}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="11" fill="${GREEN}">✓</text>`);
-      }
+      parts.push(`<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="20">${team.f||'?'}</text>`);
+      const nm = team.n.length>12 ? team.n.slice(0,11)+'…' : team.n;
+      parts.push(`<text x="${nx}" y="${cy}" text-anchor="${ta}" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="10.5" font-weight="${sel?700:400}" fill="${sel?GREEN:WHITE}">${esc(nm)}</text>`);
     } else {
-      parts.push(`<text x="${namX}" y="${cy}" text-anchor="${anchor}" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="10" fill="${DIM_CLR}" font-style="italic">?</text>`);
+      parts.push(`<text x="${nx}" y="${cy}" text-anchor="${ta}" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="9" fill="${DIM}" font-style="italic">ожидается</text>`);
     }
   }
 
-  // ── helper: render one match (2 teams, stacked) ──
-  // col: 'left' → home on left side; 'right' → home on right side (mirrored)
-  function renderMatch(colX, topY, tA, tB, matchId, col){
-    const isRight = col==='right';
-    const sel = S_PO.picks[matchId];
-    const isSelA = sel&&tA&&sel.n===tA.n;
-    const isSelB = sel&&tB&&sel.n===tB.n;
-
+  // ─── full match (2 slots + VS badge + label + click) ───
+  function match(colX, topY, tA, tB, mid, side){
+    const sel = S_PO.picks[mid];
+    const sA = sel&&tA&&sel.n===tA.n;
+    const sB = sel&&tB&&sel.n===tB.n;
     const cyA = topY + R;
-    const cyB = topY + R + D + GAP_PAIR;
-
-    teamSlot(colX, cyA, tA, isSelA, isRight);
-    teamSlot(colX, cyB, tB, isSelB, isRight);
-
-    // "VS" badge between them
-    const bx = isRight ? colX + HCOL - R : colX + R;
-    const by = topY + D/2 + GAP_PAIR/2 + R/2;
-    parts.push(`<rect x="${bx-12}" y="${by-8}" width="24" height="16" rx="8" fill="${BADGE_BG}" stroke="${LINE_CLR}" stroke-width="0.8"/>`);
-    parts.push(`<text x="${bx}" y="${by}" text-anchor="middle" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="8" font-weight="600" fill="${GOLD}">VS</text>`);
-
-    // Match label (М1, М2...)
+    const cyB = topY + D + VS + R;
+    slot(colX, cyA, tA, sA, side);
+    slot(colX, cyB, tB, sB, side);
+    // VS badge
+    const bx = side==='L' ? colX + R : colX + MW - R;
+    const by = topY + MH/2;
+    parts.push(`<rect x="${bx-10}" y="${by-7}" width="20" height="14" rx="7" fill="#0d0d1a" stroke="${GOLD}" stroke-width="0.8"/>`);
+    parts.push(`<text x="${bx}" y="${by}" text-anchor="middle" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="7.5" font-weight="700" fill="${GOLD}">VS</text>`);
+    // match label
     const allM=[...PO_MATCHES.r32,...PO_MATCHES.r16,...PO_MATCHES.r8,...PO_MATCHES.r4,PO_MATCHES.final,PO_MATCHES.r3rd];
-    const mObj=allM.find(m=>m.id===matchId);
-    const lx2 = isRight ? colX + HCOL/2 : colX + HCOL/2;
-    parts.push(`<text x="${lx2}" y="${topY-8}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="9" font-weight="600" fill="${DIM_CLR}">${mObj?.label||''}</text>`);
-
-    // Click overlay
-    if(!viewOnly && (tA||tB)){
-      parts.push(`<rect x="${colX}" y="${topY-5}" width="${HCOL}" height="${MATCH_H+10}" fill="transparent" style="cursor:pointer;" onclick="handlePoClick('${matchId}')"/>`);
+    const lbl = allM.find(m=>m.id===mid)?.label||'';
+    const lx2 = colX + MW/2;
+    parts.push(`<text x="${lx2}" y="${topY-6}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="8" fill="${GDIM}">${lbl}</text>`);
+    // click zone
+    if(!viewOnly&&(tA||tB)){
+      parts.push(`<rect x="${colX}" y="${topY-4}" width="${MW}" height="${MH+8}" fill="transparent" style="cursor:pointer;" onclick="handlePoClick('${mid}')"/>`);
     }
   }
 
-  // ── helper: bracket connector line ──
-  // Connects center of a match to a merge point, then to next round center
-  function hLine(x1, y1, x2, y2){ // simple H-V-H polyline
-    const midX = (x1+x2)/2;
-    parts.push(`<polyline points="${x1},${y1} ${midX},${y1} ${midX},${y2} ${x2},${y2}" fill="none" stroke="${LINE_CLR}" stroke-width="${LINE_W}" stroke-linecap="round" stroke-linejoin="round"/>`);
+  // ─── connector: two match centres → merge → next match centre ───
+  // exits: 'R'=right edge of left-side match; 'L'=left edge of right-side match
+  function conn2(exitX, mY0, mY1, toX, toY){
+    const mx = (exitX+toX)/2;
+    parts.push(`<line x1="${exitX}" y1="${mY0}" x2="${mx}" y2="${mY0}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${exitX}" y1="${mY1}" x2="${mx}" y2="${mY1}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${mx}" y1="${mY0}" x2="${mx}" y2="${mY1}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${mx}" y1="${toY}" x2="${toX}" y2="${toY}" stroke="${GOLD}" stroke-width="1.2"/>`);
   }
 
-  // For left side: line exits from RIGHT edge of match box
-  // For right side: line exits from LEFT edge of match box
-  const leftEdge  = (colX) => colX + HCOL;   // line exits right of left-col match
-  const rightEdge = (colX) => colX;           // line exits left of right-col match
+  // ─── single horizontal line ───
+  function line(x1,y1,x2,y2){
+    parts.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${GOLD}" stroke-width="1.2"/>`);
+  }
 
-  // ════════════════════════════════
-  // DRAW R32 — 8 LEFT + 8 RIGHT
-  // ════════════════════════════════
+  // Exit points: right edge of left-side col, left edge of right-side col
+  const exitL = cx => cx + MW;   // right edge
+  const exitR = cx => cx;        // left edge
+
+  // ════════ R32 — 8+8 ════════
   for(let i=0;i<8;i++){
     const m = PO_MATCHES.r32[i];
-    renderMatch(lx32, rowY(i), m.home, m.away, m.id, 'left');
+    match(L0, rowY(i), m.home, m.away, m.id, 'L');
   }
   for(let i=0;i<8;i++){
     const m = PO_MATCHES.r32[i+8];
-    renderMatch(rx32, rowY(i), m.home, m.away, m.id, 'right');
+    match(R0, rowY(i), m.home, m.away, m.id, 'R');
   }
 
-  // ════════════════════════════════
-  // DRAW R16 — 4 LEFT + 4 RIGHT
-  // Each R16 match merges 2 R32 matches
-  // Position: centered between the 2 R32 rows it comes from
-  // ════════════════════════════════
+  // ════════ R16 — 4+4 ════════
+  // R16 match i centres between r32 rows i*2 and i*2+1
+  const r16Y = i => (midY(i*2) + midY(i*2+1))/2 - MH/2;
+
   for(let i=0;i<4;i++){
     const m = PO_MATCHES.r16[i];
     const {a,b} = getPoTeams('r16',i);
-    const y = rowY(i*2) + ROW_UNIT/2 - MATCH_H/2;
-    const midY = y + MATCH_H/2;
-    renderMatch(lx16, y, a, b, m.id, 'left');
-
-    // connector: from R32 to this R16
-    const m0cY = matchCY(i*2);
-    const m1cY = matchCY(i*2+1);
-    const edgeX = leftEdge(lx32);
-    const nextX = lx16;  // left edge of R16 match (we'll use circle center)
-    // Vertical bar at midpoint X
-    const midX16 = (edgeX + nextX) / 2;
-    parts.push(`<line x1="${edgeX}" y1="${m0cY}" x2="${midX16}" y2="${m0cY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${edgeX}" y1="${m1cY}" x2="${midX16}" y2="${m1cY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX16}" y1="${m0cY}" x2="${midX16}" y2="${m1cY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX16}" y1="${midY}" x2="${nextX}" y2="${midY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
+    const ty = r16Y(i);
+    match(L1, ty, a, b, m.id, 'L');
+    conn2(exitL(L0), midY(i*2), midY(i*2+1), L1, ty+MH/2);
   }
   for(let i=0;i<4;i++){
     const m = PO_MATCHES.r16[i+4];
     const {a,b} = getPoTeams('r16',i+4);
-    const y = rowY(i*2) + ROW_UNIT/2 - MATCH_H/2;
-    const midY = y + MATCH_H/2;
-    renderMatch(rx16, y, a, b, m.id, 'right');
-
-    const m0cY = matchCY(i*2);
-    const m1cY = matchCY(i*2+1);
-    const edgeX = rightEdge(rx32);
-    const nextX = rx16 + HCOL;
-    const midX16 = (edgeX + nextX) / 2;
-    parts.push(`<line x1="${edgeX}" y1="${m0cY}" x2="${midX16}" y2="${m0cY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${edgeX}" y1="${m1cY}" x2="${midX16}" y2="${m1cY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX16}" y1="${m0cY}" x2="${midX16}" y2="${m1cY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX16}" y1="${midY}" x2="${nextX}" y2="${midY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
+    const ty = r16Y(i);
+    match(R1, ty, a, b, m.id, 'R');
+    // connectors drawn below in RIGHT CONNECTORS section
   }
 
-  // ════════════════════════════════
-  // DRAW R8 — 2 LEFT + 2 RIGHT
-  // ════════════════════════════════
-  const r16MatchY=(i)=> rowY(i*2) + ROW_UNIT/2 - MATCH_H/2; // top Y of R16 match i
+  // ════════ R8 — 2+2 ════════
+  // R8 match i centres between r16 matches i*2 and i*2+1
+  const r8Y = i => (r16Y(i*2)+MH/2 + r16Y(i*2+1)+MH/2)/2 - MH/2;
 
   for(let i=0;i<2;i++){
     const m = PO_MATCHES.r8[i];
     const {a,b} = getPoTeams('r8',i);
-    // Center between R16 matches i*2 and i*2+1
-    const y16_0 = r16MatchY(i*2);
-    const y16_1 = r16MatchY(i*2+1);
-    const centerOfPair = (y16_0 + MATCH_H/2 + y16_1 + MATCH_H/2) / 2;
-    const y = centerOfPair - MATCH_H/2;
-    renderMatch(lx8, y, a, b, m.id, 'left');
-
-    const mid0Y = y16_0 + MATCH_H/2;
-    const mid1Y = y16_1 + MATCH_H/2;
-    const midY = y + MATCH_H/2;
-    const edgeX = leftEdge(lx16);
-    const nextX = lx8;
-    const midX = (edgeX + nextX)/2;
-    parts.push(`<line x1="${edgeX}" y1="${mid0Y}" x2="${midX}" y2="${mid0Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${edgeX}" y1="${mid1Y}" x2="${midX}" y2="${mid1Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX}" y1="${mid0Y}" x2="${midX}" y2="${mid1Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX}" y1="${midY}" x2="${nextX}" y2="${midY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
+    const ty = r8Y(i);
+    match(L2, ty, a, b, m.id, 'L');
+    conn2(exitL(L1), r16Y(i*2)+MH/2, r16Y(i*2+1)+MH/2, L2, ty+MH/2);
   }
   for(let i=0;i<2;i++){
     const m = PO_MATCHES.r8[i+2];
     const {a,b} = getPoTeams('r8',i+2);
-    const y16_0 = r16MatchY(i*2);
-    const y16_1 = r16MatchY(i*2+1);
-    const centerOfPair = (y16_0 + MATCH_H/2 + y16_1 + MATCH_H/2) / 2;
-    const y = centerOfPair - MATCH_H/2;
-    renderMatch(rx8, y, a, b, m.id, 'right');
-
-    const mid0Y = y16_0 + MATCH_H/2;
-    const mid1Y = y16_1 + MATCH_H/2;
-    const midY = y + MATCH_H/2;
-    const edgeX = rightEdge(rx16);
-    const nextX = rx8 + HCOL;
-    const midX = (edgeX + nextX)/2;
-    parts.push(`<line x1="${edgeX}" y1="${mid0Y}" x2="${midX}" y2="${mid0Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${edgeX}" y1="${mid1Y}" x2="${midX}" y2="${mid1Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX}" y1="${mid0Y}" x2="${midX}" y2="${mid1Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX}" y1="${midY}" x2="${nextX}" y2="${midY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
+    const ty = r8Y(i);
+    match(R2, ty, a, b, m.id, 'R');
   }
 
-  // ════════════════════════════════
-  // SEMIFINALS (r4) — 1 LEFT + 1 RIGHT
-  // ════════════════════════════════
-  const r8MatchY=(i)=>{
-    const y16_0=r16MatchY(i*2), y16_1=r16MatchY(i*2+1);
-    const c=(y16_0+MATCH_H/2+y16_1+MATCH_H/2)/2;
-    return c-MATCH_H/2;
-  };
-
-  const sf0top = (() => {
-    const r8_0 = r8MatchY(0), r8_1 = r8MatchY(1);
-    const c = (r8_0+MATCH_H/2 + r8_1+MATCH_H/2)/2;
-    return c-MATCH_H/2;
-  })();
-  const sf1top = sf0top; // symmetric
+  // ════════ SF (r4) — 1+1 ════════
+  const sfY = (r8Y(0)+MH/2 + r8Y(1)+MH/2)/2 - MH/2;
 
   {
     const m = PO_MATCHES.r4[0];
     const {a,b} = getPoTeams('r4',0);
-    renderMatch(lx4, sf0top, a, b, m.id, 'left');
-
-    const mid0Y = r8MatchY(0)+MATCH_H/2;
-    const mid1Y = r8MatchY(1)+MATCH_H/2;
-    const midY  = sf0top+MATCH_H/2;
-    const edgeX = leftEdge(lx8);
-    const nextX = lx4;
-    const midX  = (edgeX+nextX)/2;
-    parts.push(`<line x1="${edgeX}" y1="${mid0Y}" x2="${midX}" y2="${mid0Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${edgeX}" y1="${mid1Y}" x2="${midX}" y2="${mid1Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX}" y1="${mid0Y}" x2="${midX}" y2="${mid1Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX}" y1="${midY}" x2="${nextX}" y2="${midY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
+    match(L3, sfY, a, b, m.id, 'L');
+    conn2(exitL(L2), r8Y(0)+MH/2, r8Y(1)+MH/2, L3, sfY+MH/2);
   }
   {
     const m = PO_MATCHES.r4[1];
     const {a,b} = getPoTeams('r4',1);
-    renderMatch(rx4, sf1top, a, b, m.id, 'right');
-
-    const mid0Y = r8MatchY(0)+MATCH_H/2;
-    const mid1Y = r8MatchY(1)+MATCH_H/2;
-    const midY  = sf1top+MATCH_H/2;
-    const edgeX = rightEdge(rx8);
-    const nextX = rx4+HCOL;
-    const midX  = (edgeX+nextX)/2;
-    parts.push(`<line x1="${edgeX}" y1="${mid0Y}" x2="${midX}" y2="${mid0Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${edgeX}" y1="${mid1Y}" x2="${midX}" y2="${mid1Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX}" y1="${mid0Y}" x2="${midX}" y2="${mid1Y}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${midX}" y1="${midY}" x2="${nextX}" y2="${midY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
+    match(R3, sfY, a, b, m.id, 'R');
   }
 
-  // ════════════════════════════════
-  // FINAL — center
-  // ════════════════════════════════
-  const finTop = sf0top;  // vertically aligned with semis
-  const finMidY = finTop + MATCH_H/2;
+  // ════════ FINAL ════════
   {
     const {a,b} = getPoTeamsFinal();
-    renderMatch(finX, finTop, a, b, PO_MATCHES.final.id, 'left');
-
-    // Connectors from both semis to final
-    const sfLedge = leftEdge(lx4);
-    const sfRedge = rightEdge(rx4);
-    const finLedge = finX;
-    const finRedge = finX + HCOL;
-    const midXL = (sfLedge + finLedge)/2;
-    const midXR = (sfRedge + finRedge)/2;
-    parts.push(`<line x1="${sfLedge}" y1="${finMidY}" x2="${finLedge}" y2="${finMidY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    parts.push(`<line x1="${sfRedge}" y1="${finMidY}" x2="${finRedge}" y2="${finMidY}" stroke="${LINE_CLR}" stroke-width="${LINE_W}"/>`);
-    // FINAL label above
-    parts.push(`<text x="${finX+HCOL/2}" y="${finTop-18}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="12" font-weight="700" fill="${GOLD}">🏆 ФИНАЛ</text>`);
+    match(FC, sfY, a, b, PO_MATCHES.final.id, 'L');
+    // left SF → final
+    line(exitL(L3), sfY+MH/2, FC, sfY+MH/2);
+    // right SF → final
+    line(exitR(R3), sfY+MH/2, exitL(FC), sfY+MH/2);
+    parts.push(`<text x="${FC+MW/2}" y="${sfY-14}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="11" font-weight="800" fill="${GOLD}">🏆 ФИНАЛ</text>`);
   }
 
-  // ════════════════════════════════
-  // 3RD PLACE
-  // ════════════════════════════════
-  const trd3Top = finTop + MATCH_H + 50;
+  // ════════ RIGHT CONNECTORS (done after so they draw over nothing) ════════
+  // R16→R32 right side
+  for(let i=0;i<4;i++){
+    const ty = r16Y(i);
+    const cy0 = midY(i*2), cy1 = midY(i*2+1);
+    const mx = (exitR(R0) + exitL(R1))/2;
+    parts.push(`<line x1="${exitR(R0)}" y1="${cy0}" x2="${mx}" y2="${cy0}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${exitR(R0)}" y1="${cy1}" x2="${mx}" y2="${cy1}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${mx}" y1="${cy0}" x2="${mx}" y2="${cy1}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${mx}" y1="${ty+MH/2}" x2="${exitL(R1)}" y2="${ty+MH/2}" stroke="${GOLD}" stroke-width="1.2"/>`);
+  }
+  // R8→R16 right side
+  for(let i=0;i<2;i++){
+    const ty = r8Y(i);
+    const cy0 = r16Y(i*2)+MH/2, cy1 = r16Y(i*2+1)+MH/2;
+    const mx = (exitR(R1) + exitL(R2))/2;
+    parts.push(`<line x1="${exitR(R1)}" y1="${cy0}" x2="${mx}" y2="${cy0}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${exitR(R1)}" y1="${cy1}" x2="${mx}" y2="${cy1}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${mx}" y1="${cy0}" x2="${mx}" y2="${cy1}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${mx}" y1="${ty+MH/2}" x2="${exitL(R2)}" y2="${ty+MH/2}" stroke="${GOLD}" stroke-width="1.2"/>`);
+  }
+  // SF→R8 right side
+  {
+    const cy0 = r8Y(0)+MH/2, cy1 = r8Y(1)+MH/2;
+    const mx = (exitR(R2) + exitL(R3))/2;
+    parts.push(`<line x1="${exitR(R2)}" y1="${cy0}" x2="${mx}" y2="${cy0}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${exitR(R2)}" y1="${cy1}" x2="${mx}" y2="${cy1}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${mx}" y1="${cy0}" x2="${mx}" y2="${cy1}" stroke="${GOLD}" stroke-width="1.2"/>`);
+    parts.push(`<line x1="${mx}" y1="${sfY+MH/2}" x2="${exitL(R3)}" y2="${sfY+MH/2}" stroke="${GOLD}" stroke-width="1.2"/>`);
+  }
+
+  // ════════ 3RD PLACE ════════
+  const trd3Y = sfY + MH + 50;
   {
     const {a,b} = getPoTeams3rd();
-    renderMatch(finX, trd3Top, a, b, PO_MATCHES.r3rd.id, 'left');
-    parts.push(`<text x="${finX+HCOL/2}" y="${trd3Top-18}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="11" font-weight="600" fill="rgba(205,127,50,0.9)">🥉 МАТЧ ЗА 3-Е МЕСТО</text>`);
+    match(FC, trd3Y, a, b, PO_MATCHES.r3rd.id, 'L');
+    parts.push(`<text x="${FC+MW/2}" y="${trd3Y-14}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="10" font-weight="700" fill="rgba(205,127,50,0.9)">🥉 МАТЧ ЗА 3-Е МЕСТО</text>`);
   }
 
-  // ════════════════════════════════
-  // COLUMN HEADERS
-  // ════════════════════════════════
-  const hdrs=[
-    [lx32+HCOL/2,'1/16 ФИНАЛА'],
-    [lx16+HCOL/2,'1/8 ФИНАЛА'],
-    [lx8+HCOL/2,'1/4 ФИНАЛА'],
-    [lx4+HCOL/2,'1/2 ФИНАЛА'],
-    [finX+HCOL/2,''],  // ФИНАЛ labeled above match
-    [rx4+HCOL/2,'1/2 ФИНАЛА'],
-    [rx8+HCOL/2,'1/4 ФИНАЛА'],
-    [rx16+HCOL/2,'1/8 ФИНАЛА'],
-    [rx32+HCOL/2,'1/16 ФИНАЛА'],
-  ];
-  hdrs.forEach(([x,t])=>{
-    if(!t) return;
-    parts.push(`<text x="${x}" y="22" text-anchor="middle" font-family="Outfit,sans-serif" font-size="10" font-weight="700" fill="${GOLD}" letter-spacing="1">${t}</text>`);
+  // ════════ ROUND HEADERS ════════
+  const hY = TOP - 16;
+  [[L0,'1/16'],[L1,'1/8'],[L2,'1/4'],[L3,'1/2'],[FC,'ФИНАЛ'],[R3,'1/2'],[R2,'1/4'],[R1,'1/8'],[R0,'1/16']].forEach(([x,t])=>{
+    parts.push(`<text x="${x+MW/2}" y="${hY}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="9.5" font-weight="700" fill="${GOLD}" letter-spacing="0.5">${t}</text>`);
   });
-  // Main title
-  parts.push(`<text x="${TOTAL_W/2}" y="14" text-anchor="middle" font-family="Outfit,sans-serif" font-size="13" font-weight="800" fill="${TEXT_CLR}" letter-spacing="2">FIFA WORLD CUP 2026 · KNOCKOUTS</text>`);
 
-  const SVG_H = trd3Top + MATCH_H + 30;
+  const SVG_H = trd3Y + MH + 24;
   const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
   svg.setAttribute('width', TOTAL_W);
   svg.setAttribute('height', SVG_H);
   svg.setAttribute('viewBox', `0 0 ${TOTAL_W} ${SVG_H}`);
-  svg.style.cssText = `min-width:${TOTAL_W}px;background:#0d0d1a;border-radius:12px;`;
+  svg.style.cssText = `min-width:${Math.min(TOTAL_W,1100)}px;width:100%;background:#0d0d1a;border-radius:12px;display:block;`;
   svg.innerHTML = parts.join('');
   return svg;
 }
-
-
 
 function handlePoClick(matchId){
   // Find the match and its teams
