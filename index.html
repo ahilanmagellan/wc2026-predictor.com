@@ -904,7 +904,7 @@ function renderPoBracketSVG(viewOnly=false){
     parts.push(`<text x="${lx2}" y="${topY-4}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="7" fill="${GDIM}">${lbl}</text>`);
     // click zone
     if(!viewOnly&&(tA||tB)){
-      parts.push(`<rect x="${colX}" y="${topY-4}" width="${MW}" height="${MH+8}" fill="transparent" style="cursor:pointer;" onclick="handlePoClick('${mid}')"/>`);
+      parts.push(`<rect x="${colX}" y="${topY-4}" width="${MW}" height="${MH+8}" fill="transparent" style="cursor:pointer;" data-matchid="${mid}" class="po-clickable"/>`);
     }
   }
 
@@ -1055,6 +1055,14 @@ function renderPoBracketSVG(viewOnly=false){
   svg.setAttribute('height', SVG_H);
   svg.style.cssText = `background:#0d0d1a;border-radius:12px;display:block;`;
   svg.innerHTML = parts.join('');
+
+  // Attach click listeners AFTER innerHTML (onclick in SVG innerHTML is blocked by browsers)
+  svg.querySelectorAll('.po-clickable').forEach(el => {
+    el.addEventListener('click', function(){
+      handlePoClick(this.getAttribute('data-matchid'));
+    });
+  });
+
   return svg;
 }
 
