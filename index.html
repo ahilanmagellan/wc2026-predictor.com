@@ -402,8 +402,11 @@ body::after{display:none;}
           <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin-top:4px;">Кликните на матч → выберите победителя → заполните всю сетку</p>
         </div>
         <!-- SVG турнирная сетка -->
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:20px;">
-          <div id="off-bracket-svg"></div>
+        <div style="overflow:auto;-webkit-overflow-scrolling:touch;margin-bottom:20px;max-height:80vh;">
+          <div id="off-bracket-svg" style="display:inline-block;"></div>
+        </div>
+        <div style="text-align:center;margin-bottom:12px;">
+          <button onclick="downloadPlayoffPng(window.currentUser?.uid)" class="btn-dl" style="font-size:0.7rem;">📸 СКАЧАТЬ PNG ПРОГНОЗА</button>
         </div>
         <div class="divider"></div>
         <!-- Награды -->
@@ -424,8 +427,11 @@ body::after{display:none;}
       <div id="off-playoff-done" class="hidden">
         <div id="off-playoff-summary"></div>
         <!-- показываем сетку только для просмотра -->
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:20px;">
-          <div id="off-bracket-svg-done"></div>
+        <div style="overflow:auto;-webkit-overflow-scrolling:touch;margin-bottom:20px;max-height:80vh;">
+          <div id="off-bracket-svg-done" style="display:inline-block;"></div>
+        </div>
+        <div style="text-align:center;margin-bottom:12px;">
+          <button onclick="downloadPlayoffPng(window.currentUser?.uid)" class="btn-dl" style="font-size:0.7rem;">📸 СКАЧАТЬ PNG ПРОГНОЗА</button>
         </div>
         <div class="divider"></div>
         <h3 style="font-family:var(--font-d);font-size:1.1rem;font-weight:700;color:var(--wc-purple-bright);margin-bottom:14px;">🗣️ ГЛАС НАРОДА</h3>
@@ -684,42 +690,64 @@ const S = {
 // ═══════════════════════════════════════════════════════
 // МАТЧИ ПЛЕЙ-ОФФ ЧМ 2026
 // ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+// СЕТКА ПЛЕЙ-ОФФ ЧМ 2026
+// Левая половина: М1-М8 (верхние 4 + нижние 4)
+//   Верхний квадрант: М1(Германия-Парагвай), М2(Франция-Швеция),
+//                     М3(ЮАР-Канада), М4(Нидерланды-Марокко)
+//   Нижний квадрант: М5(Португалия-Хорватия), М6(Испания-Австрия),
+//                    М7(США-Босния), М8(Бельгия-Сенегал)
+// Правая половина: М9-М16
+//   Верхний квадрант: М9(Бразилия-Япония), М10(КдИ-Норвегия),
+//                     М11(Мексика-Эквадор), М12(Англия-ДР Конго)
+//   Нижний квадрант: М13(Аргентина-КВ), М14(Австралия-Египет),
+//                    М15(Швейцария-Алжир), М16(Колумбия-Гана)
+// ════════════════════════════════════════════════════════
 const PO_MATCHES = {
-  // 1/16 финала
   r32: [
-    {id:'r32_0',  label:'М1',  home:{n:'Германия',f:'🇩🇪'},  away:{n:'Парагвай',f:'🇵🇾'}},
-    {id:'r32_1',  label:'М2',  home:{n:'Франция',f:'🇫🇷'},   away:{n:'Швеция',f:'🇸🇪'}},
-    {id:'r32_2',  label:'М3',  home:{n:'ЮАР',f:'🇿🇦'},      away:{n:'Канада',f:'🇨🇦'}},
-    {id:'r32_3',  label:'М4',  home:{n:'Нидерланды',f:'🇳🇱'},away:{n:'Марокко',f:'🇲🇦'}},
-    {id:'r32_4',  label:'М5',  home:{n:'Бразилия',f:'🇧🇷'},  away:{n:'Япония',f:'🇯🇵'}},
-    {id:'r32_5',  label:'М6',  home:{n:"Кот-д'Ивуар",f:'🇨🇮'},away:{n:'Норвегия',f:'🇳🇴'}},
-    {id:'r32_6',  label:'М7',  home:{n:'Мексика',f:'🇲🇽'},   away:{n:'Эквадор',f:'🇪🇨'}},
-    {id:'r32_7',  label:'М8',  home:{n:'Англия',f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'},   away:{n:'ДР Конго',f:'🇨🇩'}},
-    {id:'r32_8',  label:'М9',  home:{n:'Португалия',f:'🇵🇹'},away:{n:'Хорватия',f:'🇭🇷'}},
-    {id:'r32_9',  label:'М10', home:{n:'Испания',f:'🇪🇸'},   away:{n:'Австрия',f:'🇦🇹'}},
-    {id:'r32_10', label:'М11', home:{n:'США',f:'🇺🇸'},       away:{n:'Босния и Герцеговина',f:'🇧🇦'}},
-    {id:'r32_11', label:'М12', home:{n:'Бельгия',f:'🇧🇪'},   away:{n:'Сенегал',f:'🇸🇳'}},
+    // ── ЛЕВАЯ ПОЛОВИНА (индексы 0-7) ──
+    // Верхний квадрант (строки 0-3)
+    {id:'r32_0', label:'М1', home:{n:'Германия',f:'🇩🇪'},  away:{n:'Парагвай',f:'🇵🇾'}},
+    {id:'r32_1', label:'М2', home:{n:'Франция',f:'🇫🇷'},   away:{n:'Швеция',f:'🇸🇪'}},
+    {id:'r32_2', label:'М3', home:{n:'ЮАР',f:'🇿🇦'},      away:{n:'Канада',f:'🇨🇦'}},
+    {id:'r32_3', label:'М4', home:{n:'Нидерланды',f:'🇳🇱'},away:{n:'Марокко',f:'🇲🇦'}},
+    // Нижний квадрант (строки 4-7)
+    {id:'r32_4', label:'М5', home:{n:'Португалия',f:'🇵🇹'},away:{n:'Хорватия',f:'🇭🇷'}},
+    {id:'r32_5', label:'М6', home:{n:'Испания',f:'🇪🇸'},   away:{n:'Австрия',f:'🇦🇹'}},
+    {id:'r32_6', label:'М7', home:{n:'США',f:'🇺🇸'},       away:{n:'Босния и Герцеговина',f:'🇧🇦'}},
+    {id:'r32_7', label:'М8', home:{n:'Бельгия',f:'🇧🇪'},   away:{n:'Сенегал',f:'🇸🇳'}},
+    // ── ПРАВАЯ ПОЛОВИНА (индексы 8-15) ──
+    // Верхний квадрант (строки 0-3)
+    {id:'r32_8',  label:'М9',  home:{n:'Бразилия',f:'🇧🇷'},  away:{n:'Япония',f:'🇯🇵'}},
+    {id:'r32_9',  label:'М10', home:{n:"Кот-д'Ивуар",f:'🇨🇮'},away:{n:'Норвегия',f:'🇳🇴'}},
+    {id:'r32_10', label:'М11', home:{n:'Мексика',f:'🇲🇽'},   away:{n:'Эквадор',f:'🇪🇨'}},
+    {id:'r32_11', label:'М12', home:{n:'Англия',f:'🏴󠁧󠁢󠁥󠁮󠁧󠁿'},   away:{n:'ДР Конго',f:'🇨🇩'}},
+    // Нижний квадрант (строки 4-7)
     {id:'r32_12', label:'М13', home:{n:'Аргентина',f:'🇦🇷'}, away:{n:'Кабо-Верде',f:'🇨🇻'}},
     {id:'r32_13', label:'М14', home:{n:'Австралия',f:'🇦🇺'}, away:{n:'Египет',f:'🇪🇬'}},
     {id:'r32_14', label:'М15', home:{n:'Швейцария',f:'🇨🇭'}, away:{n:'Алжир',f:'🇩🇿'}},
     {id:'r32_15', label:'М16', home:{n:'Колумбия',f:'🇨🇴'},  away:{n:'Гана',f:'🇬🇭'}},
   ],
-  // 1/8 финала: [индекс_матча_a, индекс_матча_b] из предыдущего раунда
   r16: [
-    {id:'r16_0', label:'М17', from:[0,1]},
-    {id:'r16_1', label:'М18', from:[2,3]},
-    {id:'r16_2', label:'М19', from:[4,5]},
-    {id:'r16_3', label:'М20', from:[6,7]},
-    {id:'r16_4', label:'М21', from:[8,9]},
-    {id:'r16_5', label:'М22', from:[10,11]},
-    {id:'r16_6', label:'М23', from:[12,13]},
-    {id:'r16_7', label:'М24', from:[14,15]},
+    // Левая половина: верхний квадрант → М17(0+1), М18(2+3); нижний → М19(4+5), М20(6+7)
+    {id:'r16_0', label:'М17', from:[0,1]},   // Победитель М1 vs Победитель М2
+    {id:'r16_1', label:'М18', from:[2,3]},   // Победитель М3 vs Победитель М4
+    {id:'r16_2', label:'М19', from:[4,5]},   // Победитель М5 vs Победитель М6
+    {id:'r16_3', label:'М20', from:[6,7]},   // Победитель М7 vs Победитель М8
+    // Правая половина: верхний → М21(8+9), М22(10+11); нижний → М23(12+13), М24(14+15)
+    {id:'r16_4', label:'М21', from:[8,9]},   // Победитель М9 vs Победитель М10
+    {id:'r16_5', label:'М22', from:[10,11]}, // Победитель М11 vs Победитель М12
+    {id:'r16_6', label:'М23', from:[12,13]}, // Победитель М13 vs Победитель М14
+    {id:'r16_7', label:'М24', from:[14,15]}, // Победитель М15 vs Победитель М16
   ],
-  // 1/4 финала
   r8: [
+    // М25: Победитель М17 vs М18 (левый верхний QF)
     {id:'r8_0', label:'М25', from:[0,1]},
+    // М26: Победитель М19 vs М20 (левый нижний QF)
     {id:'r8_1', label:'М26', from:[2,3]},
+    // М27: Победитель М21 vs М22 (правый верхний QF)
     {id:'r8_2', label:'М27', from:[4,5]},
+    // М28: Победитель М23 vs М24 (правый нижний QF)
     {id:'r8_3', label:'М28', from:[6,7]},
   ],
   // 1/2 финала
@@ -1018,7 +1046,7 @@ function renderPoBracketSVG(viewOnly=false){
   svg.setAttribute('width', TOTAL_W);
   svg.setAttribute('height', SVG_H);
   svg.setAttribute('viewBox', `0 0 ${TOTAL_W} ${SVG_H}`);
-  svg.style.cssText = `min-width:${Math.min(TOTAL_W,1100)}px;width:100%;background:#0d0d1a;border-radius:12px;display:block;`;
+  svg.style.cssText = `background:#0d0d1a;border-radius:12px;display:block;`;
   svg.innerHTML = parts.join('');
   return svg;
 }
@@ -2194,7 +2222,8 @@ async function loadAdminUsers(){
           <div style="font-family:var(--font-t);font-size:0.58rem;color:rgba(255,255,255,0.3);margin-top:2px;">${esc(uid.length>24?uid.slice(0,24)+'…':uid)} · <span style="color:var(--wc-gold);">${p.points||0} очков</span> · ${p.submittedAt?new Date(p.submittedAt).toLocaleDateString('ru'):'—'}</div>
         </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap;">
-          <button onclick="downloadSinglePrediction('${jsUid}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-green);background:transparent;border:1px solid rgba(0,230,138,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📸 PNG</button>
+          <button onclick="downloadSinglePrediction('${jsUid}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-green);background:transparent;border:1px solid rgba(0,230,138,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📸 ГРУППЫ</button>
+          <button onclick="downloadPlayoffPng('${jsUid}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);background:transparent;border:1px solid rgba(255,210,63,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">🏆 ПЛЕЙ-ОФФ</button>
           <button onclick="adminAdjPoints('${jsUid}','${jsName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);background:transparent;border:1px solid rgba(255,210,63,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">⚖️ ОЧКИ</button>
           <button onclick="adminSetPhoto('${jsUid}','${jsName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-purple-bright);background:transparent;border:1px solid rgba(176,124,255,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📷 ФОТО</button>
           <button onclick="adminRenameUser('${jsUid}','${jsName}')" style="font-family:var(--font-t);font-size:0.6rem;color:rgba(255,255,255,0.55);background:transparent;border:1px solid var(--wc-border);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">✏️ ИМЯ</button>
@@ -3134,6 +3163,89 @@ function getPredOpponent(matchId,winner,userPicks){
   };
   const pa=getPickedW(m.from?.[0]),pb=getPickedW(m.from?.[1]);
   return pa?.n===winner?pb:pa;
+}
+
+/* ═══════════════════════════════════════════════════════
+   СКАЧИВАНИЕ PNG ПЛЕЙ-ОФФ ПРОГНОЗА
+═══════════════════════════════════════════════════════ */
+async function downloadPlayoffPng(uid){
+  let picks = {...S_PO.picks};
+  let displayName = window.currentUser?.displayName || 'Игрок';
+
+  // If a specific uid is passed (admin downloading for another user), load from Firestore
+  if(uid && uid !== window.currentUser?.uid){
+    try{
+      const {db,doc,getDoc} = window.FB;
+      const snap = await getDoc(doc(db,'predictions',uid));
+      if(snap.exists()){
+        picks = snap.data().playoff || {};
+        displayName = snap.data().displayName || 'Игрок';
+      }
+    } catch(e){ notify('Ошибка загрузки: '+e.message,'err'); return; }
+  }
+
+  if(!picks || !Object.keys(picks).length){
+    notify('Нет прогноза плей-офф для скачивания','err'); return;
+  }
+
+  // Temporarily load picks into S_PO to render the SVG
+  const savedPicks = {...S_PO.picks};
+  Object.keys(S_PO.picks).forEach(k => delete S_PO.picks[k]);
+  Object.assign(S_PO.picks, picks);
+
+  // Render SVG into off-screen div
+  const container = document.getElementById('dl-playoff-prev');
+  container.style.position = 'fixed';
+  container.style.top = '0';
+  container.style.left = '0';
+  container.style.zIndex = '9999';
+  container.style.background = '#0d0d1a';
+  container.innerHTML = '';
+
+  // Title
+  const titleDiv = document.createElement('div');
+  titleDiv.style.cssText = 'padding:14px 20px 8px;text-align:center;background:#0d0d1a;';
+  titleDiv.innerHTML = `<div style="font-family:Outfit,sans-serif;font-size:18px;font-weight:800;color:#FFD23F;letter-spacing:2px;">FIFA WORLD CUP 2026</div>
+    <div style="font-family:Outfit,sans-serif;font-size:12px;color:rgba(255,255,255,0.5);margin-top:3px;">Прогноз плей-офф: ${esc(displayName)}</div>`;
+  container.appendChild(titleDiv);
+
+  const svg = renderPoBracketSVG(true);
+  svg.style.cssText = 'display:block;background:#0d0d1a;';
+  container.appendChild(svg);
+
+  await new Promise(r=>setTimeout(r,150));
+  try{
+    const canvas = await html2canvas(container, {
+      backgroundColor:'#0d0d1a',
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      onclone: (clonedDoc) => {
+        const clonedEl = clonedDoc.getElementById('dl-playoff-prev');
+        if(clonedEl) resolveCssVars(clonedEl);
+        clonedDoc.querySelectorAll('style').forEach(styleTag=>{
+          let css=styleTag.textContent;
+          Object.entries(CSS_VAR_MAP).forEach(([k,v])=>{ css=css.split(`var(${k})`).join(v); });
+          styleTag.textContent=css;
+        });
+      }
+    });
+    const link = document.createElement('a');
+    link.download = `playoff_${displayName.replace(/[^a-zA-Zа-яА-Я0-9]/g,'_')}_${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    notify('✅ PNG скачан!','ok');
+  } catch(e){ notify('Ошибка: '+e.message,'err'); }
+  finally{
+    container.style.position='fixed';
+    container.style.top='-9999px';
+    container.style.left='-9999px';
+    container.style.zIndex='-1';
+    container.innerHTML='';
+    // Restore picks
+    Object.keys(S_PO.picks).forEach(k => delete S_PO.picks[k]);
+    Object.assign(S_PO.picks, savedPicks);
+  }
 }
 
 /* ═══════════════════════════════════════════════════════
