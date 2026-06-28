@@ -402,11 +402,11 @@ body::after{display:none;}
           <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin-top:4px;">Кликните на матч → выберите победителя → заполните всю сетку</p>
         </div>
         <!-- SVG турнирная сетка -->
-        <div style="overflow:auto;-webkit-overflow-scrolling:touch;margin-bottom:20px;max-height:80vh;">
-          <div id="off-bracket-svg" style="display:inline-block;"></div>
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;">
+          <div id="off-bracket-svg"></div>
         </div>
-        <div style="text-align:center;margin-bottom:12px;">
-          <button onclick="downloadPlayoffPng(window.currentUser?.uid)" class="btn-dl" style="font-size:0.7rem;">📸 СКАЧАТЬ PNG ПРОГНОЗА</button>
+        <div style="text-align:center;margin-bottom:16px;">
+          <button onclick="downloadPlayoffPng(window.currentUser?.uid)" class="btn-dl" style="font-size:0.75rem;padding:10px 22px;">📸 СКАЧАТЬ PNG ПРОГНОЗА</button>
         </div>
         <div class="divider"></div>
         <!-- Награды -->
@@ -427,11 +427,11 @@ body::after{display:none;}
       <div id="off-playoff-done" class="hidden">
         <div id="off-playoff-summary"></div>
         <!-- показываем сетку только для просмотра -->
-        <div style="overflow:auto;-webkit-overflow-scrolling:touch;margin-bottom:20px;max-height:80vh;">
-          <div id="off-bracket-svg-done" style="display:inline-block;"></div>
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;">
+          <div id="off-bracket-svg-done"></div>
         </div>
-        <div style="text-align:center;margin-bottom:12px;">
-          <button onclick="downloadPlayoffPng(window.currentUser?.uid)" class="btn-dl" style="font-size:0.7rem;">📸 СКАЧАТЬ PNG ПРОГНОЗА</button>
+        <div style="text-align:center;margin-bottom:16px;">
+          <button onclick="downloadPlayoffPng(window.currentUser?.uid)" class="btn-dl" style="font-size:0.75rem;padding:10px 22px;">📸 СКАЧАТЬ PNG ПРОГНОЗА</button>
         </div>
         <div class="divider"></div>
         <h3 style="font-family:var(--font-d);font-size:1.1rem;font-weight:700;color:var(--wc-purple-bright);margin-bottom:14px;">🗣️ ГЛАС НАРОДА</h3>
@@ -1046,7 +1046,7 @@ function renderPoBracketSVG(viewOnly=false){
   svg.setAttribute('width', TOTAL_W);
   svg.setAttribute('height', SVG_H);
   svg.setAttribute('viewBox', `0 0 ${TOTAL_W} ${SVG_H}`);
-  svg.style.cssText = `background:#0d0d1a;border-radius:12px;display:block;`;
+  svg.style.cssText = `background:#0d0d1a;border-radius:12px;display:block;width:100%;height:auto;min-width:600px;`;
   svg.innerHTML = parts.join('');
   return svg;
 }
