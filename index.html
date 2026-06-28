@@ -384,501 +384,6 @@ body::after{display:none;}
   <!-- ═══════ ОФИЦИАЛЬНЫЙ ═══════ -->
   <div id="page-official" class="page hidden fade-in">
     <div id="off-login"><div class="text-center py-20"><div style="font-size:3.5rem;margin-bottom:14px;">🔐</div><h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-purple-bright);margin-bottom:10px;">ОФИЦИАЛЬНЫЙ ТУРНИР</h2><p style="color:rgba(255,255,255,0.4);margin-bottom:28px;font-size:0.9rem;">Войдите через Google для участия</p><button onclick="signInGoogle()" class="btn-google mx-auto"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Войти через Google</button></div></div>
-    <!-- Этап 1 сдан, этап 2 открыт -->
-    <div id="off-done" class="hidden">
-      <div class="mb-5">
-        <div class="flex gap-2 mb-3 flex-wrap">
-          <span class="badge bg-green">✅ ЭТАП 1 ЗАВЕРШЁН</span>
-          <span class="badge bg-purple" id="off-phase2-badge">🏆 ЭТАП 2 ОТКРЫТ</span>
-        </div>
-        <h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;color:var(--wc-purple-bright);">ПРОГНОЗ НА ПЛЕЙ-ОФФ</h2>
-      </div>
-      <div id="off-my-pred"></div>
-      <div class="divider"></div>
-      <!-- Форма плей-офф прогноза -->
-      <div id="off-playoff-form">
-        <div class="mb-4 flex items-center gap-3 flex-wrap">
-          <h3 style="font-family:var(--font-d);font-size:1.1rem;font-weight:700;color:var(--wc-gold);">🏆 ТУРНИРНАЯ СЕТКА ПЛЕЙ-ОФФ</h3>
-          <span style="font-size:0.75rem;color:rgba(255,255,255,0.35);">Кликните на матч чтобы выбрать победителя</span>
-        </div>
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-          <div id="off-bracket-svg" style="min-width:780px;"></div>
-        </div>
-        <div class="divider"></div>
-        <div class="wc-card mb-5">
-          <h3 style="font-family:var(--font-d);font-size:1rem;font-weight:700;color:var(--wc-gold);margin-bottom:14px;">🏅 ИНДИВИДУАЛЬНЫЕ НАГРАДЫ</h3>
-          <div class="grid grid-cols-1 gap-3">
-            <div><label style="font-family:var(--font-t);font-size:0.62rem;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 ЗОЛОТАЯ БУТСА</label><input type="text" class="ai" id="o-boot" placeholder="Имя игрока..."></div>
-            <div><label style="font-family:var(--font-t);font-size:0.62rem;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ЗОЛОТАЯ ПЕРЧАТКА</label><input type="text" class="ai" id="o-glove" placeholder="Имя вратаря..."></div>
-            <div><label style="font-family:var(--font-t);font-size:0.62rem;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ЛУЧШИЙ ИГРОК</label><input type="text" class="ai" id="o-player" placeholder="Имя игрока..."></div>
-          </div>
-        </div>
-        <div class="text-center pb-6">
-          <button onclick="submitPlayoff()" class="btn-g px-12 py-4" style="font-size:0.85rem;">🚀 ОТПРАВИТЬ ПРОГНОЗ НА ПЛЕЙ-ОФФ</button>
-          <p style="color:rgba(255,255,255,0.25);font-size:0.72rem;margin-top:7px;">После отправки прогноз плей-офф нельзя изменить</p>
-        </div>
-      </div>
-      <!-- Когда плей-офф уже сдан -->
-      <div id="off-playoff-done" class="hidden">
-        <div id="off-playoff-summary"></div>
-        <div class="divider"></div>
-        <h3 style="font-family:var(--font-d);font-size:1.1rem;font-weight:700;color:var(--wc-purple-bright);margin-bottom:14px;">🗣️ ГЛАС НАРОДА</h3>
-        <div id="vox-container"></div>
-      </div>
-    </div>
-    <!-- Форма группового этапа (этап 1) -->
-    <div id="off-form" class="hidden">
-      <div class="mb-5"><span class="badge bg-purple">🏆 ОФИЦИАЛЬНЫЙ ТУРНИР</span><h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-purple-bright);margin-top:8px;">ОФИЦИАЛЬНЫЙ ПРОГНОЗ · ЭТАП 1</h2><p style="color:rgba(255,255,255,0.4);font-size:0.82rem;margin-top:4px;">Групповой этап. Одна попытка!</p></div>
-      <div id="off-groups"></div>
-      <div class="text-center pb-6"><button onclick="submitOfficial()" class="btn-g px-12 py-4" style="font-size:0.85rem;">🚀 ОТПРАВИТЬ ПРОГНОЗ</button><p style="color:rgba(255,255,255,0.25);font-size:0.72rem;margin-top:7px;">Действие необратимо!</p></div>
-    </div>
-  </div>
- 
-  <!-- ═══════ ТАБЛИЦА ═══════ -->
-  <div id="page-leaderboard" class="page hidden fade-in">
-    <div class="mb-5"><div style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:1px;color:rgba(255,255,255,0.3);margin-bottom:4px;">РЕЙТИНГ</div><h1 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-gold);">ТУРНИРНАЯ ТАБЛИЦА</h1></div>
-    <div id="lb-list"><div style="text-align:center;color:rgba(255,255,255,0.25);padding:40px;">Загрузка...</div></div>
-  </div>
- 
-  <!-- ═══════ ADMIN LOGIN ═══════ -->
-  <div id="page-admin-login" class="page hidden fade-in"><div class="max-w-xs mx-auto mt-16"><div class="wc-card text-center"><div style="font-size:2.5rem;margin-bottom:12px;">🔒</div><h2 style="font-family:var(--font-d);font-size:1.6rem;letter-spacing:1px;color:rgba(255,59,127,0.8);margin-bottom:16px;">АДМИН</h2><input type="password" id="adm-pw" class="ai mb-4" placeholder="Пароль..." onkeydown="if(event.key==='Enter')checkAdminPw()"><button onclick="checkAdminPw()" class="btn-p w-full">ВОЙТИ</button><div id="adm-err" class="hidden mt-3" style="color:var(--wc-red);font-size:0.8rem;">Неверный пароль</div></div></div></div>
- 
-  <!-- ═══════ ADMIN PANEL ═══════ -->
-  <div id="page-admin" class="page hidden fade-in">
-    <div class="mb-5"><span class="badge bg-red">⚙️ АДМИНИСТРАТОР</span><h1 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-red);margin-top:6px;">ПАНЕЛЬ УПРАВЛЕНИЯ</h1></div>
-    <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-gold);margin-bottom:14px;">📊 РЕЗУЛЬТАТЫ МАТЧЕЙ</h2><div id="adm-matches"></div></div>
-    <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-gold);margin-bottom:14px;">🏆 РЕАЛЬНЫЕ НАГРАДЫ</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 БУТСА</label><input type="text" class="ai" id="r-boot" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ПЕРЧАТКА</label><input type="text" class="ai" id="r-glove" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ИГРОК</label><input type="text" class="ai" id="r-player" placeholder="Реальный..."></div></div><button onclick="saveAwards()" class="btn-g mt-4">СОХРАНИТЬ И ПЕРЕСЧИТАТЬ</button></div>
-
-    <!-- УПРАВЛЕНИЕ УЧАСТНИКАМИ -->
-    <div class="wc-card mb-5">
-      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
-        <h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-red);">👥 УЧАСТНИКИ</h2>
-        <button onclick="loadAdminUsers()" class="btn-dl" style="font-size:0.58rem;">🔄 ОБНОВИТЬ СПИСОК</button>
-      </div>
-      <div id="adm-users"><div style="text-align:center;color:rgba(255,255,255,0.25);padding:20px;font-family:var(--font-u);font-size:0.85rem;">Нажмите «Обновить список»</div></div>
-    </div>
-
-    <!-- СРАВНЕНИЕ ПРОГНОЗОВ -->
-    <div class="wc-card mb-5">
-      <h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-green);margin-bottom:6px;">📸 СРАВНЕНИЕ ПРОГНОЗОВ (PNG)</h2>
-      <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(255,255,255,0.4);margin-bottom:14px;">Выберите участников — сформируется красивая картинка с их прогнозами на групповой этап.</p>
-      <div id="cmp-users-list" style="display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;margin-bottom:14px;">
-        <div style="text-align:center;color:rgba(255,255,255,0.25);padding:14px;font-size:0.82rem;">Обновите список участников выше ↑</div>
-      </div>
-      <button onclick="downloadComparison()" class="btn-g">📸 СКАЧАТЬ СРАВНЕНИЕ PNG</button>
-    </div>
-
-    <!-- СОЗДАТЬ АНОНИМНЫЙ ПРОГНОЗ -->
-    <div class="wc-card mb-5">
-      <h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-purple-bright);margin-bottom:14px;">➕ СОЗДАТЬ ПРОГНОЗ ОТ ИМЕНИ...</h2>
-      <div class="flex gap-3 mb-4 flex-wrap">
-        <input type="text" id="anon-name" class="ai" placeholder="Имя участника (напр. Иван Петров)" style="max-width:320px;">
-        <button onclick="startAnonPred()" class="btn-p">СОЗДАТЬ ПРОГНОЗ</button>
-      </div>
-      <div id="anon-form" class="hidden">
-        <div style="font-family:var(--font-t);font-size:0.62rem;letter-spacing:0.5px;color:var(--wc-purple-bright);margin-bottom:12px;">ЗАПОЛНИТЕ ГРУППОВОЙ ЭТАП ДЛЯ: <span id="anon-name-label" style="color:var(--wc-green);"></span></div>
-        <div id="anon-groups"></div>
-        <div class="flex gap-3 mt-4 justify-center flex-wrap">
-          <button onclick="submitAnonPred()" class="btn-g">СОХРАНИТЬ ПРОГНОЗ</button>
-          <button onclick="cancelAnonPred()" class="btn-dl">ОТМЕНА</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- РУЧНАЯ КОРРЕКТИРОВКА ОЧКОВ -->
-    <div class="wc-card mb-5">
-      <h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-gold);margin-bottom:14px;">⚖️ РУЧНАЯ КОРРЕКТИРОВКА ОЧКОВ</h2>
-      <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(255,255,255,0.4);margin-bottom:14px;">Начисляйте или снимайте очки любому участнику. Изменение отображается в истории начислений.</p>
-      <div id="points-adj-list"><div style="text-align:center;color:rgba(255,255,255,0.25);padding:14px;font-size:0.82rem;">Обновите список участников выше ↑</div></div>
-    </div>
-  </div>
- 
- lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIFA World Cup 2026 — Предиктор</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
- 
-<script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut }
-    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-  import { getFirestore, doc, setDoc, getDoc, getDocs, deleteDoc, collection, updateDoc, query, orderBy }
-    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
- 
-  // ╔══════════════════════════════════════════════╗
-  // ║  ВСТАВЬТЕ СЮДА ВАШИ ДАННЫЕ FIREBASE          ║
-  // ╚══════════════════════════════════════════════╝
-const firebaseConfig = {
-  apiKey: "AIzaSyBcoC-oUz_s5RD3V0Hmga0ggcIEH3el7SE",
-  authDomain: "wc2026-predictor-e67e9.firebaseapp.com",
-  projectId: "wc2026-predictor-e67e9",
-  storageBucket: "wc2026-predictor-e67e9.firebasestorage.app",
-  messagingSenderId: "32605510906",
-  appId: "1:32605510906:web:49d0e97bfadf979fc2fd43",
-  measurementId: "G-NVTG125L4D"
-};
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
- 
-  window.FB = { auth, db, provider, signInWithPopup, onAuthStateChanged, signOut,
-    doc, setDoc, getDoc, getDocs, deleteDoc, collection, updateDoc, query, orderBy };
- 
-  onAuthStateChanged(auth, (user) => {
-    window.currentUser = user;
-    if (window.onAuthChange) window.onAuthChange(user);
-  });
-</script>
- 
-<style>
-:root {
-  --wc-purple: #6B3FA0;
-  --wc-purple-bright: #B07CFF;
-  --wc-green: #00E68A;
-  --wc-green-dark: #00A86B;
-  --wc-red: #FF3B7F;
-  --wc-blue: #0A1535;
-  --wc-blue-mid: #142450;
-  --wc-gold: #FFD23F;
-  --wc-card: #101F45;
-  --wc-card2: #16285A;
-  --wc-border: rgba(255,255,255,0.08);
-  --font-d: 'Outfit', sans-serif;
-  --font-u: 'Outfit', sans-serif;
-  --font-t: 'Outfit', sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:100%;}
-body{background:var(--wc-blue);color:#FFFFFF;font-family:var(--font-u);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 10% 0%,rgba(255,59,127,0.10) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 10%,rgba(176,124,255,0.10) 0%,transparent 50%),radial-gradient(ellipse 70% 40% at 50% 100%,rgba(0,230,138,0.08) 0%,transparent 60%);pointer-events:none;z-index:0;}
-body::after{display:none;}
-#app{position:relative;z-index:1;}
- 
-.header{background:rgba(10,21,53,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--wc-border);position:sticky;top:0;z-index:200;}
-.logo-text{font-family:var(--font-d);font-weight:800;letter-spacing:1px;font-size:clamp(0.95rem,3vw,1.4rem);color:#fff;text-transform:uppercase;}
-.logo-year{font-family:var(--font-t);font-weight:600;font-size:0.6rem;letter-spacing:1px;color:var(--wc-green);}
- 
-.nav-btn{font-family:var(--font-t);font-weight:600;font-size:0.7rem;letter-spacing:1px;padding:8px 14px;border-radius:8px;border:1px solid var(--wc-border);cursor:pointer;transition:all 0.25s;text-transform:uppercase;white-space:nowrap;color:rgba(255,255,255,0.55);background:transparent;}
-.nav-btn.active,.nav-btn:hover{background:rgba(0,230,138,0.10);border-color:var(--wc-green);color:var(--wc-green);}
-.nav-btn.adm{color:rgba(255,80,100,0.55);border-color:rgba(255,80,100,0.15);}
-.nav-btn.adm:hover{background:rgba(255,80,100,0.10);border-color:rgba(255,80,100,0.5);color:var(--wc-red);}
- 
-.wc-card{background:var(--wc-card2);border:1px solid var(--wc-border);border-radius:14px;padding:18px;position:relative;overflow:hidden;}
-.wc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--wc-red),var(--wc-purple-bright),var(--wc-green));}
- 
-.btn-p{background:var(--wc-purple-bright);color:#15092B;font-family:var(--font-t);font-weight:700;font-size:0.78rem;letter-spacing:0.5px;padding:11px 24px;border-radius:10px;border:none;cursor:pointer;transition:all 0.2s;}
-.btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(176,124,255,0.35);}
-.btn-g{background:var(--wc-green);color:#06301F;font-family:var(--font-t);font-weight:700;font-size:0.78rem;letter-spacing:0.5px;padding:11px 24px;border-radius:10px;border:none;cursor:pointer;transition:all 0.2s;}
-.btn-g:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,230,138,0.35);}
-.btn-dl{background:rgba(0,230,138,0.08);color:var(--wc-green);font-family:var(--font-t);font-weight:600;font-size:0.7rem;letter-spacing:0.5px;padding:10px 18px;border-radius:10px;border:1px solid rgba(0,230,138,0.3);cursor:pointer;transition:all 0.2s;}
-.btn-dl:hover{background:rgba(0,230,138,0.15);}
-.btn-google{background:#fff;color:#222;font-family:var(--font-u);font-size:1rem;font-weight:700;padding:13px 28px;border-radius:10px;border:none;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all 0.25s;}
-.btn-google:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,255,255,0.18);}
- 
-.match-row{display:grid;grid-template-columns:1fr 38px 12px 38px 1fr;align-items:center;gap:6px;padding:9px 8px;background:rgba(255,255,255,0.03);border-radius:10px;border:1px solid var(--wc-border);margin-bottom:6px;transition:border-color 0.2s;}
-.match-row:hover{border-color:rgba(0,230,138,0.3);}
-.tn{font-family:var(--font-u);font-weight:600;font-size:0.85rem;min-width:0;overflow:hidden;text-overflow:ellipsis;}
-.tn.h{text-align:right;}
-.tn.a{text-align:left;}
-.si{width:38px;text-align:center;background:rgba(0,0,0,0.35);border:1px solid var(--wc-border);border-radius:6px;color:var(--wc-green);font-family:var(--font-t);font-size:1rem;font-weight:700;padding:6px 0;outline:none;transition:all 0.2s;}
-.si:focus{border-color:var(--wc-green);box-shadow:0 0 0 2px rgba(0,230,138,0.18);}
-.si::-webkit-inner-spin-button,.si::-webkit-outer-spin-button{-webkit-appearance:none;}
-.sd{color:rgba(255,255,255,0.3);font-family:var(--font-t);}
- 
-@media(max-width:640px){
-  .match-row{grid-template-columns:1fr 32px 8px 32px 1fr;gap:3px;padding:8px 6px;}
-  .tn{font-size:0.7rem;}
-  .si{width:32px;font-size:0.85rem;padding:5px 0;}
-  .wc-card{padding:12px;border-radius:12px;}
-  h1{font-size:1.6rem !important;}
-}
- 
-.group-title{font-family:var(--font-d);font-weight:800;font-size:1.5rem;letter-spacing:0.5px;color:#fff;text-transform:uppercase;}
- 
-.group-table{font-family:var(--font-t);font-size:0.62rem;letter-spacing:0.3px;margin-top:10px;border-top:1px solid var(--wc-border);padding-top:8px;}
-.gt-row{display:grid;grid-template-columns:16px 1fr 28px 28px 28px 32px;gap:4px;padding:4px 4px;border-radius:6px;align-items:center;}
-.gt-row.q1{background:rgba(0,230,138,0.08);}
-.gt-row.q2{background:rgba(0,230,138,0.04);}
-.gt-row.q3{background:rgba(255,210,63,0.06);}
- 
-/* ══ ПЛЕЙ-ОФФ ══ */
-.po-match{border-radius:10px;border:1px solid var(--wc-border);overflow:hidden;transition:all 0.2s;min-width:130px;background:rgba(255,255,255,0.03);user-select:none;position:relative;}
-.po-match.clickable{cursor:pointer;}
-.po-match.clickable:hover{border-color:rgba(0,230,138,0.5);}
-.po-match.has-winner{border-color:rgba(0,230,138,0.3);}
-.po-match-label{font-family:var(--font-t);font-size:0.5rem;letter-spacing:1px;color:rgba(255,255,255,0.3);padding:4px 8px;background:rgba(0,0,0,0.25);text-align:center;border-bottom:1px solid var(--wc-border);}
-.po-team{padding:8px 10px;font-family:var(--font-u);font-weight:600;font-size:0.78rem;border-bottom:1px solid var(--wc-border);display:flex;align-items:center;gap:5px;min-height:36px;transition:background 0.2s;}
-.po-team:last-child{border-bottom:none;}
-.po-team.winner{background:rgba(0,230,138,0.14);color:var(--wc-green);font-weight:700;}
-.po-team.loser{opacity:0.4;}
-.po-team.tbd{color:rgba(255,255,255,0.25);font-style:italic;font-size:0.7rem;}
- 
-.po-round-title{font-family:var(--font-d);font-weight:700;font-size:0.95rem;letter-spacing:1.5px;color:var(--wc-gold);text-align:center;margin:18px 0 10px;text-transform:uppercase;}
- 
-/* Выбор победителя — попап */
-.picker-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:16px;}
-.picker-box{background:var(--wc-card2);border:1px solid var(--wc-border);border-radius:16px;padding:24px;max-width:360px;width:100%;text-align:center;}
-.picker-title{font-family:var(--font-t);font-weight:600;font-size:0.68rem;letter-spacing:1.5px;color:rgba(255,255,255,0.4);margin-bottom:16px;text-transform:uppercase;}
-.picker-vs{font-family:var(--font-d);font-weight:700;font-size:1.4rem;color:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;}
-.picker-team-btn{flex:1;background:rgba(255,255,255,0.03);border:2px solid var(--wc-border);border-radius:12px;padding:16px 10px;cursor:pointer;transition:all 0.2s;color:#fff;font-family:var(--font-u);font-weight:600;font-size:0.9rem;display:flex;flex-direction:column;align-items:center;gap:6px;}
-.picker-team-btn:hover{background:rgba(0,230,138,0.08);border-color:var(--wc-green);}
-.picker-team-btn.selected{background:rgba(0,230,138,0.14);border-color:var(--wc-green);}
-.picker-team-flag{font-size:1.8rem;}
- 
-/* Таблица */
-.lb-row{display:flex;align-items:center;padding:12px 14px;border-radius:12px;border:1px solid var(--wc-border);margin-bottom:6px;transition:all 0.2s;cursor:pointer;background:rgba(255,255,255,0.02);}
-.lb-row:hover{background:rgba(255,255,255,0.05);border-color:rgba(0,230,138,0.3);}
-.lb-row.r1{border-color:rgba(255,210,63,0.4);background:rgba(255,210,63,0.05);}
-.lb-row.r2{border-color:rgba(255,255,255,0.25);}
-.lb-row.r3{border-color:rgba(255,138,76,0.3);}
- 
-.modal-ov{position:fixed;inset:0;background:rgba(5,10,25,0.85);backdrop-filter:blur(10px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity 0.3s;}
-.modal-ov.show{opacity:1;}
-.modal-box{background:var(--wc-card2);border:1px solid var(--wc-border);border-radius:16px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;transform:translateY(20px);transition:transform 0.3s;}
-.modal-ov.show .modal-box{transform:translateY(0);}
-.modal-hdr{padding:18px 22px;border-bottom:1px solid var(--wc-border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--wc-card2);z-index:1;}
-.modal-close{background:rgba(255,59,127,0.12);border:1px solid rgba(255,59,127,0.25);color:var(--wc-red);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.9rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
-.modal-close:hover{background:rgba(255,59,127,0.25);}
- 
-.vb{height:7px;border-radius:4px;background:rgba(255,255,255,0.08);overflow:hidden;margin-top:3px;}
-.vb-fill{height:100%;border-radius:4px;transition:width 0.8s ease;}
-.vb-h{background:var(--wc-purple-bright);}
-.vb-d{background:#777;}
-.vb-a{background:var(--wc-green);}
- 
-.ai{width:100%;background:rgba(0,0,0,0.3);border:1px solid var(--wc-border);border-radius:8px;color:#fff;font-family:var(--font-u);font-size:0.88rem;padding:10px 12px;outline:none;transition:all 0.2s;}
-.ai:focus{border-color:var(--wc-green);box-shadow:0 0 0 2px rgba(0,230,138,0.15);}
- 
-.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-family:var(--font-t);font-weight:600;font-size:0.6rem;letter-spacing:0.5px;text-transform:uppercase;}
-.bg-green{background:rgba(0,230,138,0.12);border:1px solid rgba(0,230,138,0.35);color:var(--wc-green);}
-.bg-purple{background:rgba(176,124,255,0.14);border:1px solid rgba(176,124,255,0.35);color:var(--wc-purple-bright);}
-.bg-gold{background:rgba(255,210,63,0.12);border:1px solid rgba(255,210,63,0.35);color:var(--wc-gold);}
-.bg-red{background:rgba(255,59,127,0.12);border:1px solid rgba(255,59,127,0.35);color:var(--wc-red);}
- 
-.divider{height:1px;background:var(--wc-border);margin:20px 0;}
-.log-item{padding:8px 11px;border-radius:8px;border-left:3px solid var(--wc-green);background:rgba(0,230,138,0.04);margin-bottom:5px;font-size:0.82rem;color:rgba(255,255,255,0.75);}
-.log-pts{font-family:var(--font-t);color:var(--wc-gold);font-weight:700;}
- 
-::-webkit-scrollbar{width:5px;}
-::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
-::-webkit-scrollbar-thumb{background:rgba(0,230,138,0.25);border-radius:3px;}
-
-/* ═══ РЕЗУЛЬТАТЫ — статичная сетка плей-офф ═══ */
-/* res-bracket replaced by SVG renderer */
-.res-bracket-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;}
-.res-bracket-wrap svg{display:block;}
-
-/* 1/16 grid: 4 колонки на десктопе, 2 на мобильном */
-/* res-r32-grid replaced by SVG */
-
-/* Таблицы групп: рядом на десктопе, стопкой на мобильном */
-.res-group-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.res-group-col{}
-@media(max-width:600px){.res-group-cols{grid-template-columns:1fr;gap:6px;}}
-
-/* ═══ УЛУЧШЕННАЯ МОБИЛЬНАЯ АДАПТАЦИЯ ═══ */
-@media(max-width:768px){
-  /* Убираем горизонтальное переполнение */
-  html,body{overflow-x:hidden;max-width:100vw;}
-  main{padding-left:12px !important;padding-right:12px !important;}
-  /* Шапка — компактная */
-  .logo-text{font-size:0.85rem;}
-  .logo-year{font-size:0.5rem;}
-  #user-name{max-width:60px;font-size:0.72rem;}
-  /* Матч-ряды */
-  .match-row{grid-template-columns:1fr 30px 8px 30px 1fr;gap:2px;padding:7px 5px;}
-  .tn{font-size:0.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .si{width:30px;font-size:0.8rem;padding:5px 0;}
-  /* Карточки */
-  .wc-card{padding:12px;border-radius:12px;}
-  /* Плей-офф — скролл по горизонтали */
-  #prac-playoff,#off-playoff{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-  #prac-playoff > *,#off-playoff > *{min-width:700px;}
-  /* Таблицы */
-  .gt-row{font-size:0.55rem;grid-template-columns:12px 1fr 22px 22px 22px 26px;gap:2px;}
-  /* Таблица лидеров */
-  .lb-row{padding:9px 10px;}
-  /* Модалки */
-  .modal-box{max-height:85vh;border-radius:14px 14px 0 0;align-self:flex-end;}
-  .modal-ov{align-items:flex-end;padding:0;}
-  /* Кнопки */
-  .btn-g,.btn-p,.btn-dl{font-size:0.72rem;padding:9px 16px;}
-  /* Сетка результатов */
-  .res-matches-grid{grid-template-columns:repeat(2,1fr);}
-  .res-team{font-size:0.65rem;padding:5px 6px;min-height:28px;}
-}
-@media(max-width:480px){
-  .match-row{grid-template-columns:1fr 28px 6px 28px 1fr;gap:1px;padding:6px 4px;}
-  .tn{font-size:0.58rem;}
-  .si{width:28px;font-size:0.75rem;}
-  h1{font-size:1.4rem !important;}
-  .group-title{font-size:1.1rem;}
-  .res-matches-grid{grid-template-columns:repeat(2,1fr);}
-  .badge{font-size:0.52rem;padding:2px 6px;}
-}
- 
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-.fade-in{animation:fadeUp 0.35s ease forwards;}
- 
-.tab-btn{font-family:var(--font-t);font-weight:600;font-size:0.68rem;letter-spacing:0.5px;padding:8px 16px;border-radius:8px;cursor:pointer;transition:all 0.2s;border:1px solid var(--wc-border);color:rgba(255,255,255,0.5);background:transparent;text-transform:uppercase;}
-.tab-btn.active{background:rgba(0,230,138,0.12);border-color:var(--wc-green);color:var(--wc-green);}
- 
-.rank-select{background:rgba(0,0,0,0.35);border:1px solid var(--wc-border);border-radius:6px;color:var(--wc-gold);font-family:var(--font-t);font-size:0.78rem;padding:5px 6px;outline:none;cursor:pointer;transition:border-color 0.2s;}
-.rank-select.conflict{border-color:var(--wc-red) !important;color:var(--wc-red);}
- 
-/* Третьи места — выбор */
-.third-btn{background:rgba(255,255,255,0.03);border:1px solid var(--wc-border);border-radius:10px;padding:9px 12px;cursor:pointer;transition:all 0.2s;color:#fff;font-family:var(--font-u);font-weight:600;font-size:0.82rem;display:flex;align-items:center;gap:6px;width:100%;text-align:left;}
-.third-btn:hover{background:rgba(255,210,63,0.06);border-color:rgba(255,210,63,0.4);}
-.third-btn.selected{background:rgba(255,210,63,0.12);border-color:var(--wc-gold);color:var(--wc-gold);}
- 
-/* Preview для скачивания */
-.dl-preview{background:linear-gradient(160deg,var(--wc-blue),var(--wc-blue-mid));padding:20px;min-width:880px;}
-.prev-title{font-family:var(--font-d);font-weight:800;letter-spacing:1px;text-align:center;color:#fff;text-transform:uppercase;}
-.prev-group-card{background:rgba(255,255,255,0.03);border:1px solid var(--wc-border);border-radius:10px;padding:12px;}
-.prev-po-match{background:rgba(255,255,255,0.04);border:1px solid var(--wc-border);border-radius:8px;overflow:hidden;min-width:110px;}
-.prev-po-team{padding:6px 8px;font-family:var(--font-u);font-weight:600;font-size:0.7rem;border-bottom:1px solid var(--wc-border);display:flex;align-items:center;gap:4px;}
-.prev-po-team:last-child{border-bottom:none;}
-.prev-po-team.w{background:rgba(0,230,138,0.12);color:var(--wc-green);}
-.prev-po-team.tbd{color:rgba(255,255,255,0.25);font-style:italic;font-size:0.62rem;}
-
-/* Глобальная мобильная адаптация */
-@media(max-width:768px){
-  .modal-box{max-width:100%;border-radius:14px;}
-  .modal-hdr{padding:14px 16px;}
-  .gt-row{font-size:0.58rem;grid-template-columns:14px 1fr 24px 24px 24px 28px;}
-  .lb-row{padding:10px 10px;}
-  .badge{font-size:0.55rem;padding:2px 8px;}
-}
-@media(max-width:480px){
-  main{padding-left:10px !important;padding-right:10px !important;}
-  .picker-box{padding:18px;}
-  .picker-team-flag{font-size:1.8rem;}
-  .po-match{min-width:0;}
-  .po-team{font-size:0.66rem;padding:6px 6px;min-height:32px;gap:3px;}
-  .po-match-label{font-size:0.46rem;padding:3px 4px;}
-}
-@media(max-width:640px){
-  #prac-playoff .grid[style*="repeat(4"],
-  #off-playoff .grid[style*="repeat(4"]{
-    grid-template-columns:repeat(2,1fr) !important;
-  }
-}
-</style>
-</head>
-<body>
-<div id="app">
- 
-<!-- ═══ HEADER ═══ -->
-<header class="header">
-  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
-    <div class="flex items-center gap-3 flex-shrink-0">
-      <div style="font-size:1.6rem;">⚽</div>
-      <div>
-        <div class="logo-text">ПРЕДИКТОР · ЧМ 2026</div>
-        <div class="logo-year">FIFA WORLD CUP PREDICTOR</div>
-      </div>
-    </div>
-    <div class="flex items-center gap-2">
-      <nav class="hidden md:flex gap-1">
-        <button class="nav-btn active" id="nb-practice" onclick="showPage('practice')">ПРАКТИКА</button>
-        <button class="nav-btn" id="nb-official" onclick="showPage('official')">ОФИЦИАЛЬНЫЙ</button>
-        <button class="nav-btn" id="nb-leaderboard" onclick="showPage('leaderboard')">ТАБЛИЦА</button>
-
-        <button class="nav-btn adm" onclick="showPage('admin-login')">ADMIN</button>
-      </nav>
-      <div id="user-area">
-        <button id="btn-signin" onclick="signInGoogle()" class="btn-google text-sm py-2 px-4">
-          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Войти
-        </button>
-        <div id="user-profile" style="display:none;" class="flex items-center gap-2">
-          <img id="user-avatar" src="" alt="" style="width:30px;height:30px;border-radius:50%;border:2px solid var(--wc-border);object-fit:cover;">
-          <span id="user-name" style="font-family:var(--font-u);font-size:0.82rem;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
-          <button onclick="signOutUser()" style="font-family:var(--font-t);font-size:0.55rem;color:rgba(255,59,127,0.6);background:transparent;border:1px solid rgba(255,59,127,0.18);padding:4px 8px;border-radius:4px;cursor:pointer;letter-spacing:1px;">ВЫЙТИ</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="md:hidden px-3 pb-2 flex gap-1.5 overflow-x-auto">
-    <button class="nav-btn active text-xs whitespace-nowrap" id="nbm-practice" onclick="showPage('practice')">ПРАКТИКА</button>
-    <button class="nav-btn text-xs whitespace-nowrap" id="nbm-official" onclick="showPage('official')">ОФИЦИАЛЬНЫЙ</button>
-    <button class="nav-btn text-xs whitespace-nowrap" id="nbm-leaderboard" onclick="showPage('leaderboard')">ТАБЛИЦА</button>
-
-    <button class="nav-btn adm text-xs whitespace-nowrap" onclick="showPage('admin-login')">ADMIN</button>
-  </div>
-</header>
- 
-<main class="max-w-7xl mx-auto px-4 py-5" id="main">
- 
-  <!-- ═══════ ПРАКТИКА ═══════ -->
-  <div id="page-practice" class="page fade-in">
-    <div class="mb-6 text-center" style="padding:28px 0 16px;">
-      <div style="font-family:var(--font-t);font-size:0.62rem;letter-spacing:1px;color:rgba(255,255,255,0.35);margin-bottom:6px;">РЕЖИМ ПРЕДИКТОРА</div>
-      <h1 style="font-family:var(--font-d);font-weight:800;font-size:clamp(1.8rem,6vw,3.2rem);letter-spacing:1px;color:#fff;text-transform:uppercase;">ПРАКТИКА</h1>
-      <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-top:8px;">Прогнозируй без регистрации · Скачивай картинки</p>
-    </div>
-    <div class="flex gap-2 mb-5 justify-center">
-      <button class="tab-btn active" id="tab-a" onclick="setPMode('A')">⚽ ПОМАТЧЕВЫЙ</button>
-      <button class="tab-btn" id="tab-b" onclick="setPMode('B')">⚡ БЫСТРЫЙ</button>
-    </div>
- 
-    <!-- Вариант А -->
-    <div id="mode-a">
-      <div id="prac-groups"></div>
-    </div>
- 
-    <!-- Вариант Б -->
-    <div id="mode-b" class="hidden">
-      <div id="quick-groups"></div>
-      <!-- Выбор 8 лучших третьих -->
-      <div id="third-picker-section" class="hidden">
-        <div class="divider"></div>
-        <div class="wc-card mb-5">
-          <div style="font-family:var(--font-d);font-size:1.1rem;font-weight:700;letter-spacing:1px;color:var(--wc-gold);margin-bottom:6px;">🥉 ВЫБЕРИТЕ 8 ЛУЧШИХ ИЗ 3-Х МЕСТ</div>
-          <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(255,255,255,0.45);margin-bottom:14px;">По правилам ФИФА 2026: 8 лучших команд, занявших 3-е место в своих группах, проходят в плей-офф. Выберите ровно 8 команд:</p>
-          <div id="third-candidates" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"></div>
-          <div style="margin-top:12px;font-family:var(--font-t);font-size:0.65rem;letter-spacing:1px;" id="third-counter">
-            <span id="third-count" style="color:var(--wc-gold);">0</span><span style="color:rgba(255,255,255,0.4);"> / 8 выбрано</span>
-          </div>
-        </div>
-      </div>
-    </div>
- 
-    <!-- Плей-офф практика -->
-    <div class="divider"></div>
-    <div class="wc-card mb-5">
-      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
-        <h2 style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;letter-spacing:1px;color:var(--wc-purple-bright);">🏟️ ПЛЕЙ-ОФФ ЧМ-2026</h2>
-        <button onclick="buildPlayoff('practice')" class="btn-p">ПОСТРОИТЬ СЕТКУ</button>
-      </div>
-      <div id="prac-playoff"><div style="text-align:center;color:rgba(255,255,255,0.25);font-family:var(--font-u);padding:28px 0;font-size:0.9rem;">Заполните групповой этап и нажмите «Построить сетку»</div></div>
-    </div>
- 
-    <!-- Награды — после плей-офф -->
-    <div class="divider"></div>
-    <div class="wc-card mb-5">
-      <h2 style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;letter-spacing:1px;color:var(--wc-gold);margin-bottom:14px;">🏆 ИНДИВИДУАЛЬНЫЕ НАГРАДЫ</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 ЗОЛОТАЯ БУТСА</label><input type="text" class="ai" id="p-boot" placeholder="Имя игрока..."></div>
-        <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ЗОЛОТАЯ ПЕРЧАТКА</label><input type="text" class="ai" id="p-glove" placeholder="Имя вратаря..."></div>
-        <div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ЛУЧШИЙ ИГРОК</label><input type="text" class="ai" id="p-player" placeholder="Имя игрока..."></div>
-      </div>
-    </div>
- 
-    <div class="flex flex-wrap gap-3 justify-center pb-6">
-      <button onclick="dlGroups()" class="btn-dl">📸 СКАЧАТЬ ФОТО ГРУПП</button>
-      <button onclick="dlPlayoff('practice')" class="btn-dl">📸 СКАЧАТЬ ФОТО ПЛЕЙ-ОФФ</button>
-    </div>
-  </div>
- 
-  <!-- ═══════ ОФИЦИАЛЬНЫЙ ═══════ -->
-  <div id="page-official" class="page hidden fade-in">
-    <div id="off-login"><div class="text-center py-20"><div style="font-size:3.5rem;margin-bottom:14px;">🔐</div><h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-purple-bright);margin-bottom:10px;">ОФИЦИАЛЬНЫЙ ТУРНИР</h2><p style="color:rgba(255,255,255,0.4);margin-bottom:28px;font-size:0.9rem;">Войдите через Google для участия</p><button onclick="signInGoogle()" class="btn-google mx-auto"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Войти через Google</button></div></div>
     <div id="off-done" class="hidden"><div class="mb-5"><span class="badge bg-green">✅ ПРОГНОЗ ОТПРАВЛЕН</span><h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-green);margin-top:8px;">ВАШ ПРОГНОЗ ЗАФИКСИРОВАН</h2></div><div id="off-my-pred"></div><div class="divider"></div><h3 style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;letter-spacing:1px;color:var(--wc-purple-bright);margin-bottom:14px;">🗣️ ГЛАС НАРОДА</h3><div id="vox-container"></div></div>
     <div id="off-form" class="hidden">
       <div class="mb-5"><span class="badge bg-purple">🏆 ОФИЦИАЛЬНЫЙ ТУРНИР</span><h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-purple-bright);margin-top:8px;">ОФИЦИАЛЬНЫЙ ПРОГНОЗ</h2><p style="color:rgba(255,255,255,0.4);font-size:0.82rem;margin-top:4px;">Одна попытка!</p></div>
@@ -908,6 +413,15 @@ body::after{display:none;}
   <div id="page-admin" class="page hidden fade-in">
     <div class="mb-5"><span class="badge bg-red">⚙️ АДМИНИСТРАТОР</span><h1 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-red);margin-top:6px;">ПАНЕЛЬ УПРАВЛЕНИЯ</h1></div>
     <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-gold);margin-bottom:14px;">📊 РЕЗУЛЬТАТЫ МАТЧЕЙ</h2><div id="adm-matches"></div></div>
+    <!-- РЕЗУЛЬТАТЫ ПЛЕЙ-ОФФ -->
+    <div class="wc-card mb-5">
+      <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;color:var(--wc-purple-bright);">🏆 РЕЗУЛЬТАТЫ ПЛЕЙ-ОФФ</h2>
+        <button onclick="saveAllPoResults()" class="btn-g" style="font-size:0.65rem;">💾 СОХРАНИТЬ ВСЁ И ПЕРЕСЧИТАТЬ</button>
+      </div>
+      <div id="adm-po-matches"></div>
+    </div>
+
     <div class="wc-card mb-5"><h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:0.5px;color:var(--wc-gold);margin-bottom:14px;">🏆 РЕАЛЬНЫЕ НАГРАДЫ</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 БУТСА</label><input type="text" class="ai" id="r-boot" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ПЕРЧАТКА</label><input type="text" class="ai" id="r-glove" placeholder="Реальный..."></div><div><label style="font-family:var(--font-t);font-size:0.6rem;letter-spacing:0.5px;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ИГРОК</label><input type="text" class="ai" id="r-player" placeholder="Реальный..."></div></div><button onclick="saveAwards()" class="btn-g mt-4">СОХРАНИТЬ И ПЕРЕСЧИТАТЬ</button></div>
 
     <!-- УПРАВЛЕНИЕ УЧАСТНИКАМИ -->
@@ -2420,14 +1934,19 @@ async function loadRealResults(){
     if(snap.exists()){
       const d=snap.data();
       S.realResults=d.scores||{}; S.realAwards=d.awards||{}; S.realPlayoff=d.playoff||{};
-      return true;
     }
   } catch(e){ console.warn('loadRealResults:',e.message); }
-  return false;
+  try{
+    const {db,doc,getDoc}=window.FB;
+    const snap=await getDoc(doc(db,'admin','po_results'));
+    if(snap.exists()) S.realPoResults=snap.data();
+  } catch(e){ console.warn('loadPoResults:',e.message); }
+  return true;
 }
 
 async function loadAdminData(){
   await loadRealResults();
+  renderAdminPoMatches();
   const d={awards:S.realAwards||{}};
   if(d.awards){
     const map=[['r-boot','goldenBoot'],['r-glove','goldenGlove'],['r-player','bestPlayer']];
@@ -3229,6 +2748,291 @@ function buildResultsGroups(){
       </div>
     </div>`;
   }).join('');
+}
+
+/* ═══════════════════════════════════════════════════════
+   РЕЗУЛЬТАТЫ ПЛЕЙ-ОФФ (ADMIN)
+═══════════════════════════════════════════════════════ */
+
+const PO_ROUNDS = [
+  {key:'r32', label:'1/16 ФИНАЛА', matches: null},
+  {key:'r16', label:'1/8 ФИНАЛА',  matches: null},
+  {key:'r8',  label:'1/4 ФИНАЛА',  matches: null},
+  {key:'r4',  label:'ПОЛУФИНАЛЫ',  matches: null},
+  {key:'r3rd',label:'МАТ. ЗА 3-Е МЕСТО', matches: null},
+  {key:'final',label:'ФИНАЛ',      matches: null},
+];
+
+function renderAdminPoMatches(){
+  const c=document.getElementById('adm-po-matches'); if(!c) return;
+  const real=S.realPoResults||{};
+  const ROUNDS_DATA=[
+    {key:'r32',  label:'1/16 ФИНАЛА', arr:PO_MATCHES.r32},
+    {key:'r16',  label:'1/8 ФИНАЛА',  arr:PO_MATCHES.r16},
+    {key:'r8',   label:'1/4 ФИНАЛА',  arr:PO_MATCHES.r8},
+    {key:'r4',   label:'ПОЛУФИНАЛЫ',  arr:PO_MATCHES.r4},
+    {key:'r3rd', label:'МАТ. ЗА 3-Е', arr:[PO_MATCHES.r3rd]},
+    {key:'final',label:'ФИНАЛ',       arr:[PO_MATCHES.final]},
+  ];
+
+  let h='';
+  ROUNDS_DATA.forEach(({key,label,arr})=>{
+    h+=`<div style="margin-bottom:16px;">
+      <div style="font-family:var(--font-d);font-size:0.9rem;font-weight:700;color:var(--wc-gold);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--wc-border);">${label}</div>`;
+    arr.forEach(m=>{
+      const r=real[m.id]||{};
+      const winnerName=r.winner||'';
+      const gh=r.goalsH!==undefined?r.goalsH:'';
+      const ga=r.goalsA!==undefined?r.goalsA:'';
+      const pen=r.pen||false;
+      // Get team names
+      let hn='?', an='?', hf='', af='';
+      if(key==='r32'){ hn=m.home?.n||'?'; hf=m.home?.f||''; an=m.away?.n||'?'; af=m.away?.f||''; }
+      else {
+        // derive from previous round results
+        const prevWinners=derivePrevWinners(key,m);
+        hn=prevWinners.a?.n||'TBD'; hf=prevWinners.a?.f||''; 
+        an=prevWinners.b?.n||'TBD'; af=prevWinners.b?.f||'';
+      }
+      h+=`<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px;background:rgba(255,255,255,0.03);border:1px solid var(--wc-border);border-radius:8px;margin-bottom:6px;">
+        <div style="flex:1;min-width:200px;font-size:0.82rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${hf} ${esc(hn)} <span style="color:rgba(255,255,255,0.3);">vs</span> ${af} ${esc(an)}</div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <input type="number" id="po_${m.id}_h" placeholder="0" min="0" max="30" value="${gh}" style="width:42px;background:rgba(0,0,0,0.4);border:1px solid var(--wc-border);border-radius:5px;color:var(--wc-green);font-family:var(--font-t);font-size:0.9rem;padding:5px 0;text-align:center;outline:none;">
+          <span style="color:rgba(255,255,255,0.3);">:</span>
+          <input type="number" id="po_${m.id}_a" placeholder="0" min="0" max="30" value="${ga}" style="width:42px;background:rgba(0,0,0,0.4);border:1px solid var(--wc-border);border-radius:5px;color:var(--wc-green);font-family:var(--font-t);font-size:0.9rem;padding:5px 0;text-align:center;outline:none;">
+          <select id="po_${m.id}_w" style="background:rgba(0,0,0,0.4);border:1px solid var(--wc-border);border-radius:5px;color:#fff;font-family:var(--font-t);font-size:0.7rem;padding:5px 6px;outline:none;max-width:130px;">
+            <option value="" ${!winnerName?'selected':''}>Победитель...</option>
+            <option value="${esc(hn)}" ${winnerName===hn?'selected':''}>${hf} ${esc(hn)}</option>
+            <option value="${esc(an)}" ${winnerName===an?'selected':''}>${af} ${esc(an)}</option>
+          </select>
+          <label style="font-size:0.65rem;color:var(--wc-gold);cursor:pointer;display:flex;align-items:center;gap:4px;">
+            <input type="checkbox" id="po_${m.id}_pen" ${pen?'checked':''} style="accent-color:var(--wc-gold);"> пен.
+          </label>
+        </div>
+      </div>`;
+    });
+    h+='</div>';
+  });
+  c.innerHTML=h;
+}
+
+function derivePrevWinners(rnd, m){
+  const real=S.realPoResults||{};
+  const getRoundArr=(r)=>{
+    if(r==='r32') return PO_MATCHES.r32;
+    if(r==='r16') return PO_MATCHES.r16;
+    if(r==='r8')  return PO_MATCHES.r8;
+    if(r==='r4')  return PO_MATCHES.r4;
+    return [];
+  };
+  const prevRndMap={r16:'r32',r8:'r16',r4:'r8',final:'r4',r3rd:'r4'};
+  const prevRnd=prevRndMap[rnd];
+  if(!prevRnd) return {a:null,b:null};
+
+  if(rnd==='r3rd'){
+    // losers of r4
+    const sf0=PO_MATCHES.r4[0],sf1=PO_MATCHES.r4[1];
+    const r0=real[sf0.id],r1=real[sf1.id];
+    const getLoser=(m32,res)=>{
+      if(!res||!res.winner) return null;
+      const prev=derivePrevWinners('r4',m32);
+      const allTeams=[prev.a,prev.b].filter(Boolean);
+      return allTeams.find(t=>t.n!==res.winner)||null;
+    };
+    return {a:getLoser(sf0,r0),b:getLoser(sf1,r1)};
+  }
+
+  const prevArr=getRoundArr(prevRnd);
+  const fromA=m.from?.[0], fromB=m.from?.[1];
+  const getWinner=(idx)=>{
+    const pm=prevArr[idx]; if(!pm) return null;
+    const res=real[pm.id]; if(!res||!res.winner) return null;
+    // find the team object
+    if(prevRnd==='r32'){
+      const om=PO_MATCHES.r32[idx];
+      if(res.winner===om.home.n) return om.home;
+      if(res.winner===om.away.n) return om.away;
+    } else {
+      const prev=derivePrevWinners(prevRnd,pm);
+      if(res.winner===prev.a?.n) return prev.a;
+      if(res.winner===prev.b?.n) return prev.b;
+    }
+    return {n:res.winner,f:''};
+  };
+  return {a:getWinner(fromA),b:getWinner(fromB)};
+}
+
+async function saveAllPoResults(){
+  const allMatchIds=[
+    ...PO_MATCHES.r32,...PO_MATCHES.r16,...PO_MATCHES.r8,...PO_MATCHES.r4,
+    PO_MATCHES.r3rd, PO_MATCHES.final
+  ].map(m=>m.id);
+
+  const results={};
+  allMatchIds.forEach(id=>{
+    const hEl=document.getElementById(`po_${id}_h`);
+    const aEl=document.getElementById(`po_${id}_a`);
+    const wEl=document.getElementById(`po_${id}_w`);
+    const penEl=document.getElementById(`po_${id}_pen`);
+    if(!hEl||!aEl||!wEl) return;
+    const gh=hEl.value.trim(), ga=aEl.value.trim(), winner=wEl.value.trim();
+    if(gh===''&&ga===''&&!winner) return; // skip empty
+    results[id]={
+      goalsH:gh!==''?parseInt(gh):null,
+      goalsA:ga!==''?parseInt(ga):null,
+      winner,
+      pen:penEl?.checked||false,
+    };
+  });
+
+  try{
+    const {db,doc,setDoc}=window.FB;
+    await setDoc(doc(db,'admin','po_results'),results);
+    S.realPoResults=results;
+    notify('✅ Результаты плей-офф сохранены! Пересчёт...','ok');
+    await recalcAllPlayoff();
+    renderAdminPoMatches();
+  } catch(e){ notify('Ошибка: '+e.message,'err'); }
+}
+
+async function recalcAllPlayoff(){
+  try{
+    const {db,collection,getDocs,doc,updateDoc}=window.FB;
+    const snap=await getDocs(collection(db,'predictions'));
+    const real=S.realPoResults||{};
+    const realAw=S.realAwards||{};
+
+    for(const ds of snap.docs){
+      const pl=ds.data();
+      const userPicks=pl.playoff||{};
+      let pts=0; const log=[];
+
+      // All playoff match ids
+      const allPo=[
+        ...PO_MATCHES.r32,...PO_MATCHES.r16,...PO_MATCHES.r8,...PO_MATCHES.r4,
+        PO_MATCHES.r3rd, PO_MATCHES.final
+      ];
+
+      allPo.forEach(m=>{
+        const res=real[m.id]; if(!res||!res.winner) return;
+        const userPick=userPicks[m.id]; if(!userPick) return;
+
+        const rnd=m.id.startsWith('r32')?'r32':m.id.startsWith('r16')?'r16':m.id.startsWith('r8')?'r8':m.id.startsWith('r4')?'r4':'other';
+
+        // 1 очко за угаданную сумму голов
+        if(res.goalsH!==null&&res.goalsA!==null&&userPick.goalsH!==undefined&&userPick.goalsA!==undefined){
+          if((res.goalsH+res.goalsA)===(userPick.goalsH+userPick.goalsA)){
+            pts+=1; log.push({points:1,desc:`Сумма голов: ${m.id}`});
+          }
+        }
+
+        // Пользователь угадал победителя этого матча
+        const userWon=userPick.n===res.winner;
+
+        if(userWon){
+          // Получаем реального соперника победителя в этом матче
+          const realOpponent=getRealOpponent(m.id, res.winner, real);
+          // Получаем предсказанного соперника
+          const predOpponent=getPredOpponent(m.id, res.winner, userPicks);
+
+          if(realOpponent&&predOpponent&&realOpponent.n===predOpponent.n){
+            // Угадан исход И пара соперников → 7 очков
+            pts+=7; log.push({points:7,desc:`Исход+пара: ${predOpponent.n} vs ${userPick.n} (${m.id})`});
+          } else {
+            // Угадан только победитель → 5 очков
+            pts+=5; log.push({points:5,desc:`Победитель: ${userPick.n} (${m.id})`});
+          }
+        }
+      });
+
+      // Награды — 10 очков каждая
+      if(pl.awards&&realAw){
+        if(realAw.goldenBoot&&pl.awards.goldenBoot?.toLowerCase().trim()===realAw.goldenBoot.toLowerCase().trim()){
+          pts+=10; log.push({points:10,desc:`Золотая бутса: ${realAw.goldenBoot}`});
+        }
+        if(realAw.goldenGlove&&pl.awards.goldenGlove?.toLowerCase().trim()===realAw.goldenGlove.toLowerCase().trim()){
+          pts+=10; log.push({points:10,desc:`Золотая перчатка: ${realAw.goldenGlove}`});
+        }
+        if(realAw.bestPlayer&&pl.awards.bestPlayer?.toLowerCase().trim()===realAw.bestPlayer.toLowerCase().trim()){
+          pts+=10; log.push({points:10,desc:`Лучший игрок: ${realAw.bestPlayer}`});
+        }
+        // Чемпион (победитель финала) — 10 очков
+        const finalRes=real[PO_MATCHES.final.id];
+        const userFinalPick=userPicks[PO_MATCHES.final.id];
+        if(finalRes?.winner&&userFinalPick?.n===finalRes.winner){
+          pts+=10; log.push({points:10,desc:`Чемпион: ${finalRes.winner}`});
+        }
+      }
+
+      const pts1=pl.pointsStage1||pl.points||0;
+      const totalPts=pts1+pts;
+      await updateDoc(doc(db,'predictions',ds.id),{
+        pointsStage2:pts,
+        points:totalPts,
+        pointsLog2:log,
+      });
+    }
+    notify('✅ Очки плей-офф пересчитаны!','ok');
+    if(S.curPage==='leaderboard') loadLeaderboard();
+  } catch(e){ notify('Ошибка пересчёта: '+e.message,'err'); }
+}
+
+function getRealOpponent(matchId, winner, real){
+  // Get the actual opponent of the winner in this match
+  const allPo=[...PO_MATCHES.r32,...PO_MATCHES.r16,...PO_MATCHES.r8,...PO_MATCHES.r4,PO_MATCHES.r3rd,PO_MATCHES.final];
+  const m=allPo.find(x=>x.id===matchId); if(!m) return null;
+  if(m.home&&m.away){
+    // r32 — teams known
+    return m.home.n===winner?m.away:m.home;
+  }
+  // Derived from previous round real results
+  const rnd=matchId.startsWith('r16')?'r16':matchId.startsWith('r8')?'r8':matchId.startsWith('r4')?'r4':matchId.startsWith('final')?'final':'r3rd';
+  const teams=derivePrevWinnersReal(rnd,m,real);
+  if(!teams) return null;
+  return teams.a?.n===winner?teams.b:teams.a;
+}
+
+function derivePrevWinnersReal(rnd,m,real){
+  const prevRndMap={r16:'r32',r8:'r16',r4:'r8',final:'r4',r3rd:'r4'};
+  const prevRnd=prevRndMap[rnd]; if(!prevRnd) return null;
+  const prevArr=prevRnd==='r32'?PO_MATCHES.r32:prevRnd==='r16'?PO_MATCHES.r16:prevRnd==='r8'?PO_MATCHES.r8:PO_MATCHES.r4;
+  const getW=(idx)=>{
+    const pm=prevArr[idx]; if(!pm) return null;
+    const res=real[pm.id]; if(!res||!res.winner) return null;
+    if(prevRnd==='r32') return res.winner===pm.home.n?pm.home:pm.away;
+    const t=derivePrevWinnersReal(prevRnd,pm,real);
+    if(!t) return {n:res.winner,f:''};
+    return t.a?.n===res.winner?t.a:t.b;
+  };
+  if(rnd==='r3rd'){
+    const sf0=PO_MATCHES.r4[0],sf1=PO_MATCHES.r4[1];
+    const r0=real[sf0.id],r1=real[sf1.id];
+    const getLoser=(pm,res)=>{
+      if(!res||!res.winner) return null;
+      const t=derivePrevWinnersReal('r4',pm,real);
+      if(!t) return null;
+      return t.a?.n===res.winner?t.b:t.a;
+    };
+    return {a:getLoser(sf0,r0),b:getLoser(sf1,r1)};
+  }
+  return {a:getW(m.from?.[0]),b:getW(m.from?.[1])};
+}
+
+function getPredOpponent(matchId,winner,userPicks){
+  const allPo=[...PO_MATCHES.r32,...PO_MATCHES.r16,...PO_MATCHES.r8,...PO_MATCHES.r4,PO_MATCHES.r3rd,PO_MATCHES.final];
+  const m=allPo.find(x=>x.id===matchId); if(!m) return null;
+  if(m.home&&m.away) return m.home.n===winner?m.away:m.home;
+  // derived from user picks
+  const rnd=matchId.startsWith('r16')?'r16':matchId.startsWith('r8')?'r8':matchId.startsWith('r4')?'r4':matchId.startsWith('final')?'final':'r3rd';
+  const prevRndMap={r16:'r32',r8:'r16',r4:'r8',final:'r4',r3rd:'r4'};
+  const prevRnd=prevRndMap[rnd]; if(!prevRnd) return null;
+  const prevArr=prevRnd==='r32'?PO_MATCHES.r32:prevRnd==='r16'?PO_MATCHES.r16:prevRnd==='r8'?PO_MATCHES.r8:PO_MATCHES.r4;
+  const getPickedW=(idx)=>{
+    const pm=prevArr[idx]; if(!pm) return null;
+    return userPicks[pm.id]||null;
+  };
+  const pa=getPickedW(m.from?.[0]),pb=getPickedW(m.from?.[1]);
+  return pa?.n===winner?pb:pa;
 }
 
 /* ═══════════════════════════════════════════════════════
