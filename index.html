@@ -384,19 +384,67 @@ body::after{display:none;}
   <!-- ═══════ ОФИЦИАЛЬНЫЙ ═══════ -->
   <div id="page-official" class="page hidden fade-in">
     <div id="off-login"><div class="text-center py-20"><div style="font-size:3.5rem;margin-bottom:14px;">🔐</div><h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-purple-bright);margin-bottom:10px;">ОФИЦИАЛЬНЫЙ ТУРНИР</h2><p style="color:rgba(255,255,255,0.4);margin-bottom:28px;font-size:0.9rem;">Войдите через Google для участия</p><button onclick="signInGoogle()" class="btn-google mx-auto"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Войти через Google</button></div></div>
-    <div id="off-done" class="hidden"><div class="mb-5"><span class="badge bg-green">✅ ПРОГНОЗ ОТПРАВЛЕН</span><h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-green);margin-top:8px;">ВАШ ПРОГНОЗ ЗАФИКСИРОВАН</h2></div><div id="off-my-pred"></div><div class="divider"></div><h3 style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;letter-spacing:1px;color:var(--wc-purple-bright);margin-bottom:14px;">🗣️ ГЛАС НАРОДА</h3><div id="vox-container"></div></div>
-    <div id="off-form" class="hidden">
-      <div class="mb-5"><span class="badge bg-purple">🏆 ОФИЦИАЛЬНЫЙ ТУРНИР</span><h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;letter-spacing:1px;color:var(--wc-purple-bright);margin-top:8px;">ОФИЦИАЛЬНЫЙ ПРОГНОЗ</h2><p style="color:rgba(255,255,255,0.4);font-size:0.82rem;margin-top:4px;">Одна попытка!</p></div>
-      <div id="off-groups"></div>
-      <div class="divider"></div>
-      <div class="wc-card mb-5" style="border-color:rgba(255,210,63,0.2);">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-          <span style="font-size:1.5rem;">⏳</span>
-          <h2 style="font-family:var(--font-d);font-size:1.05rem;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.45);">ПЛЕЙ-ОФФ — СКОРО</h2>
+    <!-- ═══ ЭТАП 2: Прогноз плей-офф (открыт после сдачи этапа 1) ═══ -->
+    <div id="off-done" class="hidden">
+      <div class="mb-4">
+        <div class="flex gap-2 mb-3 flex-wrap">
+          <span class="badge bg-green">✅ ЭТАП 1 ЗАВЕРШЁН</span>
+          <span class="badge bg-purple" id="off-phase2-badge">🏆 ЭТАП 2 — ПЛЕЙ-ОФФ</span>
         </div>
-        <p style="font-family:var(--font-u);font-size:0.82rem;color:rgba(255,255,255,0.3);">Прогноз на плей-офф откроется после завершения группового этапа. Сейчас принимаются только прогнозы на матчи групп.</p>
       </div>
-      <div class="text-center pb-6"><button onclick="submitOfficial()" class="btn-g px-12 py-4" style="font-size:0.85rem;">🚀 ОТПРАВИТЬ ПРОГНОЗ</button><p style="color:rgba(255,255,255,0.25);font-size:0.72rem;margin-top:7px;">Действие необратимо! Только групповой этап.</p></div>
+      <!-- Мини-сводка этапа 1 -->
+      <div id="off-my-pred"></div>
+      <div class="divider"></div>
+      <!-- Форма плей-офф (пока не сдан) -->
+      <div id="off-playoff-form">
+        <div class="mb-4">
+          <h2 style="font-family:var(--font-d);font-size:1.3rem;font-weight:800;color:var(--wc-gold);">🏆 ПРОГНОЗ НА ПЛЕЙ-ОФФ</h2>
+          <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin-top:4px;">Кликните на матч → выберите победителя → заполните всю сетку</p>
+        </div>
+        <!-- SVG турнирная сетка -->
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:20px;">
+          <div id="off-bracket-svg"></div>
+        </div>
+        <div class="divider"></div>
+        <!-- Награды -->
+        <div class="wc-card mb-5">
+          <h3 style="font-family:var(--font-d);font-size:1rem;font-weight:700;color:var(--wc-gold);margin-bottom:14px;">🏅 ИНДИВИДУАЛЬНЫЕ НАГРАДЫ</h3>
+          <div class="grid grid-cols-1 gap-3">
+            <div><label style="font-family:var(--font-t);font-size:0.62rem;color:var(--wc-gold);display:block;margin-bottom:5px;">👟 ЗОЛОТАЯ БУТСА</label><input type="text" class="ai" id="o-boot" placeholder="Имя игрока..."></div>
+            <div><label style="font-family:var(--font-t);font-size:0.62rem;color:rgba(192,192,192,0.8);display:block;margin-bottom:5px;">🧤 ЗОЛОТАЯ ПЕРЧАТКА</label><input type="text" class="ai" id="o-glove" placeholder="Имя вратаря..."></div>
+            <div><label style="font-family:var(--font-t);font-size:0.62rem;color:var(--wc-purple-bright);display:block;margin-bottom:5px;">⭐ ЛУЧШИЙ ИГРОК</label><input type="text" class="ai" id="o-player" placeholder="Имя игрока..."></div>
+          </div>
+        </div>
+        <div class="text-center pb-6">
+          <button onclick="submitPlayoff()" class="btn-g px-12 py-4" style="font-size:0.9rem;">🚀 ОТПРАВИТЬ ПРОГНОЗ НА ПЛЕЙ-ОФФ</button>
+          <p style="color:rgba(255,255,255,0.25);font-size:0.72rem;margin-top:7px;">После отправки изменить нельзя</p>
+        </div>
+      </div>
+      <!-- Итог: плей-офф уже сдан -->
+      <div id="off-playoff-done" class="hidden">
+        <div id="off-playoff-summary"></div>
+        <!-- показываем сетку только для просмотра -->
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:20px;">
+          <div id="off-bracket-svg-done"></div>
+        </div>
+        <div class="divider"></div>
+        <h3 style="font-family:var(--font-d);font-size:1.1rem;font-weight:700;color:var(--wc-purple-bright);margin-bottom:14px;">🗣️ ГЛАС НАРОДА</h3>
+        <div id="vox-container"></div>
+      </div>
+    </div>
+
+    <!-- ═══ ЭТАП 1: Форма группового этапа ═══ -->
+    <div id="off-form" class="hidden">
+      <div class="mb-5">
+        <span class="badge bg-purple">🏆 ОФИЦИАЛЬНЫЙ ТУРНИР · ЭТАП 1</span>
+        <h2 style="font-family:var(--font-d);font-size:1.5rem;font-weight:800;color:var(--wc-purple-bright);margin-top:8px;">ГРУППОВОЙ ЭТАП</h2>
+        <p style="color:rgba(255,255,255,0.4);font-size:0.82rem;margin-top:4px;">Заполните счета всех матчей. Одна попытка!</p>
+      </div>
+      <div id="off-groups"></div>
+      <div class="text-center pb-6">
+        <button onclick="submitOfficial()" class="btn-g px-12 py-4" style="font-size:0.85rem;">🚀 ОТПРАВИТЬ ПРОГНОЗ</button>
+        <p style="color:rgba(255,255,255,0.25);font-size:0.72rem;margin-top:7px;">Действие необратимо!</p>
+      </div>
     </div>
   </div>
  
@@ -740,10 +788,10 @@ function isDrawAllowed(rnd){ return rnd==='r32'; } // ничья только в
 function buildOfficialBracket(){
   const el=document.getElementById('off-bracket-svg'); if(!el) return;
   el.innerHTML='';
-  el.appendChild(renderPoBracketSVG());
+  el.appendChild(renderPoBracketSVG(false));
 }
 
-function renderPoBracketSVG(){
+function renderPoBracketSVG(viewOnly=false){
   // Layout constants
   const BW=130, BH=28, GAP=6, MGAP=20;
   const UNIT=BH*2+GAP+MGAP;
@@ -798,8 +846,7 @@ function renderPoBracketSVG(){
       parts.push(`<text x="${mx+8}" y="${byTop+BH/2}" dominant-baseline="central" font-family="Outfit,sans-serif" font-size="9.5" fill="${C.dim}" font-style="italic">ожидается...</text>`);
     }
     // click overlay
-    if(tA||tB){
-      const mid=my+BH+GAP/2;
+    if((tA||tB)&&!viewOnly){
       parts.push(`<rect x="${mx}" y="${my}" width="${BW}" height="${BH*2+GAP}" rx="6" fill="transparent" style="cursor:pointer;" onclick="handlePoClick('${matchId}')"/>`);
     }
     // match label
@@ -1093,13 +1140,41 @@ async function submitPlayoff(){
 
 function renderPlayoffDone(data){
   const el=document.getElementById('off-playoff-summary'); if(!el) return;
-  const fin=data.picks[PO_MATCHES.final.id];
+  const picks=data.playoff||{};
+  const fin=picks[PO_MATCHES.final.id];
   const aw=data.awards||{};
+  const pts1=data.pointsStage1||data.points||0;
+  const pts2=data.pointsStage2||0;
   el.innerHTML=`<div class="wc-card mb-4">
-    <div style="font-family:var(--font-t);font-size:0.6rem;color:rgba(255,255,255,0.35);margin-bottom:8px;">ПРОГНОЗ НА ПЛЕЙ-ОФФ ЗАФИКСИРОВАН ✅</div>
-    ${fin?`<div style="font-family:var(--font-d);font-size:1.4rem;font-weight:800;color:var(--wc-gold);margin-bottom:8px;">🏆 ${fin.f} ${fin.n}</div>`:''}
-    <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);">👟 ${aw.goldenBoot||'—'} · 🧤 ${aw.goldenGlove||'—'} · ⭐ ${aw.bestPlayer||'—'}</div>
+    <div style="font-family:var(--font-t);font-size:0.6rem;color:rgba(255,255,255,0.35);margin-bottom:10px;">✅ ПРОГНОЗ НА ПЛЕЙ-ОФФ ЗАФИКСИРОВАН</div>
+    ${fin?`<div style="font-family:var(--font-d);font-size:1.4rem;font-weight:800;color:var(--wc-gold);margin-bottom:8px;">🏆 ${esc(fin.f||'')} ${esc(fin.n||'')}</div>`:''}
+    <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);margin-bottom:10px;">👟 ${esc(aw.goldenBoot||'—')} · 🧤 ${esc(aw.goldenGlove||'—')} · ⭐ ${esc(aw.bestPlayer||'—')}</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;">
+      <div style="background:rgba(0,230,138,0.07);border:1px solid rgba(0,230,138,0.2);border-radius:8px;padding:8px;">
+        <div style="font-family:var(--font-t);font-size:0.55rem;color:rgba(255,255,255,0.35);">ЭТАП 1</div>
+        <div style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;color:var(--wc-green);">${pts1}</div>
+      </div>
+      <div style="background:rgba(176,124,255,0.07);border:1px solid rgba(176,124,255,0.2);border-radius:8px;padding:8px;">
+        <div style="font-family:var(--font-t);font-size:0.55rem;color:rgba(255,255,255,0.35);">ЭТАП 2</div>
+        <div style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;color:var(--wc-purple-bright);">${pts2}</div>
+      </div>
+      <div style="background:rgba(255,210,63,0.07);border:1px solid rgba(255,210,63,0.2);border-radius:8px;padding:8px;">
+        <div style="font-family:var(--font-t);font-size:0.55rem;color:rgba(255,255,255,0.35);">ВСЕГО</div>
+        <div style="font-family:var(--font-d);font-size:1.2rem;font-weight:700;color:var(--wc-gold);">${pts1+pts2}</div>
+      </div>
+    </div>
   </div>`;
+  // Render view-only bracket
+  const bracketEl=document.getElementById('off-bracket-svg-done');
+  if(bracketEl){
+    // Temporarily load picks into S_PO for rendering, then restore
+    const savedPicks={...S_PO.picks};
+    Object.assign(S_PO.picks, picks);
+    const svg=renderPoBracketSVG(true); // true = view-only
+    bracketEl.innerHTML='';
+    bracketEl.appendChild(svg);
+    S_PO.picks=savedPicks;
+  }
 }
 
 function groupMatches(gk) {
@@ -1727,8 +1802,12 @@ async function submitOfficial(){
     await setDoc(doc(db,'predictions',user.uid),pred);
     document.getElementById('off-form').classList.add('hidden');
     document.getElementById('off-done').classList.remove('hidden');
-    renderMyPred(pred); loadVox();
-    notify('✅ Прогноз отправлен!','ok');
+    renderMyPred(pred);
+    // Show playoff bracket form
+    document.getElementById('off-playoff-form').classList.remove('hidden');
+    document.getElementById('off-playoff-done').classList.add('hidden');
+    buildOfficialBracket();
+    notify('✅ Групповой этап сохранён! Теперь заполните плей-офф.','ok');
   } catch(e){ notify('Ошибка: '+e.message,'err'); }
 }
  
