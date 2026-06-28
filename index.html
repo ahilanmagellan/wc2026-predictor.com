@@ -402,8 +402,8 @@ body::after{display:none;}
           <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin-top:4px;">Кликните на матч → выберите победителя → заполните всю сетку</p>
         </div>
         <!-- SVG турнирная сетка -->
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;width:100%;">
-          <div id="off-bracket-svg"></div>
+        <div id="off-bracket-svg-wrap" style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;margin-bottom:12px;width:100%;">
+          <div id="off-bracket-svg" style="display:inline-block;vertical-align:top;"></div>
         </div>
         <div style="text-align:center;margin-bottom:16px;">
           <button onclick="downloadPlayoffPng(window.currentUser?.uid)" class="btn-dl" style="font-size:0.75rem;padding:10px 22px;">📸 СКАЧАТЬ PNG ПРОГНОЗА</button>
@@ -427,8 +427,8 @@ body::after{display:none;}
       <div id="off-playoff-done" class="hidden">
         <div id="off-playoff-summary"></div>
         <!-- показываем сетку только для просмотра -->
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;width:100%;">
-          <div id="off-bracket-svg-done"></div>
+        <div id="off-bracket-svg-done-wrap" style="overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;margin-bottom:12px;width:100%;">
+          <div id="off-bracket-svg-done" style="display:inline-block;vertical-align:top;"></div>
         </div>
         <div style="text-align:center;margin-bottom:16px;">
           <button onclick="downloadPlayoffPng(window.currentUser?.uid)" class="btn-dl" style="font-size:0.75rem;padding:10px 22px;">📸 СКАЧАТЬ PNG ПРОГНОЗА</button>
@@ -816,7 +816,11 @@ function isDrawAllowed(rnd){ return rnd==='r32'; } // ничья только в
 function buildOfficialBracket(){
   const el=document.getElementById('off-bracket-svg'); if(!el) return;
   el.innerHTML='';
-  el.appendChild(renderPoBracketSVG(false));
+  const svg=renderPoBracketSVG(false);
+  el.appendChild(svg);
+  // Fix CSS overflow clipping: set wrapper height = SVG height
+  const wrap=document.getElementById('off-bracket-svg-wrap');
+  if(wrap){ wrap.style.height=(parseInt(svg.getAttribute('height'))+4)+'px'; }
 }
 
 function renderPoBracketSVG(viewOnly=false){
@@ -1220,13 +1224,17 @@ function renderPlayoffDone(data){
   // Render view-only bracket
   const bracketEl=document.getElementById('off-bracket-svg-done');
   if(bracketEl){
-    // Temporarily load picks into S_PO for rendering, then restore
     const savedPicks={...S_PO.picks};
+    Object.keys(S_PO.picks).forEach(k=>delete S_PO.picks[k]);
     Object.assign(S_PO.picks, picks);
-    const svg=renderPoBracketSVG(true); // true = view-only
+    const svg=renderPoBracketSVG(true);
     bracketEl.innerHTML='';
     bracketEl.appendChild(svg);
-    S_PO.picks=savedPicks;
+    Object.keys(S_PO.picks).forEach(k=>delete S_PO.picks[k]);
+    Object.assign(S_PO.picks, savedPicks);
+    // Fix CSS overflow clipping
+    const wrap=document.getElementById('off-bracket-svg-done-wrap');
+    if(wrap){ wrap.style.height=(parseInt(svg.getAttribute('height'))+4)+'px'; }
   }
 }
 
