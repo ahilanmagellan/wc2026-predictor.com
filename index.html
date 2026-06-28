@@ -170,6 +170,8 @@ body::after{display:none;}
 .log-pts{font-family:var(--font-t);color:var(--wc-gold);font-weight:700;}
  
 ::-webkit-scrollbar{width:5px;}
+/* Override Tailwind preflight max-width on SVG */
+#off-bracket-svg svg, #off-bracket-svg-done svg { max-width: none !important; }
 ::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
 ::-webkit-scrollbar-thumb{background:rgba(0,230,138,0.25);border-radius:3px;}
 
@@ -813,13 +815,12 @@ function buildOfficialBracket(){
   const el=document.getElementById('off-bracket-svg'); if(!el) return;
   el.innerHTML='';
   const svg=renderPoBracketSVG(false);
-  // Wrap SVG in a scroll container created purely in JS (no CSS overflow on parent div)
+  // Get height from style (set as CSS, not attribute, to avoid Tailwind override)
+  const svgH=parseInt(svg.style.height)||620;
+  const svgW=parseInt(svg.style.width)||1256;
+  // Wrap in a scroll container with explicit height — prevents overflow-x from clipping y
   const scroller=document.createElement('div');
-  scroller.style.cssText='overflow-x:auto;-webkit-overflow-scrolling:touch;';
-  scroller.style.width='100%';
-  // Set explicit height on scroller = SVG height so overflow-x doesn't clip overflow-y
-  const svgH=parseInt(svg.getAttribute('height')||'500');
-  scroller.style.height=svgH+'px';
+  scroller.style.cssText=`overflow-x:auto;overflow-y:visible;-webkit-overflow-scrolling:touch;width:100%;height:${svgH+4}px;`;
   scroller.appendChild(svg);
   el.appendChild(scroller);
 }
@@ -1046,16 +1047,15 @@ function renderPoBracketSVG(viewOnly=false){
     parts.push(`<text x="${x+MW/2}" y="${hY}" text-anchor="middle" font-family="Outfit,sans-serif" font-size="8" font-weight="700" fill="${GOLD}" letter-spacing="0.5">${t}</text>`);
   });
 
-  // Must cover all 8 r32 rows (row 7 ends at rowY(7)+MH) AND the 3rd place match
+  // SVG height must cover all 8 r32 rows and the 3rd place match
   const SVG_H = Math.max(rowY(7) + MH + 24, trd3Y + MH + 24);
   const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('width', TOTAL_W);
-  svg.setAttribute('height', SVG_H);
+  // Do NOT set width/height attributes — Tailwind CSS overrides them with max-width:100%
+  // which causes height scaling and crops bottom rows.
+  // Instead: use viewBox only, control size via CSS pixel values.
   svg.setAttribute('viewBox', `0 0 ${TOTAL_W} ${SVG_H}`);
-  // Use explicit pixel size — container scrolls horizontally, no height distortion
-  svg.setAttribute('width', TOTAL_W);
-  svg.setAttribute('height', SVG_H);
-  svg.style.cssText = `background:#0d0d1a;border-radius:12px;display:block;`;
+  // Explicit pixel dimensions via style (not attribute) — Tailwind cannot override style
+  svg.style.cssText = `background:#0d0d1a;border-radius:12px;display:block;width:${TOTAL_W}px;min-width:${TOTAL_W}px;max-width:none !important;height:${SVG_H}px;min-height:${SVG_H}px;flex-shrink:0;`;
   svg.innerHTML = parts.join('');
 
   // Attach click listeners AFTER innerHTML (onclick in SVG innerHTML is blocked by browsers)
