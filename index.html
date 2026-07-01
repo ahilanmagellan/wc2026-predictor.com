@@ -521,6 +521,35 @@ body::after{display:none;}
   </div>
  
 
+  <!-- МОДАЛЬ: редактор плей-офф для админа -->
+  <div id="m-admin-playoff" class="modal-ov" onclick="if(event.target===this)closeAdminPlayoffEditor()">
+    <div class="modal-box" onclick="event.stopPropagation()" style="max-width:98vw;width:98vw;">
+      <div class="modal-hdr">
+        <div>
+          <h3 style="font-family:var(--font-d);font-size:1rem;font-weight:700;color:var(--wc-purple-bright);">✏️ РЕДАКТОР ПЛЕЙ-ОФФ</h3>
+          <div id="m-apo-name" style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-top:2px;"></div>
+        </div>
+        <button class="modal-close" onclick="closeAdminPlayoffEditor()">✕</button>
+      </div>
+      <div class="p-4">
+        <p style="font-size:0.8rem;color:rgba(255,255,255,0.4);margin-bottom:12px;">Кликайте на матчи чтобы выбрать победителей, затем нажмите «Сохранить».</p>
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+          <div id="m-apo-bracket"></div>
+        </div>
+        <div class="divider"></div>
+        <div class="grid grid-cols-1 gap-3 mb-4">
+          <div><label style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);display:block;margin-bottom:4px;">👟 ЗОЛОТАЯ БУТСА</label><input type="text" class="ai" id="apo-boot" placeholder="Имя игрока..."></div>
+          <div><label style="font-family:var(--font-t);font-size:0.6rem;color:rgba(192,192,192,0.8);display:block;margin-bottom:4px;">🧤 ЗОЛОТАЯ ПЕРЧАТКА</label><input type="text" class="ai" id="apo-glove" placeholder="Имя вратаря..."></div>
+          <div><label style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-purple-bright);display:block;margin-bottom:4px;">⭐ ЛУЧШИЙ ИГРОК</label><input type="text" class="ai" id="apo-player" placeholder="Имя игрока..."></div>
+        </div>
+        <div class="flex gap-3 justify-center flex-wrap">
+          <button onclick="saveAdminPlayoff()" class="btn-g px-10 py-3">💾 СОХРАНИТЬ ПРОГНОЗ</button>
+          <button onclick="closeAdminPlayoffEditor()" class="btn-dl">ЗАКРЫТЬ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </main>
 </div>
  
@@ -2255,7 +2284,8 @@ async function loadAdminUsers(){
         </div>
         <div style="display:flex;gap:5px;flex-wrap:wrap;">
           <button onclick="downloadSinglePrediction('${jsUid}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-green);background:transparent;border:1px solid rgba(0,230,138,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📸 ГРУППЫ</button>
-          <button onclick="downloadPlayoffPng('${jsUid}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);background:transparent;border:1px solid rgba(255,210,63,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">🏆 ПЛЕЙ-ОФФ</button>
+          <button onclick="downloadPlayoffPng('${jsUid}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);background:transparent;border:1px solid rgba(255,210,63,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">🏆 PNG</button>
+          <button onclick="adminEditPlayoff('${jsUid}','${jsName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-purple-bright);background:transparent;border:1px solid rgba(176,124,255,0.35);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">✏️ ПЛЕЙ-ОФФ</button>
           <button onclick="adminAdjPoints('${jsUid}','${jsName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-gold);background:transparent;border:1px solid rgba(255,210,63,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">⚖️ ОЧКИ</button>
           <button onclick="adminSetPhoto('${jsUid}','${jsName}')" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-purple-bright);background:transparent;border:1px solid rgba(176,124,255,0.25);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">📷 ФОТО</button>
           <button onclick="adminRenameUser('${jsUid}','${jsName}')" style="font-family:var(--font-t);font-size:0.6rem;color:rgba(255,255,255,0.55);background:transparent;border:1px solid var(--wc-border);padding:5px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;">✏️ ИМЯ</button>
@@ -3195,6 +3225,196 @@ function getPredOpponent(matchId,winner,userPicks){
   };
   const pa=getPickedW(m.from?.[0]),pb=getPickedW(m.from?.[1]);
   return pa?.n===winner?pb:pa;
+}
+
+/* ═══════════════════════════════════════════════════════
+   РЕДАКТОР ПЛЕЙ-ОФФ ДЛЯ АДМИНИСТРАТОРА
+═══════════════════════════════════════════════════════ */
+const S_APO = { picks:{}, uid:null, name:'' };
+
+async function adminEditPlayoff(uid, name){
+  S_APO.uid = uid;
+  S_APO.name = name;
+  // Reset picks
+  Object.keys(S_APO.picks).forEach(k => delete S_APO.picks[k]);
+
+  // Load existing playoff data from Firestore
+  try{
+    const {db,doc,getDoc} = window.FB;
+    const snap = await getDoc(doc(db,'predictions',uid));
+    if(snap.exists()){
+      const data = snap.data();
+      if(data.playoff && Object.keys(data.playoff).length > 0){
+        Object.assign(S_APO.picks, data.playoff);
+      }
+      // Load awards
+      document.getElementById('apo-boot').value = data.awards?.goldenBoot||'';
+      document.getElementById('apo-glove').value = data.awards?.goldenGlove||'';
+      document.getElementById('apo-player').value = data.awards?.bestPlayer||'';
+    }
+  } catch(e){ notify('Ошибка загрузки: '+e.message,'err'); return; }
+
+  document.getElementById('m-apo-name').textContent = name + ' · ' + uid.slice(0,20);
+
+  // Render bracket using S_APO.picks (temporarily swap with S_PO)
+  renderAdminPlayoffBracket();
+
+  // Show modal
+  const m = document.getElementById('m-admin-playoff');
+  m.style.display='flex';
+  requestAnimationFrame(()=>m.classList.add('show'));
+}
+
+function renderAdminPlayoffBracket(){
+  const el = document.getElementById('m-apo-bracket'); if(!el) return;
+  el.innerHTML = '';
+  // Temporarily swap S_PO.picks with S_APO.picks for rendering
+  const saved = {...S_PO.picks};
+  Object.keys(S_PO.picks).forEach(k=>delete S_PO.picks[k]);
+  Object.assign(S_PO.picks, S_APO.picks);
+
+  const svg = renderPoBracketSVG(false);
+  // Override click handlers to use adminPoClick instead
+  svg.querySelectorAll('.po-clickable').forEach(el2 => {
+    // Remove existing listeners by cloning
+    const clone = el2.cloneNode(true);
+    el2.parentNode.replaceChild(clone, el2);
+    clone.addEventListener('click', function(){
+      adminPoClick(this.getAttribute('data-matchid'));
+    });
+  });
+
+  // Fix SVG size
+  const svgH = parseInt(svg.style.height)||620;
+  const scroller = document.createElement('div');
+  scroller.style.cssText = `overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%;height:${svgH+4}px;`;
+  scroller.appendChild(svg);
+  el.appendChild(scroller);
+
+  // Restore S_PO
+  Object.keys(S_PO.picks).forEach(k=>delete S_PO.picks[k]);
+  Object.assign(S_PO.picks, saved);
+}
+
+function adminPoClick(matchId){
+  // Same as handlePoClick but uses S_APO.picks
+  const allRnds=['r32','r16','r8','r4'];
+  let teams={a:null,b:null};
+
+  // Temporarily swap picks to use getPoTeams
+  const saved = {...S_PO.picks};
+  Object.keys(S_PO.picks).forEach(k=>delete S_PO.picks[k]);
+  Object.assign(S_PO.picks, S_APO.picks);
+
+  for(const rnd of allRnds){
+    const arr=PO_MATCHES[rnd];
+    const idx=arr.findIndex(m=>m.id===matchId);
+    if(idx>=0){ teams=getPoTeams(rnd,idx); break; }
+  }
+  if(matchId===PO_MATCHES.final.id) teams=getPoTeamsFinal();
+  if(matchId===PO_MATCHES.r3rd.id) teams=getPoTeams3rd();
+
+  Object.keys(S_PO.picks).forEach(k=>delete S_PO.picks[k]);
+  Object.assign(S_PO.picks, saved);
+
+  if(!teams.a&&!teams.b){ notify('Сначала выберите победителей предыдущих матчей','err'); return; }
+
+  // Show picker that saves to S_APO
+  showAdminPoWinnerPicker(matchId, teams.a, teams.b);
+}
+
+function showAdminPoWinnerPicker(matchId, tA, tB){
+  const cur = S_APO.picks[matchId];
+  const allM=[...PO_MATCHES.r32,...PO_MATCHES.r16,...PO_MATCHES.r8,...PO_MATCHES.r4,PO_MATCHES.final,PO_MATCHES.r3rd];
+  const mObj = allM.find(m=>m.id===matchId);
+
+  const ov = document.createElement('div');
+  ov.className = 'picker-overlay';
+  ov.style.zIndex = '10000';
+  ov.innerHTML = `<div class="picker-box">
+    <div class="picker-title">КТО ПРОЙДЁТ? · ${mObj?.label||matchId}</div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;">
+      <button class="picker-team-btn ${cur&&tA&&cur.n===tA.n?'selected':''}" id="apk-a" ${!tA?'style="opacity:0.3;pointer-events:none;"':''}>
+        <span class="picker-team-flag">${tA?.f||'?'}</span>
+        <span style="font-size:0.82rem;">${tA?.n||'Ожидается'}</span>
+      </button>
+      <button class="picker-team-btn ${cur&&tB&&cur.n===tB.n?'selected':''}" id="apk-b" ${!tB?'style="opacity:0.3;pointer-events:none;"':''}>
+        <span class="picker-team-flag">${tB?.f||'?'}</span>
+        <span style="font-size:0.82rem;">${tB?.n||'Ожидается'}</span>
+      </button>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:center;">
+      ${cur?`<button id="apk-clear" style="font-family:var(--font-t);font-size:0.6rem;color:var(--wc-red);background:transparent;border:1px solid rgba(255,59,127,0.2);padding:5px 14px;border-radius:6px;cursor:pointer;">✕ СБРОС</button>`:''}
+      <button id="apk-close" style="font-family:var(--font-t);font-size:0.6rem;color:rgba(255,255,255,0.4);background:transparent;border:1px solid var(--wc-border);padding:5px 14px;border-radius:6px;cursor:pointer;">ЗАКРЫТЬ</button>
+    </div>
+  </div>`;
+
+  document.body.appendChild(ov);
+
+  const pick = (team) => {
+    S_APO.picks[matchId] = {...team};
+    // Cascade clears in APO picks
+    cascadeApoClears(matchId);
+    ov.remove();
+    renderAdminPlayoffBracket();
+  };
+
+  if(tA) ov.querySelector('#apk-a').addEventListener('click', ()=>pick(tA));
+  if(tB) ov.querySelector('#apk-b').addEventListener('click', ()=>pick(tB));
+  ov.querySelector('#apk-close').addEventListener('click', ()=>ov.remove());
+  ov.querySelector('#apk-clear')?.addEventListener('click', ()=>{
+    delete S_APO.picks[matchId];
+    cascadeApoClears(matchId);
+    ov.remove();
+    renderAdminPlayoffBracket();
+  });
+  ov.addEventListener('click', e=>{ if(e.target===ov) ov.remove(); });
+}
+
+function cascadeApoClears(changedId){
+  const CHAIN=[
+    {rnd:'r32',next:'r16'},{rnd:'r16',next:'r8'},
+    {rnd:'r8',next:'r4'},{rnd:'r4',next:'final'},
+  ];
+  for(const {rnd,next} of CHAIN){
+    const arr=PO_MATCHES[rnd];
+    const idx=arr.findIndex(m=>m.id===changedId);
+    if(idx<0) continue;
+    const nextArr=next==='final'?[PO_MATCHES.final]:PO_MATCHES[next];
+    nextArr.forEach(nm=>{
+      if(nm.from&&nm.from.includes(idx)){
+        delete S_APO.picks[nm.id];
+        cascadeApoClears(nm.id);
+      }
+    });
+    if(rnd==='r4') delete S_APO.picks[PO_MATCHES.r3rd.id];
+    break;
+  }
+}
+
+async function saveAdminPlayoff(){
+  if(!S_APO.uid){ notify('Ошибка: пользователь не выбран','err'); return; }
+  const awards = {
+    goldenBoot:  document.getElementById('apo-boot')?.value?.trim()||'',
+    goldenGlove: document.getElementById('apo-glove')?.value?.trim()||'',
+    bestPlayer:  document.getElementById('apo-player')?.value?.trim()||'',
+  };
+  try{
+    const {db,doc,updateDoc} = window.FB;
+    await updateDoc(doc(db,'predictions',S_APO.uid),{
+      playoff: {...S_APO.picks},
+      awards,
+      playoffSubmittedAt: new Date().toISOString(),
+    });
+    notify(`✅ Прогноз плей-офф для «${S_APO.name}» сохранён!`,'ok');
+    closeAdminPlayoffEditor();
+  } catch(e){ notify('Ошибка сохранения: '+e.message,'err'); }
+}
+
+function closeAdminPlayoffEditor(){
+  const m = document.getElementById('m-admin-playoff');
+  m.classList.remove('show');
+  setTimeout(()=>{ m.style.display='none'; }, 300);
 }
 
 /* ═══════════════════════════════════════════════════════
