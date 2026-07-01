@@ -1830,29 +1830,42 @@ async function handleOfficial(user){
     const snap=await getDoc(doc(db,'predictions',user.uid));
     if(snap.exists()){
       const data=snap.data();
-      done.classList.remove('hidden'); form.classList.add('hidden');
-      renderMyPred(data);
-      // Check if playoff already submitted
-      if(data.playoff && Object.keys(data.playoff).length>0){
-        // Load picks into S_PO for display
-        Object.assign(S_PO.picks, data.playoff);
-        document.getElementById('off-playoff-form').classList.add('hidden');
-        document.getElementById('off-playoff-done').classList.remove('hidden');
-        renderPlayoffDone(data);
-        loadVox();
+      // Этап 1 считается сданным если:
+      // 1. Есть submittedAt (основной маркер), ИЛИ
+      // 2. Есть хоть один прогноз в scores (на случай если admin изменил данные)
+      const stage1Done = !!(data.submittedAt || (data.scores && Object.keys(data.scores).length > 0));
+      
+      if(stage1Done){
+        done.classList.remove('hidden'); form.classList.add('hidden');
+        renderMyPred(data);
+        // Плей-офф считается сданным если есть playoff с данными
+        const playoffDone = data.playoff && typeof data.playoff === 'object' && Object.keys(data.playoff).length > 0;
+        if(playoffDone){
+          Object.assign(S_PO.picks, data.playoff);
+          document.getElementById('off-playoff-form').classList.add('hidden');
+          document.getElementById('off-playoff-done').classList.remove('hidden');
+          renderPlayoffDone(data);
+          loadVox();
+        } else {
+          document.getElementById('off-playoff-form').classList.remove('hidden');
+          document.getElementById('off-playoff-done').classList.add('hidden');
+          buildOfficialBracket();
+        }
       } else {
-        // Phase 2 open — show bracket
-        document.getElementById('off-playoff-form').classList.remove('hidden');
-        document.getElementById('off-playoff-done').classList.add('hidden');
-        buildOfficialBracket();
+        // Документ есть но этап 1 не сдан (например сброшен админом)
+        done.classList.add('hidden'); form.classList.remove('hidden');
+        if(!document.getElementById('off-groups').innerHTML.trim()) renderOffGroups();
       }
     } else {
+      // Документа нет — этап 1 не сдан
       done.classList.add('hidden'); form.classList.remove('hidden');
       if(!document.getElementById('off-groups').innerHTML.trim()) renderOffGroups();
     }
   } catch(e){
-    done.classList.add('hidden'); form.classList.remove('hidden');
-    if(!document.getElementById('off-groups').innerHTML.trim()) renderOffGroups();
+    // При ошибке чтения — НЕ сбрасываем в форму группового этапа
+    // Показываем сообщение об ошибке
+    console.error('handleOfficial error:', e);
+    notify('Ошибка загрузки прогноза: ' + e.message, 'err');
   }
 }
  
